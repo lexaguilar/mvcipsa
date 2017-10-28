@@ -1,0 +1,137 @@
+﻿@model mvcIpsa.DbModel.IngresosEgresosCaja
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit</h2>
+
+<h4>IngresosEgresosCaja</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Tipomov" class="control-label"></label>
+                <select asp-for="Tipomov" class="form-control" asp-items="ViewBag.Tipomov"></select>
+                <span asp-validation-for="Tipomov" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Numrecibo" class="control-label"></label>
+                <input asp-for="Numrecibo" class="form-control" />
+                <span asp-validation-for="Numrecibo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nestado" class="control-label"></label>
+                <select asp-for="Nestado" class="form-control" asp-items="ViewBag.Nestado"></select>
+                <span asp-validation-for="Nestado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaProceso" class="control-label"></label>
+                <input asp-for="FechaProceso" class="form-control" />
+                <span asp-validation-for="FechaProceso" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Idtipopago" class="control-label"></label>
+                <select asp-for="Idtipopago" class="form-control" asp-items="ViewBag.Idtipopago"></select>
+                <span asp-validation-for="Idtipopago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Montoefectivo" class="control-label"></label>
+                <input asp-for="Montoefectivo" class="form-control" />
+                <span asp-validation-for="Montoefectivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Montocheque" class="control-label"></label>
+                <input asp-for="Montocheque" class="form-control" />
+                <span asp-validation-for="Montocheque" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Montominuta" class="control-label"></label>
+                <input asp-for="Montominuta" class="form-control" />
+                <span asp-validation-for="Montominuta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Montotransferencia" class="control-label"></label>
+                <input asp-for="Montotransferencia" class="form-control" />
+                <span asp-validation-for="Montotransferencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Monto" class="control-label"></label>
+                <input asp-for="Monto" class="form-control" />
+                <span asp-validation-for="Monto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Noreferencia" class="control-label"></label>
+                <input asp-for="Noreferencia" class="form-control" />
+                <span asp-validation-for="Noreferencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cuentabanco" class="control-label"></label>
+                <input asp-for="Cuentabanco" class="form-control" />
+                <span asp-validation-for="Cuentabanco" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Concepto" class="control-label"></label>
+                <input asp-for="Concepto" class="form-control" />
+                <span asp-validation-for="Concepto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Noordenpago" class="control-label"></label>
+                <input asp-for="Noordenpago" class="form-control" />
+                <span asp-validation-for="Noordenpago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Idtipoingreso" class="control-label"></label>
+                <select asp-for="Idtipoingreso" class="form-control" asp-items="ViewBag.Idtipoingreso"></select>
+                <span asp-validation-for="Idtipoingreso" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Idtipomoneda" class="control-label"></label>
+                <select asp-for="Idtipomoneda" class="form-control" asp-items="ViewBag.Idtipomoneda"></select>
+                <span asp-validation-for="Idtipomoneda" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Fechacreacion" class="control-label"></label>
+                <input asp-for="Fechacreacion" class="form-control" />
+                <span asp-validation-for="Fechacreacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ncentrocosto" class="control-label"></label>
+                <input asp-for="Ncentrocosto" class="form-control" />
+                <span asp-validation-for="Ncentrocosto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Identificacioncliente" class="control-label"></label>
+                <input asp-for="Identificacioncliente" class="form-control" />
+                <span asp-validation-for="Identificacioncliente" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cuentacontablebanco" class="control-label"></label>
+                <input asp-for="Cuentacontablebanco" class="form-control" />
+                <span asp-validation-for="Cuentacontablebanco" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tipocambio" class="control-label"></label>
+                <input asp-for="Tipocambio" class="form-control" />
+                <span asp-validation-for="Tipocambio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

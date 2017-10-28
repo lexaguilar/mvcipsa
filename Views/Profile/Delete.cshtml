@@ -1,0 +1,91 @@
+﻿@using mvcIpsa.DbModel
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Eliminar usuario
+        </header>
+        <form method="post" asp-controller="Profile" asp-action="Delete" class="animated bounceInLeft">
+            <input type="hidden" asp-for="Username" />
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <!--user info table start-->
+                        <section class="panel">
+                            <div class="panel-body">
+                                <a href="#" class="task-thumb">
+                                    <span class="fa fa-user fa-4x"></span>
+                                </a>
+                                <div class="task-thumb-details">
+                                    <h1><a href="#">@Model.Username</a></h1>
+                                    <p>@(Model.Nombre+" "+Model.Apellido)</p>
+                                </div>
+                            </div>
+                            <table class="table table-hover personal-task">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <i class=" fa fa-home"></i>
+                                        </td>
+                                        <td>@Model.centrocostoDescripcion</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <i class=" fa fa-bell-o"></i>
+                                        </td>
+                                        <td>@Model.cajaDescripcion</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <i class="fa fa-envelope"></i>
+                                        </td>
+                                        <td>@Model.Correo</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                        <!--user info table end-->
+                    </div>
+
+                </div>
+                <h4>Permisos</h4>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.roles.Count == 0)
+                        {
+                            <tr>
+                                <td align="center" class="text-danger" colspan="2">No tiene ningún permiso asignado</td>
+                            </tr>
+                    }
+                        @foreach (var rol in ViewBag.roles)
+                    {
+                            <tr>
+                                <td>@rol.Name</td>
+                                <td>@rol.Description</td>
+                            </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="text-center invoice-btn">
+                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
+                    <button class="btn btn-danger btn-lg" type="submit"><i class="fa fa-remove"></i> Eliminar </button>                   
+                </div>
+            </div>
+        </form>
+</section>
+</div>
+
+
+

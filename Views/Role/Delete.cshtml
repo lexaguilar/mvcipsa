@@ -1,0 +1,48 @@
+﻿@model mvcIpsa.DbModel.Role
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/css/animate.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/animate.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInRight">
+        <header class="panel-heading">
+            Eliminar permiso
+        </header>
+        <div class="panel-body">
+            <h3>Estas seguro que quieres eliminar ese permiso?</h3>
+            <div>
+                
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Description)
+                    </dd>
+                </dl>                
+            </div>
+        </div>
+        <div class="panel-footer">
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                
+                <a asp-action="Index">Regresar</a>|<input type="submit" value="Delete" class="btn btn-danger" />
+            </form>
+        </div>
+</section>
+</div>
+       
+        

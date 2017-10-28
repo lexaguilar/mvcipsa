@@ -1,0 +1,162 @@
+﻿@model IEnumerable<mvcIpsa.DbModel.IngresosEgresosCaja>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Numrecibo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaProceso)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Montoefectivo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Montocheque)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Montominuta)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Montotransferencia)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Monto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Noreferencia)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cuentabanco)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Concepto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Noordenpago)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Username)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Fechacreacion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Ncentrocosto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Identificacioncliente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cuentacontablebanco)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tipocambio)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdtipoingresoNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdtipomonedaNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdtipopagoNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NestadoNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipomovNavigation)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Numrecibo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaProceso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Montoefectivo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Montocheque)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Montominuta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Montotransferencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Monto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Noreferencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cuentabanco)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Concepto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Noordenpago)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fechacreacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ncentrocosto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Identificacioncliente)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cuentacontablebanco)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipocambio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdtipoingresoNavigation.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdtipomonedaNavigation.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdtipopagoNavigation.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NestadoNavigation.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipomovNavigation.Descripcion)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

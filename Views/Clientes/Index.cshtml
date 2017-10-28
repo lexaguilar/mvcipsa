@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ClienteViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<environment include="Development">
+    <link href="~/css/animate.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/animate.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de clientes
+        </header>
+        <div class="panel-body">
+            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-user-plus"></span> Crear un cliente</a>
+            <table id="clientes" class="table table-hover"></table>
+        </div>
+    </section>
+</div>
+
+
+@section Scripts
+{
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+
+    <script>
+        var cliente = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        $(document).ready(function () {
+            $('#clientes').datatable({
+                columnsHead: ['', 'Identificación', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'Tipo cliente', 'RUC'],
+                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Identificacion', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'tipocliente', 'Numeroruc'],
+                data: cliente,
+                pag: 1,
+                rows: 10,
+                totalRows: cliente['length'],
+                controller: 'clientes',
+                id:'Identificacion'
+            });
+        });
+    </script>
+}

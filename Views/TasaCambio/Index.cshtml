@@ -1,0 +1,75 @@
+﻿@model IEnumerable<mvcIpsa.DbModel.CambioOficial>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<environment include="Development">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/jquery.dataTables.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/animate.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+    <link rel="stylesheet" href="~/css/jquery.dataTables.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Cambio oficial
+        </header>
+        <div class="panel-body">
+            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-money"></span> Agregar nuevo registro</a>           
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FechaCambioOficial)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Dolares)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Euros)
+                        </th>                                         
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FechaCambioOficial)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Dolares)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Euros)
+                            </td>                                               
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+
+    <environment include="Development">
+        <script src="~/js/jquery.dataTables.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/jquery.dataTables.js" asp-append-version="true"></script>
+        <script src="~/lib/moment/min/moment.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        $('table').DataTable({
+            
+        });
+    </script>
+}
+
+

@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de recibos de caja
+        </header>
+        <div class="panel-body">
+            <a class="btn btn-primary btn-sm" asp-action="create"><span class="fa fa-plus"></span> Crear un nuevo recibo</a>
+            <table id="recibo" class="table table-hover"></table>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        var recibos = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        $(document).ready(function () {
+            $('#profile').datatable({
+                columnsHead: ['', 'Número', 'Tipomov', 'Recibo', , 'Fecha de Proceso', 'Tipo pago', 'Monto', 'Tipo Ingreso', 'Tipo Moneda', 'Usuario', 'Fecha de creacion'],
+                columnsDisplay: [{ type: 'button', buttons: ['edit','remove']}, 'Id', 'Tipomov', 'Numrecibo', , 'FechaProceso', 'tipopago', 'Monto', 'tipoingreso', 'tipomoneda', 'Username','Fechacreacion'],
+                data: recibos,
+                pag: 1,
+                rows: 10,
+                totalRows: recibos['length'],
+                controller: 'caja',
+                id:'Id'
+            });
+        });
+    </script>
+}

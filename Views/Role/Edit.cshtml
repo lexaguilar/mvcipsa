@@ -1,0 +1,47 @@
+﻿@using mvcIpsa.DbModel
+@model Role
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="wrapper">
+    <section class="panel animated slideInRight">
+        <header class="panel-heading">
+            Editar un permiso
+        </header>
+        <form method="post" asp-controller="Role" asp-action="Edit" class="animated bounceInLeft">
+            <div class="panel-body">
+                <div class="row">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="col-lg-5">
+                        <div class="form-group">
+                            <label asp-for="Name"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-user"></i>
+                                <input asp-for="Name" class="form-control ipsa-requeried" placeholder="Nombre del permiso" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-user"></i>
+                                <input asp-for="Description" class="form-control ipsa-requeried" placeholder="Descripcion" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="text-center invoice-btn">
+                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
+                    <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+

@@ -1,0 +1,49 @@
+﻿@model IEnumerable<mvcIpsa.DbModel.Role>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/css/animate.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/animate.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInRight">
+        <header class="panel-heading">
+            Lista de Permisos
+        </header>
+        <div class="panel-body">
+            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-wrench"></span> Crear un permiso</a>
+            <table id="role" class="table table-hover"></table>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+
+    <script>
+        var roles = @Html.Raw(Json.Serialize(ViewBag.roles, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        $(document).ready(function () {
+            $('#role').datatable({
+                columnsHead: ['','Código','Nombre', 'Descripción'],
+                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Id', 'Name', 'Description'],
+                data: roles,
+                pag: 1,
+                rows: 10,
+                totalRows: roles['length'],
+                controller: 'role',
+                id:'Id'
+            });
+        });
+    </script>
+}

@@ -1,0 +1,170 @@
+﻿@using mvcIpsa.Models
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ipsa</title>
+
+    <environment include="Development">     
+        <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+        <link href="~/css/bootstrap-reset.css" rel="stylesheet">
+        <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
+        <link href="~/css/style.css" rel="stylesheet">
+        <link href="~/css/style-responsive.css" rel="stylesheet" />   
+    </environment>
+    <environment exclude="Production">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/bootstrap-reset.min.css" asp-append-version="true" />
+    </environment>
+</head>
+<body>
+    <section id="container" class="">
+        <!--header start-->
+        <header class="header white-bg">
+
+            <div class="sidebar-toggle-box">
+                <div data-original-title="Toggle Navigation" data-placement="right" class="fa fa-bars tooltips"></div>
+            </div>
+            <!--logo start-->
+            <a href="index.html" class="logo">IPSA</a>
+            <!--logo end-->
+            <div class="nav notify-row" id="top_menu">
+                
+            </div>
+           @await Html.PartialAsync("_LoginPartial")
+        </header>
+        <!--header end-->
+        <!--sidebar start-->
+
+        <aside>
+            <div id="sidebar" class="nav-collapse ">
+                <!-- sidebar menu start-->
+                <ul class="sidebar-menu" id="nav-accordion">
+@if (Context.User.Identity.IsAuthenticated)
+{
+                    <li> 
+                        <a asp-controller="Home" asp-action="Index">
+                            <i class="fa fa-home"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-tags"></i>
+                            <span>Registrar</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a asp-controller="caja" asp-action="Index"><span class="fa fa-laptop"></span> Recibo de caja</a></li>
+                            <li><a href="calendar.html"><span class="fa fa-exchange"></span> Transferencia</a></li>
+                            <li><a href="calendar.html"><span class="fa fa-download"></span> Depositos</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-cogs"></i>
+                            <span>Administración</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a asp-controller="profile" asp-action="index"><span class="fa fa-users"></span> Usuarios</a></li>
+                            <li><a asp-controller="role" asp-action="index"><span class="fa fa-wrench"></span> Roles</a></li>                 
+                            <li><a href="grids.html"><span class="fa fa-user-circle-o"></span> Asignar permisos</a></li>                         
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-sitemap"></i>
+                            <span>Catálogos</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a asp-controller="clientes" asp-action="index"><span class="fa fa-users"></span> Clientes</a></li>
+                            <li><a asp-controller="clientes" asp-action="index"><span class="fa fa-book"></span> Cajas</a></li>
+                            <li><a href="calendar.html"><span class="fa fa-life-ring"></span> Servicios</a></li>
+                            <li><a asp-controller="tasacambio" asp-action="index"><span class="fa fa-money"></span> Tasa de cambio</a></li>
+                        </ul>
+                    </li>
+                    <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-file"></i>
+                            <span>Reportes</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a href="grids.html"><span class="fa fa-file-o"></span> Comprobante diario</a></li>
+                            <li><a href="calendar.html"><span class="fa fa-file-o"></span> Informe de caja y banco</a></li>
+                            <li><a href="grids.html"><span class="fa fa-file-o"></span> Comprobante de Egresos</a></li>
+                        </ul>
+                    </li>
+                  
+}
+
+</ul>                
+            </div>
+        </aside>
+      
+        <section id="main-content">
+            @RenderBody()
+        </section>
+       
+        <footer class="site-footer">  
+            <div class="text-center">
+                @DateTime.Today.Year &copy; Instituto de Protección y Sanidad Agropecuaria - IPSA
+                <a href="#" class="go-top">
+                    <i class="fa fa-angle-up"></i>
+                </a>
+            </div>
+        </footer>      
+    </section>
+    
+    <environment include="Development">
+        <script src="~/js/jquery.js"></script>
+        <script src="~/js/jquery-1.8.3.min.js"></script>
+        <script src="~/js/bootstrap.min.js"></script>
+        <script class="include" type="text/javascript" src="~/js/jquery.dcjqaccordion.2.7.js"></script>
+        <script src="~/js/jquery.scrollTo.min.js"></script>
+        <script src="~/js/jquery.nicescroll.js" type="text/javascript"></script>
+        <script type="text/javascript" src="~/lib/gritter/js/jquery.gritter.js"></script>
+        <script src="~/js/respond.min.js"></script>
+        <script type="text/javascript" src="~/js/jquery.pulsate.min.js"></script>
+        <script src="~/js/common-scripts.js"></script>
+    </environment>
+    <environment exclude="Production">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+   
+   
+    @RenderSection("Scripts", required: false)
+      
+    <script>
+        var pathBase = '@Url.Content("~/")';
+
+        var url = window.location.pathname.split('/')[1]
+        if (url.length > 0) {
+            $('#nav-accordion li').each(function () {
+
+                $(this).find('ul').each(function () {
+                    $(this).find('li').each(function () {
+                        var n = $(this).find('a').attr('href');
+
+                        if (n.indexOf(url) >= 0) {
+                            $(this).addClass('active');
+                            $(this).parent().parent().find('a').addClass('active');
+                        }
+
+
+                    });
+                });
+            });
+        }
+        else {
+            $('#nav-accordion li').first().find('a').addClass('active');
+        }  
+    </script>
+</body>
+
+
+
+</html>

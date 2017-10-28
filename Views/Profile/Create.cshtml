@@ -1,0 +1,91 @@
+﻿@using mvcIpsa.DbModel
+@model Profile
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link href="~/css/selectize.min.css" rel="stylesheet" asp-append-version="true">  
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInLeft">
+        <header class="panel-heading">
+            Crear nuevo usuario
+        </header>
+        <form method="post" asp-controller="Profile" asp-action="Create" class="animated bounceInLeft">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="form-group">
+                            <label asp-for="Username"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-user"></i>
+                                <input asp-for="Username" class="form-control ipsa-requeried" placeholder="Username" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Username" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Nombre"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-user"></i>
+                                <input asp-for="Nombre" class="form-control ipsa-requeried" placeholder="Nombre" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Apellido"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-user"></i>
+                                <input asp-for="Apellido" class="form-control ipsa-requeried" placeholder="Apellidos" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Correo"></label>
+                            <div class="iconic-input">
+                                <i class="fa fa-envelope-o"></i>
+                                <input asp-for="Correo" class="form-control ipsa-requeried" placeholder="Correo" data-validation="La contraseña es requerida" />
+                                <span asp-validation-for="Correo" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Ncaja"></label>
+                            <div class="iconic-input">
+                                <select asp-for="Ncaja" class="">
+                                    @foreach (var caja in ViewBag.Cajas)
+                                     {
+                                        <option value="@caja.Ncaja">@caja.Descripcion</option>
+                                     }
+                                </select>
+                                <span asp-validation-for="Ncaja" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="text-center invoice-btn">
+                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
+                    <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+@section Scripts
+    {
+
+    <environment include="Development">       
+        <script src="~/js/selectize.js"></script>        
+    </environment>
+    <environment exclude="Development">       
+        <script src="~/js/selectize.min.js" asp-append-version="true"></script>        
+    </environment>
+        <script>
+            var $cliente = $('#Ncaja').selectize({              
+            });
+        </script>
+}

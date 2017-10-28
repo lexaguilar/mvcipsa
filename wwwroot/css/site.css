@@ -1,0 +1,129 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+.ipsa-title {
+    color: lightcoral
+}
+
+.ipsa-center{
+    text-align:center
+}
+.ipsa-content{
+    padding:0 250px;
+}
+.w10 {
+    width: 12%
+}
+.w25 {
+    width: 40%
+}
+.w100 {
+    width: 100%
+}
+.cuenta {
+    color: #137fd5;
+    font-size: 17px;
+}
+.editable-input {
+    padding: 2px 0px;
+}
+.a-type-cursor {
+    cursor: pointer;
+    color: red;
+}
+.remove {
+    cursor: pointer;
+    color:red;
+}
+.description {
+    font-weight: bold;
+    margin: 0 0 0px;
+}
+.descriptionPadre {
+font-size:11px;
+}
+
+.user {
+    color:brown
+}
+
+.money {
+    color:darkgreen;
+}
+
+.selectize-control.select40 .selectize-input [data-value] .account:before {
+    content: ' <';
+}
+
+.selectize-control.select40 .selectize-input [data-value] .account:after {
+    content: '>';
+}
+
+.selectize-control.select40 .selectize-input [data-value] {
+    text-shadow: 0 1px 0 rgba(0, 51, 83, 0.3);
+    background-color: #1b9dec;
+    background-image: -moz-linear-gradient(top, #1da7ee, #178ee9);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#1da7ee), to(#178ee9));
+    background-image: -webkit-linear-gradient(top, #1da7ee, #178ee9);
+    background-image: -o-linear-gradient(top, #1da7ee, #178ee9);
+    background-image: linear-gradient(to bottom, #1da7ee, #178ee9);
+    background-repeat: repeat-x;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff1da7ee', endColorstr='#ff178ee9', GradientType=0);
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px rgba(255, 255, 255, 0.03);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), inset 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.selectize-control.select40 .selectize-input > div {
+    padding: 0px 6px;
+    color: #ffffff;
+    cursor: pointer;
+    background: #1da7ee;
+    border: 1px solid #0073bb;
+}
+
+.selectize-input > * {
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: baseline;
+    zoom: 1;
+}
+
+.account {
+    color: rgba(255, 255, 255, 0.61);
+    text-shadow: 0 1px 0 #7d7d7d;
+}

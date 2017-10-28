@@ -1,0 +1,349 @@
+﻿@using mvcIpsa.DbModel
+@model IngresosEgresosCaja
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+    <link href="~/css/bootstrap-editable.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link href="~/css/selectize.min.css" rel="stylesheet" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/animate.min.css" asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+    <link href="~/css/site.min.css" rel="stylesheet" asp-append-version="true">
+    <link href="~/css/bootstrap-editable.css" rel="stylesheet" asp-append-version="true">
+</environment>
+<div class="wrapper">
+    <div class="chat-room">
+        <aside class="mid-side">
+            <div class="chat-room-head">
+                <h3>Recibo de caja</h3>
+                <div action="#" class="pull-right position">                   
+                    <a href="#" class="pull-right btn btn-default">+ Buscar un recibo</a>
+                </div>
+            </div>
+            <div class="room-desk">               
+                <div class="room-box">
+                    <form method="post" asp-action="Create">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Idtipopago" class="control-label"></label>
+                                            <select asp-for="Idtipopago" class="form-control" asp-items="ViewBag.Idtipopago"><option value="" disabled selected>--Seleccione--</option></select>
+
+                                            <span asp-validation-for="Idtipopago" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 col-lg-offset-6">
+                                            <label asp-for="FechaProceso" class="control-label"></label>
+                                            <input asp-for="FechaProceso" class="form-control" />
+                                            <span asp-validation-for="FechaProceso" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3 monto Montoefectivo">
+                                            <label asp-for="Montoefectivo" class="control-label"></label>
+                                            <input type="number" asp-for="Montoefectivo" class="form-control" />
+                                            <span asp-validation-for="Montoefectivo" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montocheque">
+                                            <label asp-for="Montocheque" class="control-label"></label>
+                                            <input type="number" asp-for="Montocheque" class="form-control" />
+                                            <span asp-validation-for="Montocheque" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montominuta">
+                                            <label asp-for="Montominuta" class="control-label"></label>
+                                            <input type="number" asp-for="Montominuta" class="form-control" />
+                                            <span asp-validation-for="Montominuta" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montotransferencia">
+                                            <label asp-for="Montotransferencia" class="control-label"></label>
+                                            <input type="number" asp-for="Montotransferencia" class="form-control" />
+                                            <span asp-validation-for="Montotransferencia" class="text-danger"></span>
+                                        </div>
+                                       
+                                        <div class="form-group col-lg-3 monto Noreferencia">
+                                            <label asp-for="Noreferencia" class="control-label lblNoreferencia"></label>
+                                            <input asp-for="Noreferencia" class="form-control " />
+                                            <span asp-validation-for="Noreferencia" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Cuentabanco">
+                                            <label asp-for="Cuentabanco" class="control-label"></label>
+                                            <input asp-for="Cuentabanco" class="form-control" />
+                                            <span asp-validation-for="Cuentabanco" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Noordenpago" class="control-label"></label>
+                                            <input asp-for="Noordenpago" class="form-control" />
+                                            <span asp-validation-for="Noordenpago" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 col-lg-offset-6">
+                                            <label asp-for="Idtipomoneda" class="control-label"></label>
+                                            <select asp-for="Idtipomoneda" class="form-control" asp-items="ViewBag.Idtipomoneda"></select>
+                                            <span asp-validation-for="Idtipomoneda" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Idtipoingreso" class="control-label"></label>
+                                            <select asp-for="Idtipoingreso" class="form-control" asp-items="ViewBag.Idtipoingreso"></select>
+                                            <span asp-validation-for="Idtipoingreso" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label  class="control-label">Identificación</label>
+                                            <select class="" id="identificacion"><option value="">Seleccione</option></select>                                            
+                                        </div>
+                                        <div class="form-group col-lg-3">
+                                            <label class="control-label" >Tipo cliente</label>
+                                            <input class="form-control" id="tipoCliente"/>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class="control-label" >Beneficiario</label>
+                                            <input class="form-control" id="Beneficiario"/>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label asp-for="Concepto" class="control-label"></label>
+                                            <input asp-for="Concepto" class="form-control" />
+                                            <span asp-validation-for="Concepto" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <section class="panel">
+                                <div class="col-sm-12">
+                                    <header class="panel-heading">
+                                        Venta de servicios
+                                    </header>
+                                    <table id="servicios" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="w20">Fuente</th>                                               
+                                                <th class="w20">Tipo de servicio</th>                                               
+                                                <th>Dolares</th>
+                                                <th>Precio Unit</th>
+                                                <th>Cantidad</th>
+                                                <th>Cordobas</th>
+                                                <th>Dolares</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot><tr><td colspan="10"><button type="button" class="btn btn-primary w100" onclick="addNewRow();"><span class="fa fa-plus"></span> Agregar otro servicio</button></td></tr></tfoot>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="panel-footer">
+
+                            <div class="text-center invoice-btn">
+                                <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
+                                <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>        
+            </div>          
+        </aside>
+        <aside class="right-side">
+            <div class="user-head">
+                <h3>Resumen</h3>
+            </div>         
+            <ul class="chat-available-user">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-circle text-success"></i>
+                        No Recibo:
+                        <span class="text-muted">0000000000</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-circle text-danger"></i>
+                        Estado :
+                        <span class="text-muted">Ninguno</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-circle text-success"></i>
+                        Tipo cambio:
+                        <span class="text-muted">30.05</span>
+                    </a>
+                </li>              
+            </ul>
+        </aside>
+    </div>
+</div>
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/bootstrap-editable.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/selectize.min.js" asp-append-version="true"></script>
+        <script src="~/js/bootstrap-editable.min.js"></script>
+    </environment>
+
+
+    <script>
+        var servicios = @Html.Raw(Json.Serialize(ViewBag.servicios, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        var fondos = @Html.Raw(Json.Serialize(ViewBag.fondos, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        var clientes = @Html.Raw(Json.Serialize(ViewBag.clientes, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        $(document).ready(function () {
+            addNewRow();
+            var selectClient = function () {
+                return function () {
+                    var selectize = $cliente[0].selectize;
+                    $.map(selectize.items, function (value) {
+                        console.log(selectize.options[value].tipoCliente);
+                        console.log(selectize.options[value].nombre);
+                        $('#tipoCliente').val(selectize.options[value].tipoCliente);
+                        $('#Beneficiario').val(selectize.options[value].nombre);
+                    });
+                };
+            };
+            var $cliente = $('#identificacion').selectize({
+                valueField: 'identificacion',
+                labelField: 'identificacion',
+                searchField: 'nombre',
+                options: clientes,
+                render: {
+                    option: function (item, escape) {
+                        return '<div>' +
+                            '<span class="title">' +
+                            '<span class="cuenta"><i class="fa fa-user"></i> ' + escape(item.identificacion) + '</span>' +
+                            '</span>' +
+                            '<p class="description">' + escape(item.nombre) + '</p>' +
+                            '</div>';
+                    }
+                },
+                onChange: selectClient()
+            });
+        });
+        function addNewRow() {
+            var d = new Date();
+            var t = d.getTime();
+            $('#servicios').addNewRow(t);
+
+
+            $('.dolares, .cantidad').editable({
+                validate: function (value) {
+                    if ($.trim(value) == '')
+                        return 'El valor es requerido';
+                    if (!isNumber($.trim(value)))
+                        return 'El valor debe ser numerico';
+                },
+                display: function (value) {
+                    $(this).text(parseFloat(value).toFixed(2));
+                }
+            });
+
+            $('.selector' + t).on("shown", function (e, editable) {
+                editable.input.postrender = function () {
+                    editable.input.$input.select();
+                };
+            });
+
+
+            $('.selector' + t).on('hidden', function (e, reason) {
+                if (reason === 'save')
+                    //caltulate();
+
+                if (e.target.className.toString().indexOf("dolares") >= 0) {
+                    let selector = e.target.classList[2];
+                    let elemt = $('.' + selector + '')[1];
+                    $(elemt).editable('toggle');
+                }
+            });
+
+            selectAccount(t);
+            $('.select40').removeClass('data-ajax');
+            $('.select20').removeClass('fuente');
+        }
+        var $select ={}
+        var selectAccount = function (t) {
+            //var eventHandler = function () {
+            //    return function () {
+            //        var selectize = $select[t][0].selectize;
+            //        $.map(selectize.items, function (value) {
+            //            $('#servicios tbody tr').each(function () {
+            //                var cuenta = $(this).find("td:eq(2)").find('select option:selected').val();
+            //                if (cuenta == selectize.options[value].cuenta) {
+            //                    $(this).find("td:eq(3)").html(selectize.options[value].nombre);
+            //                }
+            //            });
+            //        });
+            //    };
+            //};
+
+            $select[t] = $('.data-ajax').selectize({
+                valueField: 'Cuenta',
+                labelField: 'Nombre',
+                searchField: 'Nombre',
+                options: servicios.slice(0,1000),
+                create: false,
+                render: {
+                    option: function (item, escape) {
+
+                        return '<div>' +
+                            '<span class="title">' +
+                            '<span class="cuenta"><i class="fa fa-book"></i> ' + escape(item.Cuenta) + '</span>' +
+                            '</span>' +
+                            '<p class="description"><i class="fa fa-' + (item.TipoCta != 4 ? "user user" :"money money")+'"></i> ' + escape(item.Nombre) + '</p>' +
+                            '<p class="descriptionPadre">' + escape(item.padre) + '</p>' +
+                            '</div>';
+                    },
+                    item: function (item, escape) {
+                        return '<div>' +
+                            ('<span class="name">' + escape(item.Nombre) + '</span>') +
+                            ('<span class="account">' + escape(item.Cuenta) + '</span>') +
+                            '</div>';
+                    },
+                },
+                //onChange: eventHandler()
+            });
+            var selectizePre = $select[t][0].selectize;
+
+
+            $('.data-ajax').change(function () {
+                $(this).blur();
+                var selector = $(this).data('selector');
+                var elemt = $('.' + selector + '')[0];
+                $(elemt).editable('toggle');
+            });
+
+            $('.fuente').selectize({
+                valueField: 'fondoid',
+                labelField: 'nombre',
+                options: fondos
+            });
+        }
+        Monto.hidden();
+        $('#Idtipopago').change(function () {
+            Monto['tipo' + $(this).val()]();
+        });
+
+        
+       
+    </script>
+}
+
