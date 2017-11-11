@@ -2,13 +2,15 @@
 @{
     ViewData["Title"] = "Iniciar sesión";
 }
-<environment names="Development">
+<environment include="Development">
     <link rel="stylesheet" href="~/css/animate.css" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
 </environment>
-<environment names="Staging,Production">
-    <link rel="stylesheet" href="~/css/animate.min.css" asp-append-version="true" />    
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
 </environment>
 @{
     Layout = null;
@@ -19,7 +21,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Login2</title>
+    <title>Inicio de sesion</title>
     <style>
         /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
 
@@ -87,8 +89,7 @@
                 }
 
             .login input {
-                display: block;
-                padding: 15px 10px;
+                display: block;               
                 margin-bottom: 10px;
                 width: 100%;
                 border: 1px solid #ddd;
@@ -239,19 +240,17 @@
 
 
 
-    <environment names="Development">
+    <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>       
         <script src="~/js/bootstrap-notify.js"></script>
         <script src="~/js/notify.js"></script>
     </environment>
-    <environment names="Staging,Production">
-        <script src="~/js/bootstrap-notify.min.js" asp-append-version="true"></script>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/js/bootstrap-notify.js"></script>
+        <script src="~/js/notify.js"></script>
     </environment>
     <script>
-
-
-
-
         $('form').addClass('animated bounceInLeft');
         var working = false;
 

@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using mvcIpsa.DbModel;
 using mvcIpsa.Models;
+using Microsoft.AspNetCore.Authorization;
+
 namespace mvcIpsa.Controllers
 {
+    [Authorize(Policy = "Admin")]
     public class TasaCambioController : Controller
     {
         private readonly IPSAContext db;
@@ -40,7 +43,7 @@ namespace mvcIpsa.Controllers
             WS.BC.TipoCambio.Tipo_Cambio_BCNSoapClient tc = new WS.BC.TipoCambio.Tipo_Cambio_BCNSoapClient(new WS.BC.TipoCambio.Tipo_Cambio_BCNSoapClient.EndpointConfiguration());
             var result = await tc.RecuperaTC_MesAsync(anio, mes);
 
-             var response = result.Body.RecuperaTC_MesResult;
+            var response = result.Body.RecuperaTC_MesResult;
             var TipoCambio = new List<TipoCambioViewModel>();
 
 
@@ -51,15 +54,16 @@ namespace mvcIpsa.Controllers
                     TipoCambio.Add(new TipoCambioViewModel
                     {
                         valor = item.Element("Valor").Value,
-                        fecha = item.Element("Fecha").Value
+                        fecha = item.Element("Fecha").Value,
+                        cantidad = 5 ,
+                        precio = 10.0M
                     });
                 }
                 
             }
             
+
             return Json(TipoCambio.OrderBy(x=>x.fecha));
         }
-
-
     }
 }

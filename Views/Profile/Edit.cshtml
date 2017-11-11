@@ -43,16 +43,16 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Ncaja"></label>
+                            <label asp-for="Idcaja"></label>
                             <div class="iconic-input">
-                                <select asp-for="Ncaja" class="form-control">
+                                <select asp-for="Idcaja" class="form-control">
                                     @foreach (var caja in ViewBag.Cajas)
                                     {
-                                        <option value="@caja.Ncaja">@caja.Descripcion</option>
+                                        <option value="@caja.Idcaja">@caja.Description</option>
                                     }
                                 </select>
 
-                                <span asp-validation-for="Ncaja" class="text-danger"></span>
+                                <span asp-validation-for="Idcaja" class="text-danger"></span>
                             </div>
                         </div>
                     </div>

@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace mvcIpsa.Models
 {
+    using mvcIpsa.DbModel;
+    using System.ComponentModel.DataAnnotations;
+
     public class ProfileViewModel
     {
         public string Username { get; set; }
@@ -14,7 +17,22 @@ namespace mvcIpsa.Models
         public short Nestado { get; set; }
         public short Ncentrocosto { get; set; }
         public string centrocostoDescripcion { get; set; }
-        public short Ncaja { get; set; }        
+        public int idCaja { get; set; }        
         public string cajaDescripcion { get; set; }
+    }
+
+    public class ProfileEditModel
+    {
+        public Profile profile { get; set; }
+        public IEnumerable<Role> Members { get; set; }
+        public IEnumerable<Role> NonMembers { get; set; }
+    }
+
+    public class ProfileModificationModel
+    {
+        [Required]
+        public string username { get; set; }
+        public int[] IdsToAdd { get; set; }
+        public int[] IdsToDelete { get; set; }
     }
 }

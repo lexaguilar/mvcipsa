@@ -18,7 +18,7 @@ namespace mvcIpsa.Controllers
 {
     using mvcIpsa.Extensions;
     using mvcIpsa.DbModel;
-    [Authorize]
+   
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
@@ -72,13 +72,15 @@ namespace mvcIpsa.Controllers
                 }
 
                 var roles = db.Profilerole.Where(r => r.Username == model.username).Select(r=>r.Idrole).ToArray();
-
+                var caja = db.Caja.Find(result.Idcaja);
                 svcUser = new AppUser()
                 {
                     username = result.Username,
                     ncentrocosto = result.Ncentrocosto,
                     Token = model.Password,
-                    roles = roles
+                    roles = roles,
+                    idcaja = result.Idcaja.Value,
+                    description = caja.Description
                 };
 
                 await HttpContext.SignInAsync(svcUser.CreatePrincipal());
@@ -105,8 +107,17 @@ namespace mvcIpsa.Controllers
             return View();
         }
 
-      
 
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Info()
+        {
+            var user = this.GetServiceUser();
+            var Caja = db.Caja.Find(user.idcaja);
+
+            ViewBag.Caja = Caja.Description;
+            return PartialView("_Info");
+        }
 
 
         [HttpGet]

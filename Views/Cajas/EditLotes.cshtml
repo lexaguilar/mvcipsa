@@ -1,0 +1,115 @@
+﻿@model mvcIpsa.DbModel.LoteRecibos
+
+@{
+    ViewData["Title"] = "EditLotes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet">  
+    <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link href="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet">
+    <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+</environment>
+<style>
+    body {          
+        font-size: 16px;
+    }
+</style>
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lote de la caja @ViewBag.Caja
+        </header>
+        <div class="row">
+            <div class="col-md-6  col-md-offset-3">
+                @if (Model != null)
+                {
+                    <div class="col-md-4">
+                        <div class="easy-pie-chart">
+                            <div class="percentage easyPieChart" data-percent="@ViewBag.Porcentaje" style="width: 135px; height: 135px; line-height: 135px;"><span>@ViewBag.Porcentaje</span>%<canvas width="135" height="135"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="bio-row">
+                            <p><span>Lote inicial </span>: <i class="fa fa-clock-o"></i> <a href="#" class="myeditable" data-type="text" id="Inicio" data-name="Inicio">@Model.Inicio</a></p>
+                        </div>
+                        <div class="bio-row">
+                            <p><span>Lote final  </span>: <i class="fa fa-clock-o"></i> <a href="#"class="myeditable" data-type="text" id="Final" data-name="Final">@Model.Final</a></p>
+                        </div>
+                        <div class="bio-row">
+                            <p><span>Lote actual </span>: <i class="fa fa-bell-o"></i> @Model.Actual</p>
+                            <button type="button" id="save-btn" class="btn btn-primary btn-block"><i class="fa fa-refresh"></i> Actualizar</button>
+                        </div>       
+                       
+                    </div>                    
+                }
+                else
+                {
+                    <div class="alert alert-danger" role="alert">
+                        La caja <strong>@ViewBag.Caja</strong> no contiene un lote asignado
+                    </div>
+                }
+               
+            </div>
+        </div>
+        <div>
+            <a class="btn btn-default" asp-action="Index">Regresar a la lista</a>
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>  
+        <script src="~/js/easy-pie-chart.js"></script>  
+        <script src="~/js/bootstrap-editable.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
+        <script src="~/js/easy-pie-chart.js"></script>
+        <script src="~/js/bootstrap-editable.min.js"></script>
+    </environment>
+        
+    <script>
+        var idCaja = 1;       
+        $(document).ready(function () {
+            $('.myeditable').editable({
+                validate: function (value) {
+                    if ($.trim(value) == '')
+                        return 'El valor es requerido';
+                    if (!isNumber($.trim(value)))
+                        return 'El valor debe ser numerico';
+                },
+            });
+
+            $('#save-btn').click(function () {
+                var data,
+                    $elems = $('.myeditable'),
+                    errors = $elems.editable('validate'); 
+                if ($.isEmptyObject(errors)) {
+                    data = $elems.editable('getValue'); 
+                    data["IdCaja"] = 1;
+                    console.log(data);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: pathBase + `cajas/saveLote/${idCaja}`,
+                        data: data,
+                        dataType: 'json',
+
+                    }).success(function (response) {                        
+                        console.log(response);
+                    });
+                } else {                   
+                    console.log(errors);
+                }
+            });
+        });
+
+
+    </script>
+}

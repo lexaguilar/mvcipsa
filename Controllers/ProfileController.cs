@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using mvcIpsa.Models;
 namespace mvcIpsa.Controllers
-{
-    [Authorize]
+{   
+    [Authorize(Policy = "Admin")]
     public class ProfileController : Controller
     {
         private readonly IPSAContext db;
@@ -19,15 +19,15 @@ namespace mvcIpsa.Controllers
         }
         public IActionResult Index()
         {
-            var perfiles = db.Profile.Include(p => p.NcajaNavigation).ToList().Select(p => new ProfileViewModel
+            var perfiles = db.Profile.Include(p => p.IdcajaNavigation).ToList().Select(p => new ProfileViewModel
             {
                 Username = p.Username,
                 Nombre = p.Nombre,
                 Apellido = p.Apellido,
                 Correo = p.Correo,
                 Nestado = p.Nestado,
-                cajaDescripcion = p.NcajaNavigation.Descripcion,
-                Ncaja = p.Ncaja.Value,
+                cajaDescripcion = p.IdcajaNavigation.Description,
+                idCaja = p.Idcaja.Value,               
                 Ncentrocosto = p.Ncentrocosto,
                 centrocostoDescripcion = "IPSA Central"
             }).Where(p => p.Nestado == 1);
@@ -42,8 +42,11 @@ namespace mvcIpsa.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Profile profile)
         {
+            //crear username
+            //var username = profile.Nombre[0] + profile.Apellido;
+            //verificar si existe
             if (ModelState.IsValid)
-            {
+            {                
                 profile.Nestado = 1;
                 profile.Ncentrocosto = 1;
                 profile.Password = UrlHelperExtensions.getPasswordHashed("ipsa2017*");
@@ -70,7 +73,7 @@ namespace mvcIpsa.Controllers
                 profile.Nombre = profileClient.Nombre;
                 profile.Apellido = profileClient.Apellido;
                 profile.Correo = profileClient.Correo;
-                profile.Ncaja = profileClient.Ncaja;
+                profile.Idcaja = profileClient.Idcaja;
                 //profile.CopyFromExcept(profile, x => new
                 //{
                 //    x.Username,
@@ -86,7 +89,7 @@ namespace mvcIpsa.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
-            var profile = db.Profile.Include(p => p.NcajaNavigation).Where(p => p.Username == id);
+            var profile = db.Profile.Include(p => p.IdcajaNavigation).Where(p => p.Username == id);
 
             var result = profile.Select(p => new ProfileViewModel
             {
@@ -95,8 +98,8 @@ namespace mvcIpsa.Controllers
                 Apellido = p.Apellido,
                 Correo = p.Correo,
                 Nestado = p.Nestado,
-                cajaDescripcion = p.NcajaNavigation.Descripcion,
-                Ncaja = p.Ncaja.Value,
+                cajaDescripcion = p.IdcajaNavigation.Description,
+                idCaja = p.Idcaja.Value,
                 Ncentrocosto = p.Ncentrocosto,
                 centrocostoDescripcion = "IPSA Central"
             }).FirstOrDefault();
@@ -126,6 +129,48 @@ namespace mvcIpsa.Controllers
                 return RedirectToAction("Index");
             }
             return View(profileViewModel);
-        }        
+        }
+
+
+        public async Task<ActionResult> EditRols(string id)
+        {
+            Profile profile = await db.Profile.FindAsync(id);
+            int[] memberIDs = db.Profilerole.Where(x => x.Username == id).Select(x=>x.Idrole).ToArray();
+            IEnumerable<Role> members = db.Role.Where(x => memberIDs.Any(y => y == x.Id)).Where(m => m.Nestado == 1);
+            IEnumerable<Role> nonMembers = db.Role.Except(members).Where(m=>m.Nestado==1);
+
+            return View(new ProfileEditModel
+            {
+                profile = profile,
+                Members = members,
+                NonMembers = nonMembers
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditRols(ProfileModificationModel model)
+        {           
+            if (ModelState.IsValid)
+            {
+               
+                foreach (int rolId in model.IdsToAdd ?? new int[] { })
+                {
+                    var profilerole = new Profilerole { Idrole = rolId, Username = model.username };
+                    db.Add(profilerole);
+                }
+                
+                foreach (int rolId in model.IdsToDelete ?? new int[] { })
+                {
+                    var profilerole = db.Profilerole.Where(p => p.Username == model.username && p.Idrole == rolId).FirstOrDefault();
+                    if (profilerole != null)
+                    {
+                        db.Profilerole.Remove(profilerole);
+                    }
+                }
+                await db.SaveChangesAsync();
+                return RedirectToAction("EditRols",new { id = model.username});
+            }
+            return View("Error", new string[] { "Role Not Found" });
+        }
     }
 }

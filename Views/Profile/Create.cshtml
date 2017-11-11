@@ -8,7 +8,7 @@
     <link href="~/css/selectize.css" rel="stylesheet">
 </environment>
 <environment exclude="Development">
-    <link href="~/css/selectize.min.css" rel="stylesheet" asp-append-version="true">  
+    <link href="~/css/selectize.css" rel="stylesheet">
 </environment>
 <div class="wrapper">
     <section class="panel animated slideInLeft">
@@ -18,7 +18,7 @@
         <form method="post" asp-controller="Profile" asp-action="Create" class="animated bounceInLeft">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-4 col-lg-offset-4">
                         <div class="form-group">
                             <label asp-for="Username"></label>
                             <div class="iconic-input">
@@ -52,24 +52,25 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Ncaja"></label>
+                            <label asp-for="IdcajaNavigation.Description"></label>
                             <div class="iconic-input">
-                                <select asp-for="Ncaja" class="">
+                                <select asp-for="Idcaja" class="">
                                     @foreach (var caja in ViewBag.Cajas)
                                      {
-                                        <option value="@caja.Ncaja">@caja.Descripcion</option>
+                                        <option value="@caja.Id">@caja.Description</option>
                                      }
                                 </select>
-                                <span asp-validation-for="Ncaja" class="text-danger"></span>
+                                <span asp-validation-for="Idcaja" class="text-danger"></span>
                             </div>
                         </div>
+                        <button class="btn btn-success btn-block" type="submit"><i class="fa fa-check"></i> Guardar </button>
                     </div>
                 </div>
             </div>
             <div class="panel-footer">
-                <div class="text-center invoice-btn">
-                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
-                    <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
+                <div class="text-left invoice-btn">
+                    <a class="btn btn-default" asp-action="index"> Regresar a la lista</a>
+                    
                 </div>
             </div>
         </form>
@@ -82,10 +83,10 @@
         <script src="~/js/selectize.js"></script>        
     </environment>
     <environment exclude="Development">       
-        <script src="~/js/selectize.min.js" asp-append-version="true"></script>        
+        <script src="~/js/selectize.js"></script>         
     </environment>
         <script>
-            var $cliente = $('#Ncaja').selectize({              
+            var $cliente = $('#Idcaja').selectize({              
             });
         </script>
 }

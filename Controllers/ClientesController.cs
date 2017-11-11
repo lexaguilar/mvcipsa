@@ -9,7 +9,9 @@ using mvcIpsa.DbModel;
 
 namespace mvcIpsa.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
     using mvcIpsa.Models;
+    [Authorize(Policy = "Admin")]
     public class ClientesController : Controller
     {
         private readonly IPSAContext db;

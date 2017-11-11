@@ -1,183 +1,190 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using mvcIpsa.DbModel;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 namespace mvcIpsa.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using mvcIpsa.DbModel;
+    using mvcIpsa.Extensions;
+    using mvcIpsa.Models;
+    using System;
+    using System.Threading.Tasks;
+
+    [Authorize(Policy = "Admin,User")]  
     public class IngresosEgresosCajasController : Controller
     {
-        private readonly IPSAContext _context;
-
-        public IngresosEgresosCajasController(IPSAContext context)
+        private readonly IPSAContext db;
+        public IngresosEgresosCajasController(IPSAContext _db)
         {
-            _context = context;
+            db = _db;
         }
 
-        // GET: IngresosEgresosCajas
-        public async Task<IActionResult> Index()
+        public IActionResult Index(CajaParameterModel c)
         {
-            var iPSAContext = _context.IngresosEgresosCaja.Include(i => i.IdtipoingresoNavigation).Include(i => i.IdtipomonedaNavigation).Include(i => i.IdtipopagoNavigation).Include(i => i.NestadoNavigation).Include(i => i.TipomovNavigation);
-            return View(await iPSAContext.ToListAsync());
-        }
-
-        // GET: IngresosEgresosCajas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var ingresosEgresosCaja = await _context.IngresosEgresosCaja
-                .Include(i => i.IdtipoingresoNavigation)
-                .Include(i => i.IdtipomonedaNavigation)
-                .Include(i => i.IdtipopagoNavigation)
-                .Include(i => i.NestadoNavigation)
-                .Include(i => i.TipomovNavigation)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (ingresosEgresosCaja == null)
-            {
-                return NotFound();
-            }
-
-            return View(ingresosEgresosCaja);
-        }
-
-        // GET: IngresosEgresosCajas/Create
-        public IActionResult Create()
-        {
-            ViewData["Idtipoingreso"] = new SelectList(_context.Tipoingreso, "Idtipoingreso", "Descripcion");
-            ViewData["Idtipomoneda"] = new SelectList(_context.Tipomoneda, "Idtipomoneda", "Descripcion");
-            ViewData["Idtipopago"] = new SelectList(_context.Tipopago, "Idtipopago", "Descripcion");
-            ViewData["Nestado"] = new SelectList(_context.CajaEstado, "Nestado", "Descripcion");
-            ViewData["Tipomov"] = new SelectList(_context.TipoMovimiento, "Idtipomovimiento", "Descripcion");
+            ViewData["Nestado"] = new SelectList(db.CajaEstado, "Nestado", "Descripcion", 1);
             return View();
         }
 
-        // POST: IngresosEgresosCajas/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Tipomov,Numrecibo,Nestado,FechaProceso,Idtipopago,Montoefectivo,Montocheque,Montominuta,Montotransferencia,Monto,Noreferencia,Cuentabanco,Concepto,Noordenpago,Idtipoingreso,Idtipomoneda,Username,Fechacreacion,Ncentrocosto,Identificacioncliente,Cuentacontablebanco,Tipocambio")] IngresosEgresosCaja ingresosEgresosCaja)
+        public IActionResult GetList(CajaParameterModel p)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(ingresosEgresosCaja);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["Idtipoingreso"] = new SelectList(_context.Tipoingreso, "Idtipoingreso", "Descripcion", ingresosEgresosCaja.Idtipoingreso);
-            ViewData["Idtipomoneda"] = new SelectList(_context.Tipomoneda, "Idtipomoneda", "Descripcion", ingresosEgresosCaja.Idtipomoneda);
-            ViewData["Idtipopago"] = new SelectList(_context.Tipopago, "Idtipopago", "Descripcion", ingresosEgresosCaja.Idtipopago);
-            ViewData["Nestado"] = new SelectList(_context.CajaEstado, "Nestado", "Descripcion", ingresosEgresosCaja.Nestado);
-            ViewData["Tipomov"] = new SelectList(_context.TipoMovimiento, "Idtipomovimiento", "Descripcion", ingresosEgresosCaja.Tipomov);
-            return View(ingresosEgresosCaja);
-        }
-
-        // GET: IngresosEgresosCajas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var ingresosEgresosCaja = await _context.IngresosEgresosCaja.SingleOrDefaultAsync(m => m.Id == id);
-            if (ingresosEgresosCaja == null)
-            {
-                return NotFound();
-            }
-            ViewData["Idtipoingreso"] = new SelectList(_context.Tipoingreso, "Idtipoingreso", "Descripcion", ingresosEgresosCaja.Idtipoingreso);
-            ViewData["Idtipomoneda"] = new SelectList(_context.Tipomoneda, "Idtipomoneda", "Descripcion", ingresosEgresosCaja.Idtipomoneda);
-            ViewData["Idtipopago"] = new SelectList(_context.Tipopago, "Idtipopago", "Descripcion", ingresosEgresosCaja.Idtipopago);
-            ViewData["Nestado"] = new SelectList(_context.CajaEstado, "Nestado", "Descripcion", ingresosEgresosCaja.Nestado);
-            ViewData["Tipomov"] = new SelectList(_context.TipoMovimiento, "Idtipomovimiento", "Descripcion", ingresosEgresosCaja.Tipomov);
-            return View(ingresosEgresosCaja);
-        }
-
-        // POST: IngresosEgresosCajas/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Tipomov,Numrecibo,Nestado,FechaProceso,Idtipopago,Montoefectivo,Montocheque,Montominuta,Montotransferencia,Monto,Noreferencia,Cuentabanco,Concepto,Noordenpago,Idtipoingreso,Idtipomoneda,Username,Fechacreacion,Ncentrocosto,Identificacioncliente,Cuentacontablebanco,Tipocambio")] IngresosEgresosCaja ingresosEgresosCaja)
-        {
-            if (id != ingresosEgresosCaja.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+            var user = this.GetServiceUser();
+            PaginationResult<IEnumerable<CajaViewModel>> result = new PaginationResult<IEnumerable<CajaViewModel>>();
+            var query = db.IngresosEgresosCaja
+                .Include(c => c.IdtipoingresoNavigation)
+                .Include(c => c.TipomovNavigation)
+                .Include(c => c.IdtipopagoNavigation)
+                .Include(c => c.IdtipomonedaNavigation)
+                .Where(c=>c.IdCaja == user.idcaja)
+                .ToList()
+                .Select(c => new CajaViewModel
                 {
-                    _context.Update(ingresosEgresosCaja);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                    Id = c.Idrecibo,
+                    Tipomov = c.TipomovNavigation.Descripcion,
+                    Numrecibo=c.Numrecibo,
+                    Nestado=c.Nestado,
+                    FechaProceso=c.FechaProceso,
+                    tipopago = c.IdtipopagoNavigation.Descripcion,
+                    Montoefectivo =c.Montoefectivo,
+                    Montocheque=c.Montocheque,
+                    Montominuta=c.Montominuta,
+                    Montotransferencia = c.Montotransferencia,
+                    Monto=c.Monto,
+                    Noreferencia=c.Noreferencia??"",
+                    Cuentabanco =c.Cuentabanco ?? "",
+                    Concepto=c.Concepto,
+                    Noordenpago=c.Noordenpago,
+                    tipoingreso = c.IdtipoingresoNavigation.Descripcion,
+                    tipomoneda =c.IdtipomonedaNavigation.Descripcion,
+                    Username = c.Username,
+                    Fechacreacion =c.Fecharegistro,
+                    centrocosto= "IPSA Central",
+                    Identificacioncliente =c.Identificacioncliente,
+                    Cuentacontablebanco=c.Cuentacontablebanco ?? "",
+                    Tipocambio=c.Tipocambio,                    
+                });
+
+            query = query.Where(x => x.FechaProceso >= p.Desde && x.FechaProceso <= p.Hasta);
+            if (p.estado.HasValue)
+                query = query.Where(x => x.Nestado == p.estado);
+
+            result.Count = query.Count();
+            result.Result = query.OrderByDescending(q=>q.FechaProceso)
+                .Skip((p.Page-1)*p.Rows)
+                .Take(p.Rows).ToArray();
+
+            return Json(result);
+        }
+
+        public IActionResult Create()
+        {
+            var user = this.GetServiceUser();
+
+            ViewData["Idtipoingreso"] = new SelectList(db.TipoIngreso, "Idtipoingreso", "Descripcion");
+            ViewData["Idtipomoneda"] = new SelectList(db.TipoMoneda, "Idtipomoneda", "Descripcion");
+            ViewData["Idtipopago"] = new SelectList(db.TipoPago, "Idtipopago", "Descripcion");
+            ViewData["Nestado"] = new SelectList(db.CajaEstado, "Nestado", "Descripcion",1);
+            ViewData["Tipomov"] = new SelectList(db.TipoMovimiento, "Idtipomovimiento", "Descripcion");
+
+            var lote = db.LoteRecibos.Where(lt=>lt.IdCaja== user.idcaja).FirstOrDefault();
+            ViewBag.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
+
+            ViewBag.servicios = from mc in db.MaestroContable
+                                join mcp in db.MaestroContable on mc.CtaPadre equals mcp.CtaContable
+                                join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
+                                where ccc.IdCaja ==  user.idcaja
+                                //where mc.TipoCta==4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105")
+                                select new {
+                                    mc.Cuenta,
+                                    mc.Nombre,
+                                    padre=mcp.Nombre,
+                                    mc.TipoCta
+                                };
+
+
+            var cambioOficial = db.CambioOficial.Find(DateTime.Today);
+            decimal TasaDelDia = 0;
+            if (cambioOficial!=null)
+            {
+                TasaDelDia = cambioOficial.Dolares;
+            }
+            ViewBag.TasaDelDia = TasaDelDia;
+
+
+
+            ViewBag.fondos = db.Fondos.Select(mc => new {
+                fondoid = mc.Fondoid,
+                nombre = mc.Nombre
+            }).ToList();
+
+            ViewBag.clientes = db.Cliente.Include(c=>c.IdtipoclienteNavigation).Select(c=> new { nombre= c.Nombre +" "+c.Apellido, identificacion = c.Identificacion , tipoCliente = c.IdtipoclienteNavigation.Tipocliente}).ToList();
+            
+            return View();
+        }
+
+        [HttpPost]       
+        [Produces("application/json")]
+        public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
+        {
+            var user = this.GetServiceUser();
+
+            var CambioOficial = db.CambioOficial.Find(iECajaViewModel.master.FechaProceso);
+            if (CambioOficial==null)           
+                return NotFound(new string[] { string.Format("No se encontro la tasa de cambio para la fecha {0}", iECajaViewModel.master.FechaProceso) });
+
+            var ingresosEgresosCaja = iECajaViewModel.master;
+
+            //Numero de recibo actual
+            var lote = db.LoteRecibos.Where(lt => lt.IdCaja == user.idcaja).FirstOrDefault();           
+            ingresosEgresosCaja.Numrecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
+            lote.Actual = lote.Actual + 1;
+
+            ingresosEgresosCaja.Tipomov = 32;
+            ingresosEgresosCaja.Nestado = 1;          
+            ingresosEgresosCaja.Fecharegistro = DateTime.Now;
+            ingresosEgresosCaja.IdCaja = user.idcaja;
+            ingresosEgresosCaja.Tipocambio = CambioOficial.Dolares;
+            ingresosEgresosCaja.Username = user.username;
+
+            ingresosEgresosCaja.Monto = (ingresosEgresosCaja.Montoefectivo + ingresosEgresosCaja.Montocheque + ingresosEgresosCaja.Montominuta + ingresosEgresosCaja.Montotransferencia);
+           
+            foreach (var item in iECajaViewModel.details)
+            {
+                var _montoDolar = item.precio * item.cantidad;
+                ingresosEgresosCaja.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
                 {
-                    if (!IngresosEgresosCajaExists(ingresosEgresosCaja.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    Cantidad = item.cantidad,
+                    CtaContable = $"1000{item.cta_cuenta}",
+                    Precio = item.precio,
+                    Montodolar = _montoDolar,
+                    Montocordoba = _montoDolar * CambioOficial.Dolares,
+                    Idrecibo = ingresosEgresosCaja.Idrecibo                   
+                });
             }
-            ViewData["Idtipoingreso"] = new SelectList(_context.Tipoingreso, "Idtipoingreso", "Descripcion", ingresosEgresosCaja.Idtipoingreso);
-            ViewData["Idtipomoneda"] = new SelectList(_context.Tipomoneda, "Idtipomoneda", "Descripcion", ingresosEgresosCaja.Idtipomoneda);
-            ViewData["Idtipopago"] = new SelectList(_context.Tipopago, "Idtipopago", "Descripcion", ingresosEgresosCaja.Idtipopago);
-            ViewData["Nestado"] = new SelectList(_context.CajaEstado, "Nestado", "Descripcion", ingresosEgresosCaja.Nestado);
-            ViewData["Tipomov"] = new SelectList(_context.TipoMovimiento, "Idtipomovimiento", "Descripcion", ingresosEgresosCaja.Tipomov);
-            return View(ingresosEgresosCaja);
+
+            db.Add(ingresosEgresosCaja);      
+
+            try
+            {                
+               await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {                
+                    return BadRequest();              
+            }
+            return Ok(ingresosEgresosCaja.IngresosEgresosCajaDetalle.Count());
         }
 
-        // GET: IngresosEgresosCajas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [ActionName("FindTipoCambio")]
+        public async Task<IActionResult> FindTipoCambio(DateTime fecha)
         {
-            if (id == null)
+            var cambioOficial = await db.CambioOficial.FindAsync(fecha);
+            if (cambioOficial==null)
             {
                 return NotFound();
             }
-
-            var ingresosEgresosCaja = await _context.IngresosEgresosCaja
-                .Include(i => i.IdtipoingresoNavigation)
-                .Include(i => i.IdtipomonedaNavigation)
-                .Include(i => i.IdtipopagoNavigation)
-                .Include(i => i.NestadoNavigation)
-                .Include(i => i.TipomovNavigation)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (ingresosEgresosCaja == null)
-            {
-                return NotFound();
-            }
-
-            return View(ingresosEgresosCaja);
-        }
-
-        // POST: IngresosEgresosCajas/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var ingresosEgresosCaja = await _context.IngresosEgresosCaja.SingleOrDefaultAsync(m => m.Id == id);
-            _context.IngresosEgresosCaja.Remove(ingresosEgresosCaja);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool IngresosEgresosCajaExists(int id)
-        {
-            return _context.IngresosEgresosCaja.Any(e => e.Id == id);
+            return Json(cambioOficial);       
         }
     }
 }

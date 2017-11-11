@@ -4,6 +4,6 @@
     {
         string username { get; set; }
         int ncentrocosto { get; set; }
-        int ncaja { get; set; }
+        int idcaja { get; set; }
     }
 }

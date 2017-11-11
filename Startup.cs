@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace mvcIpsa
 {
+    using mvcIpsa.Extensions;
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -45,21 +46,41 @@ namespace mvcIpsa
                        options.LoginPath = "/Account/LogIn";
                        options.LogoutPath = "/Account/LogOut";
                    });
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("Admin", p =>
+                {
+                    p.RequireAssertion(rol =>
+                    {
+                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == 1));
+                    });
+                });
+            });
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("Admin,User", p =>
+                {
+                    p.RequireAssertion(rol =>
+                    {
+                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == 1 || Convert.ToInt32(x) == 2));
+                    });
+                });
+            });
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            //if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
             }
-            else
+            //else
             {
-                app.UseExceptionHandler("/Home/Error");
+                //app.UseExceptionHandler("/Home/Error");
             }
 
             app.UseStaticFiles();

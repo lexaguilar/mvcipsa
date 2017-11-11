@@ -1,0 +1,36 @@
+﻿@model mvcIpsa.DbModel.Caja
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Editar caja
+        </header>
+        <div class="row">
+            <div class="col-md-4  col-md-offset-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="NoCaja" class="control-label"></label>
+                        <input asp-for="NoCaja" class="form-control" />
+                        <span asp-validation-for="NoCaja" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Guardar" class="btn btn-primary btn-block" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <a asp-action="Index">Regresar a la lista</a>
+        </div>
+    </section>
+</div>

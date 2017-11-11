@@ -9,8 +9,10 @@ using mvcIpsa.DbModel;
 using Microsoft.AspNetCore.Authorization;
 namespace mvcIpsa.Controllers
 {
+    [Authorize(Policy = "Admin")]
     public class RoleController : Controller
     {
+        
         private readonly IPSAContext db;
         public RoleController(IPSAContext _db)
         {

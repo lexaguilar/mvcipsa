@@ -1,131 +1,388 @@
-﻿@model mvcIpsa.DbModel.IngresosEgresosCaja
-
+﻿@using mvcIpsa.DbModel
+@model IngresosEgresosCaja
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section Styles
+{
+    <environment include="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/css/animate.css" rel="stylesheet">
+        <link href="~/css/site.css" rel="stylesheet">
+        <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">      
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/css/animate.css" rel="stylesheet">
+        <link href="~/css/site.css" rel="stylesheet">
+        <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
+}
+<div class="wrapper">
+    <div class="chat-room">
+        <aside class="mid-side">
+            <div class="chat-room-head">
+                <h3>Recibo de caja</h3>
+                <div action="#" class="pull-right position">                   
+                    <a href="#" class="pull-right btn btn-default">+ Buscar un recibo</a>
+                </div>
+            </div>
+            <div class="room-desk">               
+                <div class="room-box">
+                    <form method="post" asp-action="Create">
+                        <input type="hidden" asp-for="Idrecibo" class="master" />
+                        <div class="panel-body">
+                            <div class="row">
+                                <div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Idtipopago" class="control-label"></label>
+                                            <select data-error-message="Seleccione el Tipo de pago" asp-for="Idtipopago" class="select master" asp-items="ViewBag.Idtipopago"><option value="" disabled selected>--Seleccione--</option></select>
 
-<h2>Create</h2>
+                                            <span asp-validation-for="Idtipopago" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 col-lg-offset-6">
+                                            <label asp-for="FechaProceso" class="control-label"></label>
+                                            <input data-error-message="Seleccione la fecha de proceso" type="date" asp-for="FechaProceso" class="form-control master" />
+                                            <span asp-validation-for="FechaProceso" class="text-danger"></span>
+                                        </div>
+                                    </div>
 
-<h4>IngresosEgresosCaja</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Tipomov" class="control-label"></label>
-                <select asp-for="Tipomov" class ="form-control" asp-items="ViewBag.Tipomov"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Numrecibo" class="control-label"></label>
-                <input asp-for="Numrecibo" class="form-control" />
-                <span asp-validation-for="Numrecibo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nestado" class="control-label"></label>
-                <select asp-for="Nestado" class ="form-control" asp-items="ViewBag.Nestado"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaProceso" class="control-label"></label>
-                <input asp-for="FechaProceso" class="form-control" />
-                <span asp-validation-for="FechaProceso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idtipopago" class="control-label"></label>
-                <select asp-for="Idtipopago" class ="form-control" asp-items="ViewBag.Idtipopago"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Montoefectivo" class="control-label"></label>
-                <input asp-for="Montoefectivo" class="form-control" />
-                <span asp-validation-for="Montoefectivo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Montocheque" class="control-label"></label>
-                <input asp-for="Montocheque" class="form-control" />
-                <span asp-validation-for="Montocheque" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Montominuta" class="control-label"></label>
-                <input asp-for="Montominuta" class="form-control" />
-                <span asp-validation-for="Montominuta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Montotransferencia" class="control-label"></label>
-                <input asp-for="Montotransferencia" class="form-control" />
-                <span asp-validation-for="Montotransferencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Monto" class="control-label"></label>
-                <input asp-for="Monto" class="form-control" />
-                <span asp-validation-for="Monto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Noreferencia" class="control-label"></label>
-                <input asp-for="Noreferencia" class="form-control" />
-                <span asp-validation-for="Noreferencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cuentabanco" class="control-label"></label>
-                <input asp-for="Cuentabanco" class="form-control" />
-                <span asp-validation-for="Cuentabanco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Concepto" class="control-label"></label>
-                <input asp-for="Concepto" class="form-control" />
-                <span asp-validation-for="Concepto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Noordenpago" class="control-label"></label>
-                <input asp-for="Noordenpago" class="form-control" />
-                <span asp-validation-for="Noordenpago" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idtipoingreso" class="control-label"></label>
-                <select asp-for="Idtipoingreso" class ="form-control" asp-items="ViewBag.Idtipoingreso"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Idtipomoneda" class="control-label"></label>
-                <select asp-for="Idtipomoneda" class ="form-control" asp-items="ViewBag.Idtipomoneda"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Username" class="control-label"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Fechacreacion" class="control-label"></label>
-                <input asp-for="Fechacreacion" class="form-control" />
-                <span asp-validation-for="Fechacreacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Ncentrocosto" class="control-label"></label>
-                <input asp-for="Ncentrocosto" class="form-control" />
-                <span asp-validation-for="Ncentrocosto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Identificacioncliente" class="control-label"></label>
-                <input asp-for="Identificacioncliente" class="form-control" />
-                <span asp-validation-for="Identificacioncliente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Cuentacontablebanco" class="control-label"></label>
-                <input asp-for="Cuentacontablebanco" class="form-control" />
-                <span asp-validation-for="Cuentacontablebanco" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Tipocambio" class="control-label"></label>
-                <input asp-for="Tipocambio" class="form-control" />
-                <span asp-validation-for="Tipocambio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </form>
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3 monto Montoefectivo">
+                                            <label asp-for="Montoefectivo" class="control-label"></label>
+                                            <input type="number" asp-for="Montoefectivo" class="form-control master clear-monto" />
+                                            <span asp-validation-for="Montoefectivo" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montocheque">
+                                            <label asp-for="Montocheque" class="control-label"></label>
+                                            <input type="number" asp-for="Montocheque" class="form-control master clear-monto" />
+                                            <span asp-validation-for="Montocheque" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montominuta">
+                                            <label asp-for="Montominuta" class="control-label"></label>
+                                            <input type="number" asp-for="Montominuta" class="form-control master clear-monto" />
+                                            <span asp-validation-for="Montominuta" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Montotransferencia">
+                                            <label asp-for="Montotransferencia" class="control-label"></label>
+                                            <input type="number" asp-for="Montotransferencia" class="form-control master clear-monto" />
+                                            <span asp-validation-for="Montotransferencia" class="text-danger"></span>
+                                        </div>
+                                       
+                                        <div class="form-group col-lg-3 monto Noreferencia">
+                                            <label asp-for="Noreferencia" class="control-label lblNoreferencia"></label>
+                                            <input asp-for="Noreferencia" class="form-control master"/>
+                                            <span asp-validation-for="Noreferencia" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 monto Cuentabanco">
+                                            <label asp-for="Cuentabanco" class="control-label"></label>
+                                            <input asp-for="Cuentabanco" class="form-control master" />
+                                            <span asp-validation-for="Cuentabanco" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Noordenpago" class="control-label"></label>
+                                            <input data-error-message="Ingrese el número de orden de pago" asp-for="Noordenpago" class="form-control master" />
+                                            <span asp-validation-for="Noordenpago" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3 col-lg-offset-6">
+                                            <label asp-for="Idtipomoneda" class="control-label"></label>
+                                            <select asp-for="Idtipomoneda" class="select master" asp-items="ViewBag.Idtipomoneda"></select>
+                                            <span asp-validation-for="Idtipomoneda" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Idtipoingreso" class="control-label"></label>
+                                            <select data-error-message="Seleccione el tipo de ingreso" asp-for="Idtipoingreso" class="select master" asp-items="ViewBag.Idtipoingreso"></select>
+                                            <span asp-validation-for="Idtipoingreso" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group col-lg-3">
+                                            <label  class="control-label">Identificación</label>
+                                            <select class="master" data-error-message="Seleccione un cliente" asp-for="Identificacioncliente" ><option value="">Seleccione</option></select>                                            
+                                        </div>
+                                        <div class="form-group col-lg-3">
+                                            <label class="control-label" >Tipo cliente</label>
+                                            <input class="form-control" id="tipoCliente" disabled/>
+                                        </div>
+                                        <div class="form-group col-lg-6">
+                                            <label class="control-label" >Beneficiario</label>
+                                            <input class="form-control" id="Beneficiario" disabled/>
+                                        </div>
+                                        <div class="form-group col-lg-12">
+                                            <label asp-for="Concepto" class="control-label"></label>
+                                            <input data-error-message="Ingrese el concepto" asp-for="Concepto" class="form-control master" />
+                                            <span asp-validation-for="Concepto" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <section class="panel">
+                                <div class="col-sm-12">
+                                    <header class="panel-heading">
+                                        Venta de servicios
+                                    </header>
+                                    <table id="servicios" class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>                                                                                             
+                                                <th class="w20">Tipo de servicio</th>                                               
+                                                <th>Precio</th>
+                                                <th>Cantidad </th>
+                                                <th>Dolares</th>
+                                                <th>Cordobas</th>                                               
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot><tr><td colspan="10"><button type="button" class="btn btn-primary w100" onclick="addNewRow();"><span class="fa fa-plus"></span> Agregar otro servicio</button></td></tr></tfoot>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-lg-4 invoice-block pull-right">
+                                            <ul class="unstyled amounts">
+                                                <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
+                                                <li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>                                                
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="panel-footer">
+
+                            <div class="text-center invoice-btn">
+                                <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect pull-left" asp-action="index"><span class="fa fa-arrow-left"></span> Regresar</a>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-success" type="button" onclick="save(this);"><span class="fa fa-check"></span> Guardar </button>                            
+                            </div>
+                        </div>
+                    </form>
+                </div>        
+            </div>          
+        </aside>
+        <aside class="right-side">
+            <div class="user-head">
+                <h3>Resumen</h3>
+            </div>         
+            <ul class="chat-available-user">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-circle text-success"></i>
+                        No Recibo:
+                        <span class="text-muted">@ViewBag.NumRecibo</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-circle text-danger"></i>
+                        Estado :
+                        <span class="text-muted">Pendiente</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-money text-success"></i>
+                        Tipo cambio:
+                        <span class="text-muted" id="TasaDelDia">@ViewBag.TasaDelDia</span>
+                    </a>
+                </li>              
+            </ul>
+        </aside>
     </div>
 </div>
+@section Scripts
+{
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/bootstrap-editable.min.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
+        <script src="~/js/notify.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/bootstrap-editable.min.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
+        <script src="~/js/notify.js"></script>
+    </environment>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
+    <script>
+        var servicios = @Html.Raw(Json.Serialize(ViewBag.servicios, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        var clientes = @Html.Raw(Json.Serialize(ViewBag.clientes, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
+        var detalle = [];
+        var tasaCambio = @ViewBag.TasaDelDia;
+        var NumRecibo = @ViewBag.NumRecibo;
+
+
+        $(document).ready(function () {
+            addNewRow();
+            var selectClient = function () {
+                return function () {
+                    var selectize = $cliente[0].selectize;
+                    $.map(selectize.items, function (value) {      
+                        $('#tipoCliente').val(selectize.options[value].tipoCliente);
+                        $('#Beneficiario').val(selectize.options[value].nombre);
+                    });
+                };
+            };
+            var $cliente = $('#Identificacioncliente').selectize({
+                valueField: 'identificacion',
+                labelField: 'identificacion',
+                searchField: 'nombre',
+                options: clientes,
+                render: {
+                    option: function (item, escape) {
+                        return '<div>' +
+                            '<span class="title">' +
+                            '<span class="cuenta"><i class="fa fa-user"></i> ' + escape(item.identificacion) + '</span>' +
+                            '</span>' +
+                            '<p class="description">' + escape(item.nombre) + '</p>' +
+                            '</div>';
+                    }
+                },
+                onChange: selectClient()
+            });
+        });
+        function addNewRow() {
+            var d = new Date();
+            var t = d.getTime();
+            $('#servicios').addNewRow(t);
+
+
+            $('.dolares, .cantidad, .precio, .cordobas').editable({
+                validate: function (value) {
+                    if ($.trim(value) == '')
+                        return 'El valor es requerido';
+                    if (!isNumber($.trim(value)))
+                        return 'El valor debe ser numerico';
+                },
+                display: function (value) {
+                    $(this).text(parseFloat(value).toFixed(2));
+                }                
+            });
+
+
+
+
+            $('.selector' + t).on("shown", function (e, editable) {
+                editable.input.postrender = function () {
+                    editable.input.$input.select();
+                };
+            });
+
+
+            $('.selector' + t).on('hidden', function (e, reason) {
+                if (reason === 'save')
+                    calculate();
+
+                if (e.target.className.toString().indexOf("precio") >= 0) {
+                    let selector = e.target.classList[2];
+                    let elemt = $('.' + selector + '')[1];
+                    $(elemt).editable('toggle');
+                }
+            });
+
+            selectAccount(t);
+            $('.select40').removeClass('data-ajax');
+            $('.select20').removeClass('fuente');
+        }
+        var $select ={}
+        var selectAccount = function (t) { 
+            $select[t] = $('.data-ajax').selectize({
+                valueField: 'Cuenta',
+                labelField: 'Nombre',
+                searchField: 'Nombre',
+                options: servicios.slice(0,1000),
+                create: false,
+                render: {
+                    option: function (item, escape) {
+
+                        return '<div>' +
+                            '<span class="title">' +
+                            '<span class="cuenta"><i class="fa fa-book"></i> ' + escape(item.Cuenta) + '</span>' +
+                            '</span>' +
+                            '<p class="description"><i class="fa fa-' + (item.TipoCta != 4 ? "user user" :"money money")+'"></i> ' + escape(item.Nombre) + '</p>' +
+                            '<p class="descriptionPadre">' + escape(item.padre) + '</p>' +
+                            '</div>';
+                    },
+                    item: function (item, escape) {
+                        return '<div>' +
+                            ('<span class="name">' + escape(item.Nombre) + '</span>') +
+                            ('<span class="account">' + escape(item.Cuenta) + '</span>') +
+                            '</div>';
+                    },
+                },
+                //onChange: eventHandler()
+            });
+            var selectizePre = $select[t][0].selectize;
+
+
+            $('.data-ajax').change(function () {
+                $(this).blur();
+                var selector = $(this).data('selector');
+                var elemt = $('.' + selector + '')[0];
+                $(elemt).editable('toggle');
+            });          
+        }
+        Monto.hidden();
+        $('#Idtipopago').change(function () {          
+            Monto['tipo' + $(this).val()]();
+        });
+             
+        $('.select').selectize();
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#FechaProceso').change(function (e) {
+                $.get(pathBase +"IngresosEgresosCajas/FindTipoCambio", { fecha: this.value },
+                    function (data, textStatus, jqXHR) {
+                        tasaCambio = data.dolares;
+                        $('#TasaDelDia').text(data.dolares);                        
+                    },
+                    "json"                    
+                ).fail(function (xhr, status, error) {
+                    $('#TasaDelDia').text('No hay datos');
+                });
+            });
+        });     
+
+        var save = (b) => {
+            if (fieldsIsValid('master')) {
+                $(b).saving();
+                var master = findEntity('master');
+                master['NumRecibo'] = NumRecibo;
+                var iECajaViewModel = { master: master, details: detalle };
+                console.log('entro1');
+                $.ajax({
+                    type: "POST",
+                    url: pathBase + "ingresosEgresosCajas/create",
+                    data: iECajaViewModel,
+                    dataType: "json",
+                    success: function (response) {
+                        $(b).reset();
+                        window.location.href = pathBase + 'ingresosEgresosCajas';
+                    },
+                });
+            }
+            
+        }
+    </script>
+
+}
 

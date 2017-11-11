@@ -1,0 +1,70 @@
+﻿@model IEnumerable<mvcIpsa.DbModel.Caja>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
+    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
+    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
+    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+</environment>
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de cajas
+        </header>
+        <div class="panel-body">
+            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-book"></span> Crear un caja</a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.NoCaja)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Description)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NoCaja)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id"><span class="glyphicon glyphicon-pencil"></span> Editar</a> |
+                                <a asp-action="EditAccountsById" asp-route-id="@item.Id"><span class="glyphicon glyphicon-book"></span> Cuentas asociadas</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-remove text-danger"></span> Eliminar</a> |
+                                <a asp-action="EditLotes" asp-route-id="@item.Id"><span class="glyphicon glyphicon-menu-hamburger text-primary"></span> Lotes</a>
+                            </td>
+                        </tr>}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+{
+    <environment include="Development">
+        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+    </environment>
+    <script>
+        $('table').dataTable();
+    </script>
+}

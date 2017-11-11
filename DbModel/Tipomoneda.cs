@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace mvcIpsa.DbModel
 {
-    public partial class Tipomoneda
+    public partial class TipoMoneda
     {
-        public Tipomoneda()
+        public TipoMoneda()
         {
             IngresosEgresosCaja = new HashSet<IngresosEgresosCaja>();
         }

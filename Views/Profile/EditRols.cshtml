@@ -1,0 +1,131 @@
+﻿@using mvcIpsa.Models
+@using mvcIpsa.DbModel
+@model ProfileEditModel
+@{
+    ViewData["Title"] = "EditRols";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>EditRols</h2>
+
+<div class="wrapper">
+    <section class="panel animated slideInLeft">
+        <header>
+            <h3>
+                <span class="fa fa-chevron-circle-right"></span> Lista de roles asignador al usuario @Model.profile.Username
+            </h3>
+        </header>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <form asp-action="EditRols" method="post">
+                        <input type="hidden" name="username" value="@Model.profile.Username" />
+
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                Elimniar de @Model.profile.Username
+                            </div>
+                            <table class="table table-striped table-hover">
+                                @if (Model.Members.Count() == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            No hay roles asignados
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Nombre del rol
+                                            </th>
+                                            <th>
+                                                Descripción del rol
+                                            </th>
+                                            <th>
+                                                Quitar del usuario
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    foreach (Role role in Model.Members)
+                                    {
+                                        <tr>
+                                            <td>@role.Name</td>
+                                            <td>@role.Description</td>
+                                            <td>
+                                                <input type="checkbox" name="IdsToDelete" value="@role.Id" />
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+
+                            </table>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                Agregar a @Model.profile.Username
+                            </div>
+                            <table class="table table-striped table-hover">
+                                @if (Model.NonMembers.Count() == 0)
+                                {
+                                    <tr>
+                                        <td colspan="2">
+                                            El usurio tiene todos los roles asignados
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Nombre del rol
+                                            </th>
+                                            <th>
+                                                Descripción del rol
+                                            </th>
+                                            <th>
+                                                Agregar el usuario
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    foreach (Role role in Model.NonMembers)
+                                    {
+                                        <tr>
+                                            <td>@role.Name</td>
+                                            <td>@role.Description</td>
+                                            <td>
+                                                <input type="checkbox" name="IdsToAdd" value="@role.Id" />
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+
+                            </table>
+                        </div>
+                        <a asp-action="index" class="btn btn-default">Regresar</a>
+                        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar cambios</button>
+                    </form>
+                    
+                </div>
+            </div>
+          
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+        <script>
+            $(document).ready(function () {
+                $('form').on('submit', function (e) { 
+                    $('button').html('<span class="fa fa-spinner fa-pulse"></span> Aplicando cambios...')
+                });
+            });
+        </script>
+    }

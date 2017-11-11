@@ -5,7 +5,10 @@
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/animate.css" rel="stylesheet" />
 </environment>
-
+<environment exclude="Development">
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/animate.css" rel="stylesheet" />
+</environment>
 
 <div class="wrapper">
     <div class="ipsa-center">
@@ -21,7 +24,42 @@
             <p style="text-align:justify">Para acceder a cualquier de estos servicios informáticos es necesario previamente estar registrado.</p>
         </div>
         
-
+        <section class="panel animated slideInUp">
+            <div class="panel-body">
+                <ul class="summary-list">
+                    <li>
+                        <a asp-controller="ingresosegresoscajas" asp-action="create">
+                            <i class=" fa fa-laptop text-primary"></i>
+                            Recibo oficial de caja
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="fa fa-exchange text-info"></i>
+                            Transferencias
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class=" fa fa-download text-muted"></i>
+                            Depositos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="fa fa-users text-success"></i>
+                            Clientes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <i class="fa fa-life-ring text-danger"></i>
+                            Servicios
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </section>
        
     </div>        
 </div>

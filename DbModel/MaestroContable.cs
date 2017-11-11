@@ -5,14 +5,20 @@ namespace mvcIpsa.DbModel
 {
     public partial class MaestroContable
     {
-        public char CtaContable { get; set; }
+        public MaestroContable()
+        {
+            CajaCuentaContable = new HashSet<CajaCuentaContable>();
+            IngresosEgresosCajaDetalle = new HashSet<IngresosEgresosCajaDetalle>();
+        }
+
+        public string CtaContable { get; set; }
         public char? Centro { get; set; }
         public string Cuenta { get; set; }
         public string Nombre { get; set; }
         public int TipoDh { get; set; }
         public int TipoCta { get; set; }
         public int NivelCuenta { get; set; }
-        public char CtaPadre { get; set; }
+        public string CtaPadre { get; set; }
         public decimal? SaldoInicialPeriodo { get; set; }
         public decimal? Mes1 { get; set; }
         public decimal? Mes2 { get; set; }
@@ -36,5 +42,8 @@ namespace mvcIpsa.DbModel
         public decimal? MovDebitoshist { get; set; }
         public decimal? MovCreditoshist { get; set; }
         public decimal? SaldoFinalhist { get; set; }
+
+        public ICollection<CajaCuentaContable> CajaCuentaContable { get; set; }
+        public ICollection<IngresosEgresosCajaDetalle> IngresosEgresosCajaDetalle { get; set; }
     }
 }

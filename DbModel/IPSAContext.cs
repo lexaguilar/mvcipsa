@@ -9,32 +9,31 @@ namespace mvcIpsa.DbModel
         public virtual DbSet<Bancos> Bancos { get; set; }
         public virtual DbSet<BancosCuentas> BancosCuentas { get; set; }
         public virtual DbSet<Caja> Caja { get; set; }
+        public virtual DbSet<CajaCuentaContable> CajaCuentaContable { get; set; }
         public virtual DbSet<CajaEstado> CajaEstado { get; set; }
         public virtual DbSet<CambioOficial> CambioOficial { get; set; }
         public virtual DbSet<Cliente> Cliente { get; set; }
         public virtual DbSet<Fondos> Fondos { get; set; }
         public virtual DbSet<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
         public virtual DbSet<IngresosEgresosCajaDetalle> IngresosEgresosCajaDetalle { get; set; }
+        public virtual DbSet<LoteRecibos> LoteRecibos { get; set; }
         public virtual DbSet<MaestroContable> MaestroContable { get; set; }
         public virtual DbSet<Profile> Profile { get; set; }
         public virtual DbSet<Profilerole> Profilerole { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<TipoCliente> TipoCliente { get; set; }
         public virtual DbSet<TipoDocumento> TipoDocumento { get; set; }
-        public virtual DbSet<Tipoingreso> Tipoingreso { get; set; }
-        public virtual DbSet<Tipomoneda> Tipomoneda { get; set; }
+        public virtual DbSet<TipoIngreso> TipoIngreso { get; set; }
+        public virtual DbSet<TipoMoneda> TipoMoneda { get; set; }
         public virtual DbSet<TipoMovimiento> TipoMovimiento { get; set; }
-        public virtual DbSet<Tipopago> Tipopago { get; set; }
-
-        // Unable to generate entity type for table 'siscb.CTA100202228'. Please see the warning messages.
-        // Unable to generate entity type for table 'siscb.100202228'. Please see the warning messages.
+        public virtual DbSet<TipoPago> TipoPago { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseNpgsql(@"Server=192.168.0.13;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
+                optionsBuilder.UseNpgsql(@"Server=192.168.0.11;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
             }
         }
 
@@ -124,29 +123,61 @@ namespace mvcIpsa.DbModel
 
             modelBuilder.Entity<Caja>(entity =>
             {
-                entity.HasKey(e => e.Ncaja);
+                entity.ToTable("caja", "siscb_core");
 
-                entity.ToTable("caja", "admin");
+                entity.HasIndex(e => e.NoCaja)
+                    .HasName("IX_noCaja")
+                    .IsUnique();
 
-                entity.HasIndex(e => e.Ncaja)
-                    .HasName("ncaja_index");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("nextval('siscb_core.\"Caja_id_seq\"'::regclass)");
 
-                entity.Property(e => e.Ncaja)
-                    .HasColumnName("ncaja")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.Description).IsRequired();
 
-                entity.Property(e => e.Descripcion).HasColumnName("descripcion");
+                entity.Property(e => e.NoCaja).HasColumnName("noCaja");
+            });
+
+            modelBuilder.Entity<CajaCuentaContable>(entity =>
+            {
+                entity.ToTable("caja_cuenta_contable", "siscb_core");
+
+                entity.HasIndex(e => e.CtaCuenta)
+                    .HasName("IX_cta_cuenta");
+
+                entity.HasIndex(e => e.IdCaja)
+                    .HasName("IX_idCaja");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("nextval('siscb_core.cajacuentacontable_id_seq'::regclass)");
+
+                entity.Property(e => e.CtaCuenta)
+                    .IsRequired()
+                    .HasColumnName("cta_cuenta");
+
+                entity.Property(e => e.IdCaja).HasColumnName("idCaja");
+
+                entity.HasOne(d => d.CtaCuentaNavigation)
+                    .WithMany(p => p.CajaCuentaContable)
+                    .HasForeignKey(d => d.CtaCuenta)
+                    .HasConstraintName("FK_cta_cuenta");
+
+                entity.HasOne(d => d.IdCajaNavigation)
+                    .WithMany(p => p.CajaCuentaContable)
+                    .HasForeignKey(d => d.IdCaja)
+                    .HasConstraintName("FK_idCaja");
             });
 
             modelBuilder.Entity<CajaEstado>(entity =>
             {
                 entity.HasKey(e => e.Nestado);
 
-                entity.ToTable("caja_estado", "siscb");
+                entity.ToTable("caja_estado", "siscb_core");
 
                 entity.Property(e => e.Nestado)
                     .HasColumnName("nestado")
-                    .HasDefaultValueSql("nextval('siscb.ceja_estado_nestado_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.ceja_estado_nestado_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -246,11 +277,19 @@ namespace mvcIpsa.DbModel
 
             modelBuilder.Entity<IngresosEgresosCaja>(entity =>
             {
-                entity.ToTable("ingresos_egresos_caja", "siscb");
+                entity.HasKey(e => e.Idrecibo);
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('siscb.ingresos_egresos_caja_id_seq'::regclass)");
+                entity.ToTable("ingresos_egresos_caja", "siscb_core");
+
+                entity.HasIndex(e => e.IdCaja)
+                    .HasName("Ix?IdCaja");
+
+                entity.HasIndex(e => e.Numrecibo)
+                    .HasName("Ix_NumRecibo");
+
+                entity.Property(e => e.Idrecibo)
+                    .HasColumnName("idrecibo")
+                    .HasDefaultValueSql("nextval('siscb_core.ingresos_egresos_caja_id_seq'::regclass)");
 
                 entity.Property(e => e.Concepto)
                     .HasColumnName("concepto")
@@ -264,13 +303,15 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("cuentacontablebanco")
                     .HasColumnType("varchar");
 
-                entity.Property(e => e.FechaProceso).HasColumnName("fecha_proceso");
-
-                entity.Property(e => e.Fechacreacion).HasColumnName("fechacreacion");
+                entity.Property(e => e.FechaProceso)
+                    .HasColumnName("fecha_proceso")
+                    .HasColumnType("date");
 
                 entity.Property(e => e.Fecharegistro)
                     .HasColumnName("fecharegistro")
-                    .HasColumnType("time");
+                    .HasColumnType("date");
+
+                entity.Property(e => e.IdCaja).HasColumnName("idCaja");
 
                 entity.Property(e => e.Identificacioncliente)
                     .HasColumnName("identificacioncliente")
@@ -329,6 +370,11 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("username")
                     .HasColumnType("varchar");
 
+                entity.HasOne(d => d.IdCajaNavigation)
+                    .WithMany(p => p.IngresosEgresosCaja)
+                    .HasForeignKey(d => d.IdCaja)
+                    .HasConstraintName("PK_idCaja");
+
                 entity.HasOne(d => d.IdtipoingresoNavigation)
                     .WithMany(p => p.IngresosEgresosCaja)
                     .HasForeignKey(d => d.Idtipoingreso)
@@ -360,51 +406,55 @@ namespace mvcIpsa.DbModel
 
             modelBuilder.Entity<IngresosEgresosCajaDetalle>(entity =>
             {
-                entity.ToTable("ingresos_egresos_caja_detalle", "siscb");
+                entity.ToTable("ingresos_egresos_caja_detalle", "siscb_core");
 
-                entity.HasIndex(e => e.Idcaja)
-                    .HasName("IX_idcaja");
+                entity.HasIndex(e => e.Idrecibo)
+                    .HasName("IX_idrecibo");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('siscb.ingresos_egresos_caja_detalle_id_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.ingresos_egresos_caja_detalle_id_seq'::regclass)");
 
                 entity.Property(e => e.Cantidad).HasColumnName("cantidad");
 
-                entity.Property(e => e.Ctacentrocostos)
-                    .HasColumnName("ctacentrocostos")
-                    .HasColumnType("char(20)");
-
-                entity.Property(e => e.Ctacontable)
-                    .HasColumnName("ctacontable")
-                    .HasColumnType("char(20)");
-
-                entity.Property(e => e.Ctaservicio)
-                    .HasColumnName("ctaservicio")
-                    .HasColumnType("char(20)");
-
-                entity.Property(e => e.Idcaja).HasColumnName("idcaja");
-
-                entity.Property(e => e.Montocordoba).HasColumnName("montocordoba");
-
-                entity.Property(e => e.Montodolar).HasColumnName("montodolar");
-
-                entity.Property(e => e.Ncaja).HasColumnName("ncaja");
-
-                entity.Property(e => e.Numero).HasColumnName("numero");
-
-                entity.Property(e => e.Numrecibo)
+                entity.Property(e => e.CtaContable)
                     .IsRequired()
-                    .HasColumnName("numrecibo")
-                    .HasColumnType("varchar");
+                    .HasColumnName("cta_contable");
 
-                entity.Property(e => e.Tipocambio).HasColumnName("tipocambio");
+                entity.Property(e => e.Idrecibo).HasColumnName("idrecibo");
 
-                entity.HasOne(d => d.IdcajaNavigation)
+                entity.Property(e => e.Montocordoba)
+                    .HasColumnName("montocordoba")
+                    .HasColumnType("numeric(32, 2)");
+
+                entity.Property(e => e.Montodolar)
+                    .HasColumnName("montodolar")
+                    .HasColumnType("numeric(32, 2)");
+
+                entity.Property(e => e.Precio)
+                    .HasColumnName("precio")
+                    .HasColumnType("numeric(32, 2)");
+
+                entity.HasOne(d => d.CtaContableNavigation)
                     .WithMany(p => p.IngresosEgresosCajaDetalle)
-                    .HasForeignKey(d => d.Idcaja)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("PK_idcaja");
+                    .HasForeignKey(d => d.CtaContable)
+                    .HasConstraintName("FK_ctacontable");
+
+                entity.HasOne(d => d.IdreciboNavigation)
+                    .WithMany(p => p.IngresosEgresosCajaDetalle)
+                    .HasForeignKey(d => d.Idrecibo)
+                    .HasConstraintName("FK_idrecibo");
+            });
+
+            modelBuilder.Entity<LoteRecibos>(entity =>
+            {
+                entity.ToTable("lote_recibos", "siscb_core");
+
+                entity.HasIndex(e => e.IdCaja)
+                    .HasName("IX_IdCaja")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasDefaultValueSql("nextval('siscb_core.\"loterecibos_Id_seq\"'::regclass)");
             });
 
             modelBuilder.Entity<MaestroContable>(entity =>
@@ -418,7 +468,6 @@ namespace mvcIpsa.DbModel
 
                 entity.Property(e => e.CtaContable)
                     .HasColumnName("cta_contable")
-                    .HasColumnType("char(20)")
                     .HasDefaultValueSql("NULL::bpchar");
 
                 entity.Property(e => e.Centro)
@@ -427,8 +476,8 @@ namespace mvcIpsa.DbModel
                     .HasDefaultValueSql("NULL::bpchar");
 
                 entity.Property(e => e.CtaPadre)
+                    .IsRequired()
                     .HasColumnName("cta_padre")
-                    .HasColumnType("char(20)")
                     .HasDefaultValueSql("NULL::bpchar");
 
                 entity.Property(e => e.Cuenta)
@@ -563,7 +612,7 @@ namespace mvcIpsa.DbModel
             {
                 entity.HasKey(e => e.Username);
 
-                entity.ToTable("profile", "admin");
+                entity.ToTable("profile", "admin_core");
 
                 entity.HasIndex(e => e.Username)
                     .HasName("username_index_profile");
@@ -580,7 +629,7 @@ namespace mvcIpsa.DbModel
                     .IsRequired()
                     .HasColumnName("correo");
 
-                entity.Property(e => e.Ncaja).HasColumnName("ncaja");
+                entity.Property(e => e.Idcaja).HasColumnName("idcaja");
 
                 entity.Property(e => e.Ncentrocosto).HasColumnName("ncentrocosto");
 
@@ -594,17 +643,18 @@ namespace mvcIpsa.DbModel
                     .IsRequired()
                     .HasColumnName("password");
 
-                entity.HasOne(d => d.NcajaNavigation)
+                entity.HasOne(d => d.IdcajaNavigation)
                     .WithMany(p => p.Profile)
-                    .HasForeignKey(d => d.Ncaja)
-                    .HasConstraintName("FK_ncaja");
+                    .HasForeignKey(d => d.Idcaja)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Caja");
             });
 
             modelBuilder.Entity<Profilerole>(entity =>
             {
                 entity.HasKey(e => new { e.Username, e.Idrole });
 
-                entity.ToTable("profilerole", "admin");
+                entity.ToTable("profilerole", "admin_core");
 
                 entity.Property(e => e.Username).HasColumnName("username");
 
@@ -613,7 +663,7 @@ namespace mvcIpsa.DbModel
 
             modelBuilder.Entity<Role>(entity =>
             {
-                entity.ToTable("role", "admin");
+                entity.ToTable("role", "admin_core");
 
                 entity.HasIndex(e => e.Id)
                     .HasName("IdRole")
@@ -621,7 +671,7 @@ namespace mvcIpsa.DbModel
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('admin.user_id_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('admin_core.user_id_seq'::regclass)");
 
                 entity.Property(e => e.Description).HasColumnName("description");
 
@@ -649,11 +699,11 @@ namespace mvcIpsa.DbModel
             {
                 entity.HasKey(e => e.TipoDoc);
 
-                entity.ToTable("tipo_documento", "siscb");
+                entity.ToTable("tipo_documento", "siscb_core");
 
                 entity.Property(e => e.TipoDoc)
                     .HasColumnName("tipo_doc")
-                    .HasDefaultValueSql("nextval('siscb.tipo_documento_tipo_doc_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.tipo_documento_tipo_doc_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -661,15 +711,15 @@ namespace mvcIpsa.DbModel
                     .HasColumnType("varchar");
             });
 
-            modelBuilder.Entity<Tipoingreso>(entity =>
+            modelBuilder.Entity<TipoIngreso>(entity =>
             {
                 entity.HasKey(e => e.Idtipoingreso);
 
-                entity.ToTable("tipoingreso", "siscb");
+                entity.ToTable("tipo_ingreso", "siscb_core");
 
                 entity.Property(e => e.Idtipoingreso)
                     .HasColumnName("idtipoingreso")
-                    .HasDefaultValueSql("nextval('siscb.tipoingreso_idtipoingreso_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.tipoingreso_idtipoingreso_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -677,15 +727,15 @@ namespace mvcIpsa.DbModel
                     .HasColumnType("varchar");
             });
 
-            modelBuilder.Entity<Tipomoneda>(entity =>
+            modelBuilder.Entity<TipoMoneda>(entity =>
             {
                 entity.HasKey(e => e.Idtipomoneda);
 
-                entity.ToTable("tipomoneda", "siscb");
+                entity.ToTable("tipo_moneda", "siscb_core");
 
                 entity.Property(e => e.Idtipomoneda)
                     .HasColumnName("idtipomoneda")
-                    .HasDefaultValueSql("nextval('siscb.tipomoneda_idtipomoneda_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.tipomoneda_idtipomoneda_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -697,11 +747,11 @@ namespace mvcIpsa.DbModel
             {
                 entity.HasKey(e => e.Idtipomovimiento);
 
-                entity.ToTable("tipo_movimiento", "siscb");
+                entity.ToTable("tipo_movimiento", "siscb_core");
 
                 entity.Property(e => e.Idtipomovimiento)
                     .HasColumnName("idtipomovimiento")
-                    .HasDefaultValueSql("nextval('siscb.tipo_movimiento_idtipomovimiento_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.tipo_movimiento_idtipomovimiento_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -711,15 +761,15 @@ namespace mvcIpsa.DbModel
                 entity.Property(e => e.TipoDoc).HasColumnName("tipo_doc");
             });
 
-            modelBuilder.Entity<Tipopago>(entity =>
+            modelBuilder.Entity<TipoPago>(entity =>
             {
                 entity.HasKey(e => e.Idtipopago);
 
-                entity.ToTable("tipopago", "siscb");
+                entity.ToTable("tipo_pago", "siscb_core");
 
                 entity.Property(e => e.Idtipopago)
                     .HasColumnName("idtipopago")
-                    .HasDefaultValueSql("nextval('siscb.tipopago_id_seq'::regclass)");
+                    .HasDefaultValueSql("nextval('siscb_core.tipopago_id_seq'::regclass)");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -729,11 +779,17 @@ namespace mvcIpsa.DbModel
 
             modelBuilder.HasSequence("user_id_seq");
 
+            modelBuilder.HasSequence("Caja_id_seq");
+
+            modelBuilder.HasSequence("cajacuentacontable_id_seq");
+
             modelBuilder.HasSequence("ceja_estado_nestado_seq");
 
             modelBuilder.HasSequence("ingresos_egresos_caja_detalle_id_seq");
 
             modelBuilder.HasSequence("ingresos_egresos_caja_id_seq");
+
+            modelBuilder.HasSequence("loterecibos_Id_seq");
 
             modelBuilder.HasSequence("tipo_documento_tipo_doc_seq");
 

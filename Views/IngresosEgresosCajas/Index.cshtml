@@ -1,162 +1,104 @@
-﻿@model IEnumerable<mvcIpsa.DbModel.IngresosEgresosCaja>
-
+﻿@model IEnumerable<mvcIpsa.Models.CajaViewModel>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Numrecibo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FechaProceso)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Montoefectivo)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Montocheque)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Montominuta)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Montotransferencia)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Monto)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Noreferencia)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cuentabanco)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Concepto)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Noordenpago)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Username)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Fechacreacion)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Ncentrocosto)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Identificacioncliente)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cuentacontablebanco)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Tipocambio)
-                </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdtipoingresoNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdtipomonedaNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdtipopagoNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NestadoNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipomovNavigation)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Numrecibo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaProceso)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Montoefectivo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Montocheque)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Montominuta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Montotransferencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Monto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Noreferencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cuentabanco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Concepto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Noordenpago)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fechacreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ncentrocosto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Identificacioncliente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cuentacontablebanco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipocambio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdtipoingresoNavigation.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdtipomonedaNavigation.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdtipopagoNavigation.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NestadoNavigation.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipomovNavigation.Descripcion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@section Styles
+    {
+    <environment include="Development">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">      
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
 }
-    </tbody>
-</table>
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de recibos de caja
+        </header>
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label for="sinceDate" class="control-label">Desde :</label>
+                    <input type="text" class="form-control datepicker CajaParameter" id="Desde" placeholder="Fecha inicio">
+                </div>
+                <div class="form-group mx-sm-3">
+                    <label for="sinceDate" class="control-label">Hasta :</label>
+                    <input type="text" class="form-control datepicker CajaParameter" id="Hasta" placeholder="Fecha inicio">
+                </div>
+                <div class="form-group mx-sm-3">
+                    <label for="sinceDate" class="control-label">Estado :</label>
+                    <select class="form-control CajaParameter" id="Estado" asp-items="ViewBag.Nestado"><option value="" >Todos</option></select>
+                </div> 
+                <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect"  id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
+                <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent pull-right" asp-action="create"><span class="fa fa-plus"></span> Crear nuevo recibo</a>
+            </div>
+                
+            <table id="recibo" class="table table-hover">
+
+            </table>
+        </div>
+    </section>
+</div>
+
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>  
+        <script src="~/lib/material-design-lite/material.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
+    </environment>
+    <script>
+        $('#btnSearch').click(function () {           
+            init(1);
+        });
+        $(document).ready(function () {    
+            var now = moment();
+            $('.datepicker')
+                .val(now.format("DD-MM-YYYY"))
+                .datepicker({
+                    autoclose: true,
+                    format: 'dd-mm-yyyy'
+                });
+            init(1);
+        });
+                
+
+        var init = pag => { 
+            $('#btnSearch').searching();
+            var data = findEntity('CajaParameter');
+            data['Page'] = pag;
+            data['Rows'] = 5;          
+            
+            var f = function (response) {                
+                $('#recibo').datatable({                    
+                    columnsHead: ['', 'Número', 'Tipomov', 'Recibo', 'Fecha de Proceso', 'Tipo pago', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario', 'Fecha de creacion'],
+                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'id', 'tipomov', 'numrecibo', 'fechaProceso', 'tipopago', 'monto', 'tipomoneda', 'tipoingreso', 'username', 'fechacreacion'],
+                    data: response.result,
+                    pag: pag,
+                    rows: data.Rows,
+                    totalRows: response.count,
+                    controller: 'ingresoEgresoscajas',
+                    id: 'id',
+                    columnsWithFormatDate: ['fechaProceso', 'fechacreacion'],
+                    columnsWithFormatMoney: ['monto']
+                });
+                $('#btnSearch').reset();
+            }
+            context.ajax.get('IngresosEgresosCajas/GetList', data, f);
+
+        }
+    </script>
+}
