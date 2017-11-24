@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace mvcIpsa.DbModel
 {
@@ -12,6 +13,7 @@ namespace mvcIpsa.DbModel
         public string Password { get; set; }
         public short Nestado { get; set; }
         public short Ncentrocosto { get; set; }
+        [Display(Name = "Caja o delegación")]
         public int? Idcaja { get; set; }
 
         public Caja IdcajaNavigation { get; set; }

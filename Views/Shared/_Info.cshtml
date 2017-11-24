@@ -1,3 +1,6 @@
 ﻿@using mvcIpsa.Extensions;
-@*@{var user = this.User.GetServiceUser();}*@
-<p style="margin: 0 0 0px;"><span class="fa fa-home"></span> @*@user.description*@</p>
+@if (Context.User.Identity.IsAuthenticated)
+{
+    var user = this.User.GetServiceUser();
+    <p style="margin: 0 0 0px;"><span class="fa fa-home"></span> @user.description</p>
+}

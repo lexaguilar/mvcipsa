@@ -202,6 +202,7 @@
     <div class="wrapper">
         <h2 class="text-center animated slideInUp " style="color:white">@ViewData["Title"].</h2>
         <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal login animated bounceInLeft">
+            <img class="animated slideInDown" src="~/images/ipsa-logo.png" style="width: 277px;"/>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">

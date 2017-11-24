@@ -5,6 +5,7 @@ namespace mvcIpsa.DbModel
 {
     public partial class IngresosEgresosCajaDetalle
     {
+
         public int Id { get; set; }
         public int Idrecibo { get; set; }
         public decimal Montodolar { get; set; }

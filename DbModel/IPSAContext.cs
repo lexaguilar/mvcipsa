@@ -33,7 +33,7 @@ namespace mvcIpsa.DbModel
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseNpgsql(@"Server=192.168.0.11;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
+                optionsBuilder.UseNpgsql(@"Server=192.168.0.12;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
             }
         }
 
@@ -281,6 +281,9 @@ namespace mvcIpsa.DbModel
 
                 entity.ToTable("ingresos_egresos_caja", "siscb_core");
 
+                entity.HasIndex(e => e.Bancoid)
+                    .HasName("Ix_Banco");
+
                 entity.HasIndex(e => e.IdCaja)
                     .HasName("Ix?IdCaja");
 
@@ -290,6 +293,8 @@ namespace mvcIpsa.DbModel
                 entity.Property(e => e.Idrecibo)
                     .HasColumnName("idrecibo")
                     .HasDefaultValueSql("nextval('siscb_core.ingresos_egresos_caja_id_seq'::regclass)");
+
+                entity.Property(e => e.Bancoid).HasColumnName("bancoid");
 
                 entity.Property(e => e.Concepto)
                     .HasColumnName("concepto")
@@ -343,8 +348,6 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("montotransferencia")
                     .HasColumnType("numeric(10, 2)");
 
-                entity.Property(e => e.Ncentrocosto).HasColumnName("ncentrocosto");
-
                 entity.Property(e => e.Nestado).HasColumnName("nestado");
 
                 entity.Property(e => e.Noordenpago)
@@ -369,6 +372,11 @@ namespace mvcIpsa.DbModel
                 entity.Property(e => e.Username)
                     .HasColumnName("username")
                     .HasColumnType("varchar");
+
+                entity.HasOne(d => d.Banco)
+                    .WithMany(p => p.IngresosEgresosCaja)
+                    .HasForeignKey(d => d.Bancoid)
+                    .HasConstraintName("PK_bancoid_iec");
 
                 entity.HasOne(d => d.IdCajaNavigation)
                     .WithMany(p => p.IngresosEgresosCaja)

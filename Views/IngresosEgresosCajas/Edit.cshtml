@@ -1,11 +1,11 @@
 ﻿@using mvcIpsa.DbModel
 @model IngresosEgresosCaja
 @{
-    ViewData["Title"] = "crear";
+    ViewData["Title"] = "Editar";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles
-{
+    {
     <environment include="Development">
         <link href="~/css/selectize.css" rel="stylesheet">
         <link href="~/css/animate.css" rel="stylesheet">
@@ -13,7 +13,7 @@
         <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
         <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
     </environment>
-    <environment exclude="Development">      
+    <environment exclude="Development">
         <link href="~/css/selectize.css" rel="stylesheet">
         <link href="~/css/animate.css" rel="stylesheet">
         <link href="~/css/site.css" rel="stylesheet">
@@ -26,13 +26,13 @@
         <aside class="mid-side">
             <div class="chat-room-head">
                 <h3>Recibo de caja</h3>
-                @*<div action="#" class="pull-right position">                   
-                    <a href="#" class="pull-right btn btn-default">+ Buscar un recibo</a>
-                </div>*@
+                @*<div action="#" class="pull-right position">
+                        <a href="#" class="pull-right btn btn-default">+ Buscar un recibo</a>
+                    </div>*@
             </div>
-            <div class="room-desk">               
+            <div class="room-desk">
                 <div class="room-box">
-                    <form method="post" asp-action="Create">
+                    <form method="put" asp-action="Edit">
                         <input type="hidden" asp-for="Idrecibo" class="master" />
                         <div class="panel-body">
                             <div class="row">
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="form-group col-lg-3 col-lg-offset-6">
                                             <label asp-for="FechaProceso" class="control-label"></label>
-                                            <input data-error-message="Seleccione la fecha de proceso" type="text" asp-for="FechaProceso" class="form-control master datepicker" />
+                                            <input data-error-message="Seleccione la fecha de proceso" type="date" asp-for="FechaProceso" class="form-control master" />
                                             <span asp-validation-for="FechaProceso" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -72,10 +72,10 @@
                                             <input type="number" asp-for="Montotransferencia" class="form-control master clear-monto" />
                                             <span asp-validation-for="Montotransferencia" class="text-danger"></span>
                                         </div>
-                                       
+
                                         <div class="form-group col-lg-3 monto Noreferencia">
                                             <label asp-for="Noreferencia" class="control-label lblNoreferencia"></label>
-                                            <input asp-for="Noreferencia" class="form-control master"/>
+                                            <input asp-for="Noreferencia" class="form-control master" />
                                             <span asp-validation-for="Noreferencia" class="text-danger"></span>
                                         </div>
                                         <div class="form-group col-lg-3 monto Cuentabanco">
@@ -108,16 +108,16 @@
 
                                     <div class="col-lg-12">
                                         <div class="form-group col-lg-3">
-                                            <label  class="control-label">Identificación</label>
-                                            <select class="master" data-error-message="Seleccione un cliente" asp-for="Identificacioncliente" ><option value="">Seleccione</option></select>                                            
+                                            <label class="control-label">Identificación</label>
+                                            <select class="master" data-error-message="Seleccione un cliente" asp-for="Identificacioncliente"><option value="">Seleccione</option></select>
                                         </div>
                                         <div class="form-group col-lg-3">
-                                            <label class="control-label" >Tipo cliente</label>
-                                            <input class="form-control" id="tipoCliente"/>
+                                            <label class="control-label">Tipo cliente</label>
+                                            <input class="form-control" id="tipoCliente" disabled />
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label class="control-label" >Beneficiario</label>
-                                            <input asp-for="Cuentacontablebanco" class="form-control master"/>
+                                            <label class="control-label">Beneficiario</label>
+                                            <input class="form-control" id="Beneficiario" disabled />
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label asp-for="Concepto" class="control-label"></label>
@@ -137,28 +137,23 @@
                                     </header>
                                     <table id="servicios" class="table table-striped table-hover">
                                         <thead>
-                                            <tr>                                                                                             
-                                                <th class="w20">Tipo de servicio</th>                                               
+                                            <tr>
+                                                <th class="w20">Tipo de servicio</th>
                                                 <th>Precio</th>
                                                 <th>Cantidad </th>
                                                 <th>Dolares</th>
-                                                <th>Cordobas</th>                                               
+                                                <th>Cordobas</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
-                                        <tfoot><tr><td colspan="10"><button type="button" class="btn btn-primary w100" onclick="addNewRow();"><span class="fa fa-plus"></span> Agregar otro servicio</button></td></tr></tfoot>
+                                        <tfoot><tr><td colspan="10"><button type="button" class="btn btn-primary w100" onclick="addNewRow(null);"><span class="fa fa-plus"></span> Agregar otro servicio</button></td></tr></tfoot>
                                     </table>
                                     <div class="row">
-                                        <div class="col-lg-4 pull-left">
-                                            <label asp-for="Bancoid" class="control-label"></label>
-                                            <select data-error-message="Seleccione un banco" asp-for="Bancoid" class="select master" asp-items="ViewBag.Banco"><option value="">Seleccione</option></select>
-                                            <span asp-validation-for="Bancoid" class="text-danger"></span>
-                                        </div>
                                         <div class="col-lg-4 invoice-block pull-right">
                                             <ul class="unstyled amounts">
                                                 <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
-                                                <li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>                                                
+                                                <li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -168,45 +163,45 @@
                         <div class="panel-footer">
                             <div class="text-center invoice-btn">
                                 <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect pull-left" asp-action="index"><span class="fa fa-arrow-left"></span> Regresar</a>
-                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-success" type="button" onclick="save(this);"><span class="fa fa-check"></span> Guardar </button>                            
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-success" type="button" onclick="save(this);"><span class="fa fa-check"></span> Guardar </button>
                             </div>
                         </div>
                     </form>
-                </div>        
-            </div>          
+                </div>
+            </div>
         </aside>
         <aside class="right-side">
             <div class="user-head">
                 <h3>Resumen</h3>
-            </div>         
+            </div>
             <ul class="chat-available-user">
                 <li>
                     <a href="#">
                         <i class="fa fa-circle text-success"></i>
                         No Recibo:
-                        <span class="text-muted">@ViewBag.NumRecibo</span>
+                        <span class="text-muted">@Model.Numrecibo.ToString().PadLeft(10, '0')</span>
                     </a>
                 </li>
                 <li>
                     <a href="#">
-                        <i class="fa fa-circle text-danger"></i>
+                        <i class="fa fa-circle text-success"></i>
                         Estado :
-                        <span class="text-muted">Pendiente</span>
+                        <span class="text-muted">Activo</span>
                     </a>
                 </li>
                 <li>
                     <a href="#">
                         <i class="fa fa-money text-success"></i>
                         Tipo cambio:
-                        <span class="text-muted" id="TasaDelDia">@ViewBag.TasaDelDia</span>
+                        <span class="text-muted" id="TasaDelDia">@Model.Tipocambio</span>
                     </a>
-                </li>              
+                </li>
             </ul>
         </aside>
     </div>
 </div>
 @section Scripts
-{
+    {
     <environment include="Development">
         <script src="~/js/site.js"></script>
         <script src="~/js/selectize.js"></script>
@@ -214,7 +209,6 @@
         <script src="~/lib/numeral/src/numeral.js"></script>
         <script src="~/lib/material-design-lite/material.js"></script>
         <script src="~/js/notify.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="~/js/site.js"></script>
@@ -223,32 +217,38 @@
         <script src="~/lib/numeral/src/numeral.js"></script>
         <script src="~/lib/material-design-lite/material.js"></script>
         <script src="~/js/notify.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
     </environment>
-
-
     <script>
-        var now = moment();
-        $('.datepicker')
-            .val(now.format("DD-MM-YYYY"))
-            .datepicker({
-                autoclose: true,
-                format: 'dd-mm-yyyy'
-         });
-
         var servicios = @Html.Raw(Json.Serialize(ViewBag.servicios, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
         var clientes = @Html.Raw(Json.Serialize(ViewBag.clientes, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
         var detalle = [];
-        var tasaCambio = @ViewBag.TasaDelDia;
-        var NumRecibo = @ViewBag.NumRecibo;
-
+        var tasaCambio = @Model.Tipocambio.ToString().Replace(',','.');
+        var NumRecibo = @Model.Numrecibo.ToString().PadLeft(10, '0');
+        var detallePre = @Html.Raw(Json.Serialize(Model.IngresosEgresosCajaDetalle, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
 
         $(document).ready(function () {
-            addNewRow();
+           
+            Monto['tipo' + $('#Idtipopago').val()](!0);
+            $('#Idtipopago').change(function () {
+                Monto['tipo' + $(this).val()]();
+            });
+
+            $('#FechaProceso').change(function (e) {
+                $.get(pathBase + "IngresosEgresosCajas/FindTipoCambio", { fecha: this.value },
+                    function (data, textStatus, jqXHR) {
+                        tasaCambio = data.dolares;
+                        $('#TasaDelDia').text(data.dolares);
+                    },
+                    "json"
+                ).fail(function (xhr, status, error) {
+                    $('#TasaDelDia').text('No hay datos');
+                });
+            });
+
             var selectClient = function () {
                 return function () {
                     var selectize = $cliente[0].selectize;
-                    $.map(selectize.items, function (value) {      
+                    $.map(selectize.items, function (value) {
                         $('#tipoCliente').val(selectize.options[value].tipoCliente);
                         $('#Beneficiario').val(selectize.options[value].nombre);
                     });
@@ -271,11 +271,22 @@
                 },
                 onChange: selectClient()
             });
+
+            var c = $cliente[0].selectize;
+            c.setValue('@Model.Identificacioncliente', !1);
+
+            detallePre.forEach(function (v, i) {
+                addNewRow(v);             
+            });
+            calculate();
+            
+            
         });
-        function addNewRow() {
+
+        function addNewRow(model) {
             var d = new Date();
             var t = d.getTime();
-            $('#servicios').addNewRow(t);
+            $('#servicios').addNewRow(t, model);
 
 
             $('.dolares, .cantidad, .precio, .cordobas').editable({
@@ -287,18 +298,14 @@
                 },
                 display: function (value) {
                     $(this).text(parseFloat(value).toFixed(2));
-                }                
+                }
             });
-
-
-
 
             $('.selector' + t).on("shown", function (e, editable) {
                 editable.input.postrender = function () {
                     editable.input.$input.select();
                 };
             });
-
 
             $('.selector' + t).on('hidden', function (e, reason) {
                 if (reason === 'save')
@@ -311,17 +318,18 @@
                 }
             });
 
-            selectAccount(t);
+            selectAccount(t, model);
             $('.select40').removeClass('data-ajax');
             $('.select20').removeClass('fuente');
         }
-        var $select ={}
-        var selectAccount = function (t) { 
+        
+        var $select = {}
+        var selectAccount = function (t,model) {
             $select[t] = $('.data-ajax').selectize({
                 valueField: 'Cuenta',
                 labelField: 'Nombre',
                 searchField: 'Nombre',
-                options: servicios.slice(0,1000),
+                options: servicios.slice(0, 1000),
                 create: false,
                 render: {
                     option: function (item, escape) {
@@ -330,7 +338,7 @@
                             '<span class="title">' +
                             '<span class="cuenta"><i class="fa fa-book"></i> ' + escape(item.Cuenta) + '</span>' +
                             '</span>' +
-                            '<p class="description"><i class="fa fa-' + (item.TipoCta != 4 ? "user user" :"money money")+'"></i> ' + escape(item.Nombre) + '</p>' +
+                            '<p class="description"><i class="fa fa-' + (item.TipoCta != 4 ? "user user" : "money money") + '"></i> ' + escape(item.Nombre) + '</p>' +
                             '<p class="descriptionPadre">' + escape(item.padre) + '</p>' +
                             '</div>';
                     },
@@ -344,64 +352,20 @@
                 //onChange: eventHandler()
             });
             var selectizePre = $select[t][0].selectize;
-
+            //selectizePre.clearOptions();
+            if (model) {
+                selectizePre.setValue(model.CtaContable.slice(4, 20), !1);
+            }
+            
 
             $('.data-ajax').change(function () {
                 $(this).blur();
                 var selector = $(this).data('selector');
                 var elemt = $('.' + selector + '')[0];
                 $(elemt).editable('toggle');
-            });          
+            });
         }
-        Monto.hidden();
-        $('#Idtipopago').change(function () {          
-            Monto['tipo' + $(this).val()]();
-        });
-             
+
         $('.select').selectize();
     </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#FechaProceso').change(function (e) {
-                var d = moment(this.value, 'DD-MM-YYYY').utc().format()
-                console.log(d);
-                $.get(pathBase + "IngresosEgresosCajas/FindTipoCambio", { fecha: d },
-                    function (data, textStatus, jqXHR) {
-                        tasaCambio = data.dolares;
-                        $('#TasaDelDia').text(data.dolares);                        
-                    },
-                    "json"                    
-                ).fail(function (xhr, status, error) {
-                    $('#TasaDelDia').text('No hay datos');
-                });
-            });
-        });     
-
-        var save = (b) => {
-            if (fieldsIsValid('master')) {
-                $(b).saving();
-                var master = findEntity('master');
-                master['NumRecibo'] = NumRecibo;
-                var iECajaViewModel = { master: master, details: detalle };
-                console.log('entro1');
-                $.ajax({
-                    type: "POST",
-                    url: pathBase + "ingresosEgresosCajas/create",
-                    data: iECajaViewModel,
-                    dataType: "json",
-                    error: function (err) { 
-                        console.log(err);
-                    },
-                    success: function (response) {
-                        $(b).reset();
-                        window.location.href = pathBase + 'ingresosEgresosCajas';
-                    },
-                });
-            }
-            
-        }
-    </script>
-
 }
-

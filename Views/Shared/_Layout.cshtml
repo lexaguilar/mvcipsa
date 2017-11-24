@@ -83,7 +83,7 @@
                         <ul class="sub">
                             <li><a asp-controller="clientes" asp-action="index"><span class="fa fa-users"></span> Clientes</a></li>
                             <li><a asp-controller="cajas" asp-action="index"><span class="fa fa-book"></span> Cajas</a></li>
-                            <li><a href="calendar.html"><span class="fa fa-life-ring"></span> Servicios</a></li>
+                            <li><a href="#"><span class="fa fa-life-ring"></span> Servicios</a></li>
                             <li><a asp-controller="tasacambio" asp-action="index"><span class="fa fa-money"></span> Tasa de cambio</a></li>
                         </ul>
                     </li>
@@ -149,7 +149,9 @@
         var pathBase = '@Url.Content("~/")';
 
         var url = window.location.pathname.split('/')[1]
-      
+        if (url=='ipsacore') {
+            url = window.location.pathname.split('/')[2]
+        }
         if (url.length > 0) {
             $('#nav-accordion li').each(function () {
                 $(this).find('ul').each(function () {

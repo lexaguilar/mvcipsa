@@ -33,6 +33,10 @@
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="reports\" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES6</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>

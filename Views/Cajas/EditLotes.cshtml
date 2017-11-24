@@ -75,7 +75,7 @@
     </environment>
         
     <script>
-        var idCaja = 1;       
+        var idCaja = @Model.IdCaja;       
         $(document).ready(function () {
             $('.myeditable').editable({
                 validate: function (value) {
@@ -92,7 +92,7 @@
                     errors = $elems.editable('validate'); 
                 if ($.isEmptyObject(errors)) {
                     data = $elems.editable('getValue'); 
-                    data["IdCaja"] = 1;
+                    data["IdCaja"] = idCaja;
                     console.log(data);
 
                     $.ajax({

@@ -166,14 +166,14 @@ var  getURL = (a) => a.join('/');
 
 
 (function ($) {
-    $.fn.addNewRow = function (t) {
+    $.fn.addNewRow = function (t,model) {
         var tick = 'selector' + t;
         return this.each(function () {
             var table = $(this);
             $(table).find('tbody').append('<tr>' +                         
                 '<td class="w25"><select class="select40 data-ajax" data-selector="' + tick + '"><option value="">Seleccione</option></select></td>' +    
-                '<td class="w40 text-center"><a data-name="precio" href="#" data-original-title="Ingrese el precio" class="editable precio ' + tick + '" customData="' + tick + '">0.00</a></td>' +   
-                '<td class="w40"><a href="#" data-name="cantidad" data-original-title="Ingrese la cantidad" class="editable cantidad ' + tick + '" customData="' + tick + '">1</a></td>' +   
+                '<td class="w40 text-center"><a data-name="precio" href="#" data-original-title="Ingrese el precio" class="editable precio ' + tick + '" customData="' + tick + '">' + (model ? model.Precio:"0.00") +'</a></td>' +   
+                '<td class="w40"><a href="#" data-name="cantidad" data-original-title="Ingrese la cantidad" class="editable cantidad ' + tick + '" customData="' + tick + '">' + (model ? model.Cantidad : "1") +'</a></td>' +   
                 '<td class="w40"><a href="#" data-name="montodolar" data-original-title="cantidad en dolares" class="editable dolares ' + tick + '" customData="' + tick + '">0.00</a></td>' +   
                 '<td class="w40"><a href="#" data-name="montocordoba" data-original-title="Cantidad en cordobas" class="editable cordobas ' + tick + '" customData="' + tick + '">0.00</a></td>' +   
                 '<td><a class="fa fa-remove fa-color-red a-type-cursor" onclick="remove(this);"></a></td>' +
@@ -222,40 +222,41 @@ var Monto = {
         });  
         return _total;
     },
-    hidden: function () {
+    hidden: function (change) {
         $('.monto').hide();
         $('.clear-monto').each(function (index, element) {
-            element.value = 0;           
-        });  
-        
+            if (!change) {
+                element.value = 0;   
+            }                    
+        });          
     },
-    tipo1: function () {//efec
-        Monto.hidden();
+    tipo1: function (c) {//efec
+        Monto.hidden(c);
         $('.Montoefectivo').show();
     },
-    tipo2: function(){ //cheque
-        Monto.hidden();
+    tipo2: function(c){ //cheque
+        Monto.hidden(c);
         $('.Montocheque').show();
         Monto.showLable('No. cheque:');
     },
-    tipo3: function () {//minuta
-        Monto.hidden();
+    tipo3: function (c) {//minuta
+        Monto.hidden(c);
         $('.Montominuta').show();
         Monto.showLable();
     },
-    tipo4: function () {//transf
-        Monto.hidden();
+    tipo4: function (c) {//transf
+        Monto.hidden(c);
         $('.Montotransferencia').show();
         Monto.showLable();
     },
-    tipo5: function () {//efec + cheq
-        Monto.hidden();
+    tipo5: function (c) {//efec + cheq
+        Monto.hidden(c);
         $('.Montoefectivo').show();
         $('.Montocheque').show();
         Monto.showLable('No.cheque:');
     },
-    tipo6: function () {//efec + minuta
-        Monto.hidden();
+    tipo6: function (c) {//efec + minuta
+        Monto.hidden(c);
         $('.Montoefectivo').show();
         $('.Montominuta').show();
         Monto.showLable();

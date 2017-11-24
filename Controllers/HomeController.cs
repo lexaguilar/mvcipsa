@@ -9,10 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace mvcIpsa.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "Admin")]
     public class HomeController : Controller
-    {
-
+    {        
         public IActionResult Index() 
         {
             return View();
@@ -32,6 +31,7 @@ namespace mvcIpsa.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
