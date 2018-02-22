@@ -36,10 +36,11 @@
                             <p><span>Lote inicial </span>: <i class="fa fa-clock-o"></i> <a href="#" class="myeditable" data-type="text" id="Inicio" data-name="Inicio">@Model.Inicio</a></p>
                         </div>
                         <div class="bio-row">
-                            <p><span>Lote final  </span>: <i class="fa fa-clock-o"></i> <a href="#"class="myeditable" data-type="text" id="Final" data-name="Final">@Model.Final</a></p>
+                            <p><span>Lote final </span>: <i class="fa fa-clock-o"></i> <a href="#"class="myeditable" data-type="text" id="Final" data-name="Final">@Model.Final</a></p>
                         </div>
                         <div class="bio-row">
-                            <p><span>Lote actual </span>: <i class="fa fa-bell-o"></i> @Model.Actual</p>
+                            <p><span>Lote actual </span>: <i class="fa fa-bell-o"></i> <a href="#" class="myeditable" data-type="text" id="Actual" data-name="Actual">@Model.Actual</a></p>
+                                                   
                             <button type="button" id="save-btn" class="btn btn-primary btn-block"><i class="fa fa-refresh"></i> Actualizar</button>
                         </div>       
                        
@@ -66,20 +67,25 @@
         <script src="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>  
         <script src="~/js/easy-pie-chart.js"></script>  
         <script src="~/js/bootstrap-editable.min.js"></script>
+        <script src="~/js/notify.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="~/js/site.js"></script>
         <script src="~/lib/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
         <script src="~/js/easy-pie-chart.js"></script>
         <script src="~/js/bootstrap-editable.min.js"></script>
+        <script src="~/js/notify.js"></script>
     </environment>
         
     <script>
-        var idCaja = @Model.IdCaja;       
+        
+        var idCaja = '@Model.Id';
+        
+                
         $(document).ready(function () {
             $('.myeditable').editable({
-                validate: function (value) {
-                    if ($.trim(value) == '')
+                    validate: function (value) {
+                        if ($.trim(value) == '')
                         return 'El valor es requerido';
                     if (!isNumber($.trim(value)))
                         return 'El valor debe ser numerico';
@@ -87,26 +93,28 @@
             });
 
             $('#save-btn').click(function () {
-                var data,
-                    $elems = $('.myeditable'),
-                    errors = $elems.editable('validate'); 
-                if ($.isEmptyObject(errors)) {
-                    data = $elems.editable('getValue'); 
-                    data["IdCaja"] = idCaja;
-                    console.log(data);
+                if (idCaja) { 
+                    var data,
+                        $elems = $('.myeditable'),
+                        errors = $elems.editable('validate');
+                    if ($.isEmptyObject(errors)) {
+                        data = $elems.editable('getValue');
+                        data["IdCaja"] = idCaja;
+                        console.log(data);
 
-                    $.ajax({
-                        type: 'POST',
-                        url: pathBase + `cajas/saveLote/${idCaja}`,
-                        data: data,
-                        dataType: 'json',
+                        $.ajax({
+                            type: 'POST',
+                            url: pathBase + `cajas/saveLote/${idCaja}`,
+                            data: data,
+                            dataType: 'json',
 
-                    }).success(function (response) {                        
-                        console.log(response);
-                    });
-                } else {                   
-                    console.log(errors);
-                }
+                        }).success(function (response) {
+                            $.notification('Lote guardado correctamente','success')
+                        });
+                    } else {
+                        console.log(errors);
+                    }
+                }                
             });
         });
 

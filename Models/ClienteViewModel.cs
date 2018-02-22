@@ -14,7 +14,6 @@ namespace mvcIpsa.Models
         public string Correo { get; set; }
         public string Direccion { get; set; }
         public int? Idtipocliente { get; set; }
-        public string tipocliente { get; set; }
-        public string Numeroruc { get; set; }
+        public string tipocliente { get; set; }       
     }
 }

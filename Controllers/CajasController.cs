@@ -22,6 +22,11 @@ namespace mvcIpsa.Controllers
         }
 
         // GET: Cajas
+        /// <summary>
+        /// Obtiene las cajas
+        /// </summary>
+        /// <param name="planId">Id del plan</param>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             return View(await _context.Caja.ToListAsync());
@@ -65,7 +70,7 @@ namespace mvcIpsa.Controllers
 
                 var loterecibo = new LoteRecibos
                 {
-                    IdCaja = caja.Id,
+                    CajaId = caja.Id,
                     Actual = 0,
                     Final = 0,
                     Inicio = 0
@@ -94,9 +99,6 @@ namespace mvcIpsa.Controllers
             return View(caja);
         }
 
-        // POST: Cajas/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,NoCaja,Description")] Caja caja)
@@ -182,11 +184,11 @@ namespace mvcIpsa.Controllers
                                 mc.CtaContable
                             };
 
-            string[] CuentaList = _context.CajaCuentaContable.Where(x => x.IdCaja == id.Value).Select(x => x.CtaCuenta).ToArray();
+            string[] CuentaList = _context.CajaCuentaContable.Where(x => x.CajaId == id.Value).Select(x => x.CtaCuenta).ToArray();
             var members = servicios.Where(x => CuentaList.Any(y => y == x.CtaContable)).ToList();
-            //var nonMembers = servicios.Except(members);
+   
             var _caja = _context.Caja.Find(id);
-          
+
             var cuentasPorCaja = new CajaCtaContablesViewModel
             {
                 idCaja = id.Value,
@@ -197,12 +199,12 @@ namespace mvcIpsa.Controllers
                     CtaContable = x.CtaContable,
                     Cuenta = x.Cuenta,
                     Padre = x.Padre
-                }).ToArray()               
+                }).ToArray()
             };
             return View("ListOfAccounting", cuentasPorCaja);
         }
 
-        //EditLotes
+        
         public async Task<IActionResult> EditLotes(int? id)
         {
             if (id==null)
@@ -210,7 +212,7 @@ namespace mvcIpsa.Controllers
                 return NotFound();
             }
 
-            var lote = _context.LoteRecibos.Where(l => l.IdCaja == id.Value).FirstOrDefault();
+            var lote = _context.LoteRecibos.Where(l => l.CajaId == id.Value).FirstOrDefault();
             if (lote == null)
             {                
                 return View(lote);
@@ -226,7 +228,7 @@ namespace mvcIpsa.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> saveLote(LoteRecibos lote)
         {
-            var LoteActual = await _context.LoteRecibos.FindAsync(lote.IdCaja);
+            var LoteActual = await _context.LoteRecibos.FindAsync(lote.Id);
             if (LoteActual == null)
             {
                 return NotFound();
@@ -234,10 +236,52 @@ namespace mvcIpsa.Controllers
 
             LoteActual.Inicio = lote.Inicio;
             LoteActual.Final = lote.Final;
-
+            LoteActual.Actual = lote.Actual;
             await _context.SaveChangesAsync();
 
             return Json(LoteActual);
+        }
+
+        [HttpGet("Cajas/GetAccounting/{id}")]
+        public IActionResult GetAccounting(int id)
+        {
+            var servicios = from mc in _context.MaestroContable
+                            join mcp in _context.MaestroContable
+                            on mc.CtaPadre equals mcp.CtaContable
+                            where mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105")
+                            select new
+                            {
+                                mc.Cuenta,
+                                mc.Nombre,
+                                Padre = mcp.Nombre,
+                                mc.CtaContable
+                            };
+
+            string[] CuentaList = _context.CajaCuentaContable.Where(x => x.CajaId == id).Select(x => x.CtaCuenta).ToArray();
+
+            var NoMembers = servicios.Where(x => !CuentaList.Contains(x.CtaContable)).ToList();
+
+            return Json(NoMembers);
+        }
+
+        [HttpPost("Cajas/AddAccounting/{idCaja}")]
+        public async Task<IActionResult> AddAccounting(string[] CtaContables, int idCaja)
+        {
+            //var _CtaContables = CtaContables.Split(',');
+            foreach (var item in CtaContables)
+            {
+                var cajaCuentaContable = _context.CajaCuentaContable.Where(c=>c.CtaCuenta == item && c.CajaId == idCaja).FirstOrDefault();
+                if (cajaCuentaContable == null)
+                {
+                    var newCajaCuentaContable = new CajaCuentaContable{
+                         CtaCuenta = item, CajaId= idCaja
+                    };
+                    _context.CajaCuentaContable.Add(newCajaCuentaContable);
+                }
+
+            }
+            _context.SaveChanges();
+            return Ok(0);
         }
     }
 }

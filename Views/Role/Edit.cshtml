@@ -14,7 +14,7 @@
             <div class="panel-body">
                 <div class="row">
                     <input type="hidden" asp-for="Id" />
-                    <div class="col-lg-5">
+                    <div class="col-lg-4 col-lg-offset-4">
                         <div class="form-group">
                             <label asp-for="Name"></label>
                             <div class="iconic-input">
@@ -31,15 +31,11 @@
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
+                        <button class="btn btn-success btn-block" type="submit"><i class="fa fa-check"></i> Guardar </button>
                     </div>
                 </div>
             </div>
-            <div class="panel-footer">
-                <div class="text-center invoice-btn">
-                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
-                    <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
-                </div>
-            </div>
+            <button asp-action="index" class="btn btn-default"><span class="fa fa-arrow-left"></span> Regresar a la lista </button>
         </form>
     </section>
 </div>

@@ -14,7 +14,7 @@
         <form method="post" asp-controller="Profile" asp-action="Edit" class="animated bounceInLeft">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-4 col-lg-offset-4">
                         <input type="hidden" asp-for="Username" />
                         <label asp-for="Username"></label>
                         <h4> @Model.Username</h4>
@@ -43,27 +43,23 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Idcaja"></label>
+                            <label asp-for="Caja.Description"></label>
                             <div class="iconic-input">
-                                <select asp-for="Idcaja" class="form-control">
+                                <select asp-for="CajaId" class="form-control">
                                     @foreach (var caja in ViewBag.Cajas)
-                                    {
-                                        <option value="@caja.Idcaja">@caja.Description</option>
-                                    }
+                {
+                    <option value="@caja.Id">@caja.Description</option>
+}
                                 </select>
 
-                                <span asp-validation-for="Idcaja" class="text-danger"></span>
+                                <span asp-validation-for="CajaId" class="text-danger"></span>
                             </div>
                         </div>
+                        <button class="btn btn-success btn-block" type="submit"><i class="fa fa-check"></i> Guardar </button>
                     </div>
                 </div>
-            </div>
-            <div class="panel-footer">
-                <div class="text-center invoice-btn">
-                    <a class="btn btn-default btn-lg" asp-action="index"> Regresar</a>
-                    <button class="btn btn-success btn-lg" type="submit"><i class="fa fa-check"></i> Guardar </button>
-                </div>
-            </div>
+            </div>          
+            <button asp-action="index" class="btn btn-default"><span class="fa fa-arrow-left"></span> Regresar a la lista </button>
         </form>
     </section>
 </div>

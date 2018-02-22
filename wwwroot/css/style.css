@@ -2074,17 +2074,17 @@ ul.labels-info li a i {
     font-weight: 300;
 }
 
-.inbox-head  .sr-input {
-    height: 40px;
-    border: none;
-    box-shadow: none;
-    padding: 0 10px;
-    float: left;
-    border-radius: 4px 0 0 4px;
-    color: #8a8a8a;
-}
+    .inbox-head .sr-input {
+        height: 35px;
+        border: 1px solid #ccc;
+        box-shadow: none;
+        padding: 0 10px;
+        float: left;
+        border-radius: 4px 0 0 4px;
+        color: #8a8a8a;
+    }
 .inbox-head  .sr-btn {
-    height: 40px;
+    height: 35px;
     border: none;
     background: #00a6b2;
     color: #fff;
@@ -2951,7 +2951,7 @@ ul.amounts li {
 }
 
 .tab-bg-dark-navy-blue {
-    background: #7087A3;
+    background: #d9534f;
     border-radius: 5px 5px 0 0;
     -webkit-border-radius: 5px 5px 0 0;
     border-bottom: none;
@@ -4724,7 +4724,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
     background: #5b6e84;
     color: #fff;
     padding: 10px 0;
-    position: fixed;
+    position:static;
     bottom: 0;
     width: 100%;
     z-index: 1;
@@ -5504,4 +5504,8 @@ a.guest-on i {
 
 .padding-top22 {
     padding-top: 22px
+}
+
+.text-bold {
+    font-weight: bold;
 }

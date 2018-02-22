@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ClienteViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Clientes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -38,8 +38,8 @@
         var cliente = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
         $(document).ready(function () {
             $('#clientes').datatable({
-                columnsHead: ['', 'Identificación', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'Tipo cliente', 'RUC'],
-                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Identificacion', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'tipocliente', 'Numeroruc'],
+                columnsHead: ['', 'Identificación', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'Tipo cliente'],
+                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Identificacion', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'tipocliente'],
                 data: cliente,
                 pag: 1,
                 rows: 10,

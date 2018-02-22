@@ -17,7 +17,7 @@ namespace mvcIpsa.Models
         public short Nestado { get; set; }
         public short Ncentrocosto { get; set; }
         public string centrocostoDescripcion { get; set; }
-        public int idCaja { get; set; }        
+        public int CajaId { get; set; }        
         public string cajaDescripcion { get; set; }
     }
 

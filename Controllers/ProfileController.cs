@@ -19,15 +19,15 @@ namespace mvcIpsa.Controllers
         }
         public IActionResult Index()
         {
-            var perfiles = db.Profile.Include(p => p.IdcajaNavigation).ToList().Select(p => new ProfileViewModel
+            var perfiles = db.Profile.Include(p => p.Caja).ToList().Select(p => new ProfileViewModel
             {
                 Username = p.Username,
                 Nombre = p.Nombre,
                 Apellido = p.Apellido,
                 Correo = p.Correo,
                 Nestado = p.Nestado,
-                cajaDescripcion = p.IdcajaNavigation.Description,
-                idCaja = p.Idcaja.Value,               
+                cajaDescripcion = p.Caja.Description,
+                CajaId = p.CajaId,               
                 Ncentrocosto = p.Ncentrocosto,
                 centrocostoDescripcion = "IPSA Central"
             }).Where(p => p.Nestado == 1);
@@ -73,7 +73,7 @@ namespace mvcIpsa.Controllers
                 profile.Nombre = profileClient.Nombre;
                 profile.Apellido = profileClient.Apellido;
                 profile.Correo = profileClient.Correo;
-                profile.Idcaja = profileClient.Idcaja;
+                profile.CajaId = profileClient.CajaId;
                 //profile.CopyFromExcept(profile, x => new
                 //{
                 //    x.Username,
@@ -89,7 +89,7 @@ namespace mvcIpsa.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
-            var profile = db.Profile.Include(p => p.IdcajaNavigation).Where(p => p.Username == id);
+            var profile = db.Profile.Include(p => p.Caja).Where(p => p.Username == id);
 
             var result = profile.Select(p => new ProfileViewModel
             {
@@ -98,8 +98,8 @@ namespace mvcIpsa.Controllers
                 Apellido = p.Apellido,
                 Correo = p.Correo,
                 Nestado = p.Nestado,
-                cajaDescripcion = p.IdcajaNavigation.Description,
-                idCaja = p.Idcaja.Value,
+                cajaDescripcion = p.Caja.Description,
+                CajaId = p.CajaId,
                 Ncentrocosto = p.Ncentrocosto,
                 centrocostoDescripcion = "IPSA Central"
             }).FirstOrDefault();
@@ -108,7 +108,7 @@ namespace mvcIpsa.Controllers
             var roles = await db.Profilerole
                 .Join(
                     db.Role,
-                    profilerole => profilerole.Idrole,
+                    profilerole => profilerole.RoleId,
                     role => role.Id,
                     (profilerole, role) => new { profilerole, role }
                 )
@@ -135,7 +135,7 @@ namespace mvcIpsa.Controllers
         public async Task<ActionResult> EditRols(string id)
         {
             Profile profile = await db.Profile.FindAsync(id);
-            int[] memberIDs = db.Profilerole.Where(x => x.Username == id).Select(x=>x.Idrole).ToArray();
+            int[] memberIDs = db.Profilerole.Where(x => x.Username == id).Select(x=>x.RoleId).ToArray();
             IEnumerable<Role> members = db.Role.Where(x => memberIDs.Any(y => y == x.Id)).Where(m => m.Nestado == 1);
             IEnumerable<Role> nonMembers = db.Role.Except(members).Where(m=>m.Nestado==1);
 
@@ -155,13 +155,13 @@ namespace mvcIpsa.Controllers
                
                 foreach (int rolId in model.IdsToAdd ?? new int[] { })
                 {
-                    var profilerole = new Profilerole { Idrole = rolId, Username = model.username };
+                    var profilerole = new Profilerole { RoleId = rolId, Username = model.username };
                     db.Add(profilerole);
                 }
                 
                 foreach (int rolId in model.IdsToDelete ?? new int[] { })
                 {
-                    var profilerole = db.Profilerole.Where(p => p.Username == model.username && p.Idrole == rolId).FirstOrDefault();
+                    var profilerole = db.Profilerole.Where(p => p.Username == model.username && p.RoleId == rolId).FirstOrDefault();
                     if (profilerole != null)
                     {
                         db.Profilerole.Remove(profilerole);

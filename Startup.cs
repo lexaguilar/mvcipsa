@@ -16,7 +16,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace mvcIpsa
 {
+    using Microsoft.AspNetCore.Localization;
     using mvcIpsa.Extensions;
+    using System.Globalization;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -66,27 +69,30 @@ namespace mvcIpsa
                     });
                 });
             });
+            string enUSCulture = "en-US";
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(19466);
+
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            //if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            //else
+            //{
+               // app.UseExceptionHandler("/Home/Error");
+            //}
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
-
+            //app.UseRequestLocalization();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

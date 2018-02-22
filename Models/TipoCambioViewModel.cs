@@ -9,9 +9,8 @@ namespace mvcIpsa.Models
     {
         public string fecha { get; set; }
         public string valor { get; set; }
-
         public decimal precio { get; set; }
-
         public int cantidad { get; set; }
+        public bool udpated { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace mvcIpsa.Extensions
         {
             public const string username = "username";
             public const string ncentrocosto = "ncentrocosto";
-            public const string idcaja = "ncaja";
+            public const string cajaid = "ncaja";
             public const string description = "description";
             public const string Token = "Token";
             public const string roles = "roles";
@@ -25,7 +25,7 @@ namespace mvcIpsa.Extensions
             var claims = new ClaimsIdentity(
                 new Claim[] {
                                 new Claim(ClaimTypes.Name,usr.username),
-                                new Claim(AppClaimTypes.idcaja,usr.idcaja.ToString()),
+                                new Claim(AppClaimTypes.cajaid,usr.cajaid.ToString()),
                                 new Claim(AppClaimTypes.description,usr.description.ToString()),
                                 new Claim(AppClaimTypes.ncentrocosto,usr.ncentrocosto.ToString()),                                     
                                 new Claim(AppClaimTypes.roles,String.Join(",", usr.roles))
@@ -46,8 +46,8 @@ namespace mvcIpsa.Extensions
                 if (claim.Type == AppClaimTypes.description)
                     usr.description = Convert.ToString(claim.Value);
 
-                if (claim.Type == AppClaimTypes.idcaja)
-                    usr.idcaja = Convert.ToInt32(claim.Value);
+                if (claim.Type == AppClaimTypes.cajaid)
+                    usr.cajaid = Convert.ToInt32(claim.Value);
 
                 if (claim.Type == AppClaimTypes.ncentrocosto)
                     usr.ncentrocosto = Convert.ToInt32(claim.Value);
@@ -65,7 +65,7 @@ namespace mvcIpsa.Extensions
     {
         public string username { get; set; }
         public int ncentrocosto { get; set; }
-        public int idcaja { get; set; }
+        public int cajaid { get; set; }
         public int[] roles { get; set; }
         internal string Token { get; set; }
         public string description { get; set; }

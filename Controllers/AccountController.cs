@@ -71,15 +71,28 @@ namespace mvcIpsa.Controllers
                     return View("Login2",model);
                 }
 
-                var roles = db.Profilerole.Where(r => r.Username == model.username).Select(r=>r.Idrole).ToArray();
-                var caja = db.Caja.Find(result.Idcaja);
+                if (result.Nestado == 91)
+                {
+                    ModelState.AddModelError(string.Empty, "Usuario bloqueado.");
+                    return View("Login2", model);
+                }
+
+                var roles = db.Profilerole.Where(r => r.Username == model.username).Select(r=>r.RoleId).ToArray();
+
+                if (roles.Length==0)
+                {
+                    ModelState.AddModelError(string.Empty, "El usuario no tiene permisos asignados, contacte al administrador de sistemas");
+                    return View("Login2", model);
+                }
+
+                var caja = db.Caja.Find(result.CajaId);
                 svcUser = new AppUser()
                 {
                     username = result.Username,
                     ncentrocosto = result.Ncentrocosto,
                     Token = model.Password,
                     roles = roles,
-                    idcaja = result.Idcaja.Value,
+                    cajaid = result.CajaId,
                     description = caja.Description
                 };
 
@@ -113,7 +126,7 @@ namespace mvcIpsa.Controllers
         public async Task<IActionResult> Info()
         {
             var user = this.GetServiceUser();
-            var Caja = db.Caja.Find(user.idcaja);
+            var Caja = db.Caja.Find(user.cajaid);
 
             ViewBag.Caja = Caja.Description;
             return PartialView("_Info");
@@ -162,6 +175,38 @@ namespace mvcIpsa.Controllers
             return View();
         }
 
+        [HttpGet]
+        [Authorize]
+        public IActionResult ChangePassword()
+        {        
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {              
+                var profile = db.Profile.Find(model.username);
+
+                var OldPasswordHashedOriginal = profile.Password;
+                var OldPasswordHashedDigit = UrlHelperExtensions.getPasswordHashed(model.OldPassword);
+
+                if (OldPasswordHashedDigit != OldPasswordHashedOriginal)
+                {
+                    ModelState.AddModelError("Credenciales","La contraseña anterior no conincide con la actual");
+                    return View(model);
+                }
+
+                profile.Password = UrlHelperExtensions.getPasswordHashed(model.NewPassword);               
+                await db.SaveChangesAsync();      
+                
+                return RedirectToAction("Index", "Home");
+            }
+            return View(model);
+        }
         #region Helpers
 
         private void AddErrors(IdentityResult result)

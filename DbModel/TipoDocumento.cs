@@ -5,7 +5,7 @@ namespace mvcIpsa.DbModel
 {
     public partial class TipoDocumento
     {
-        public int TipoDoc { get; set; }
+        public int Id { get; set; }
         public string Descripcion { get; set; }
     }
 }

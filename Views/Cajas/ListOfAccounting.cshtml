@@ -4,12 +4,43 @@
     ViewData["Title"] = "ListOfAccounting";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section Styles
+    {
+    <environment include="Development">      
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+        <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
+        <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
+        <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+    </environment>
+    <environment exclude="Development">       
+        <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
+        <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
+        <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
+        <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+    </environment>
+}
+<style>
+    .mdl-dialog {
+        max-height: 500px;
+        min-height: 500px;
+        width: 880px
+    }
+    #cuentas > tbody > tr > td {
+        font-size: 11px;
+    }
+    .resalto{
+        background-color:aqua;
+    }
+</style>
+
 <div class="wrapper">
     <section class="panel animated slideInLeft">
         <header class="panel-heading">
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <h2><span class="fa fa-caret-right"></span> Cuentas de la caja <code>@Model.description</code></h2>
+                    <h2><span class="fa fa-caret-right"></span> Cuentas de la caja <code>@Model.description</code></h2> 
+                    <button onclick="addAccount()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"><span class="fa fa-plus"></span> Agregar una cuenta a la caja</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><span class="fa fa-remove"></span> Elimniar una cuenta a la caja</button>
                 </div>
             </div>
             
@@ -50,15 +81,11 @@
                                         <tr>
                                             <td>@members.Padre</td>
                                             <td>@members.Nombre</td>
-                                            <td>@members.Cuenta</td>
-                                            
+                                            <td>@members.Cuenta</td>                                            
                                         </tr>
                                     }
-
                                 }
-
                         </table>
-                        <button class="btn btn-success btn-block" type="submit"><i class="fa fa-check"></i> Guardar </button>
                     </div>
                 </div>
             </div>
@@ -68,5 +95,153 @@
                 </div>
             </div>
         </form>
+
     </section>
+    <dialog class="mdl-dialog">
+        <h4 class="mdl-dialog__title">Buscar una cuenta</h4>
+        
+        <div class="mdl-dialog__content" style="max-height:380px;min-height:380px;overflow:scroll">         
+
+            <div class="row">
+                <div class="col-md-6">
+                    <input id="searchRow" onkeyup="search(this)" indice="2" class="form-control col-md-6" type="text" placeholder="Buscar por nombre de la cuenta" />
+                </div>
+                <div class="col-md-6">
+                    <input id="searchRow" onkeyup="search(this)" indice="3"  class="form-control col-md-6" type="text" placeholder="Buscar cuenta contable" />
+                </div>
+            </div>
+            <br />
+            
+            <div class="mdl-spinner mdl-js-spinner is-active" id="waiting" style="margin:auto;left:50%;top:100px"></div>
+           
+            <table class="table table-hover table-striped table-responsive" id="cuentas" style="max-height:350px;overflow:scroll">
+              
+            </table>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="addAccounts();">Agregar</button>
+            <button type="button" class="mdl-button" onclick="cerrar();">Cancelar</button>
+        </div>
+    </dialog>
 </div>
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
+        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.min.js"></script>
+        <script src="~/lib/material-design-lite/material.min.js"></script>
+        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+    </environment>
+    <script>       
+        var dialog = document.querySelector('dialog');
+        var id = '@Model.idCaja';
+        var addAccount = () => {
+            
+            //var showDialogButton = document.querySelector('#show-dialog');
+            if (!dialog.showModal) {
+                dialogPolyfill.registerDialog(dialog);
+            }
+            $('#cuentas').html('');
+            dialog.showModal();
+
+            $('#waiting').show();
+            $.get(pathBase + `Cajas/GetAccounting/${id}`, null, function (data) {
+                var head = ' <thead><tr><th></th><th>Cuenta padre</th><th>Nombre de la cuenta</th><th>Cuenta contable</th></tr></thead>';
+                var tr = '';
+                data.forEach(cuenta => {
+                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.padre + '</td>' + '<td>' + cuenta.nombre + '</td>' + '<td>' + cuenta.ctaContable + '</td>' + '</tr>';
+                });
+                $('#cuentas').html(head + '<tbody>' + tr + '</tbody>');
+
+                $('#waiting').hide();
+
+                //table = document.getElementById("cuentas");
+                //tr = table.getElementsByTagName("tr");
+                //for (i = 0; i < tr.length; i++) {
+                //    td = tr[i].getElementsByTagName("td")[2];
+                //    if (td) {
+                //        td.setAttribute("htmlText", td.innerHTML);
+                //    }
+                //    td = tr[i].getElementsByTagName("td")[3];
+                //    if (td) {
+                //        td.setAttribute("htmlText", td.innerHTML);
+                //    }
+                //}
+
+                componentHandler.upgradeDom();
+
+            });
+
+        }
+
+        var cerrar = () => {
+            dialog.close();
+        }
+
+        var timer;
+
+        var callSearch = el => {
+            var input, filter, table, tr, td, i;
+            input = el;//document.getElementById("searchRow");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("cuentas");
+            tr = table.getElementsByTagName("tr");
+
+
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[el.getAttribute("indice")];
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+
+                       // td.innerHTML = td.getAttribute("htmlText").toUpperCase().replace(filter, '<span class="resalto">' + filter + '</span>');
+                        tr[i].style.display = "";
+                    } else {
+                       // td.innerHTML = td.innerHTML.replace('<span class="resalto">' + filter + '</span>', filter);
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        var search = el => {
+            callSearch(el);
+            //window.clearTimeout(timer);
+            //timer = window.setTimeout(callSearch, 600, el);
+        }
+
+        var addAccounts = () => {
+            var CtaContables = [];
+            var t = $('#cuentas tbody tr')
+            t.each(function (i, e) {
+                if ($(this).find("td:eq(0)").find('label').find('input').is(':checked')) {
+                    CtaContables.push($(this).find("td:eq(3)").text());
+                }                
+            });
+            if (CtaContables.length) {
+                $.ajax({
+                    url: pathBase + `Cajas/AddAccounting/${id}`,
+                    type: 'POST',
+                    dataType: 'json',                  
+                    data: {
+                        CtaContables: CtaContables
+                    },
+                    success: function (data) {                       
+                        dialog.close();
+                        document.location.reload();
+                    }
+                });
+            }
+            
+
+        }
+    </script>
+}

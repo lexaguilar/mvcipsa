@@ -54,7 +54,7 @@
 }
 .cuenta {
     color: #137fd5;
-    font-size: 17px;
+    font-size: 15px;
 }
 .editable-input {
     padding: 2px 0px;
@@ -70,9 +70,12 @@
 .description {
     font-weight: bold;
     margin: 0 0 0px;
+    line-height: 17px;
+    font-size: 12px;
 }
 .descriptionPadre {
-font-size:11px;
+    font-size: 11px;
+    margin: 0 0 2px;
 }
 
 .user {
@@ -126,5 +129,16 @@ font-size:11px;
 .account {
     color: rgba(255, 255, 255, 0.61);
     text-shadow: 0 1px 0 #7d7d7d;
+}
+
+.nombreCliente {
+    margin: 0 0 0px;
+    font-size: 12px;
+}
+
+.cedulaCliente {
+    color: #137fd5;
+    font-weight: bold;
+    font-size: 14px;
 }
 

@@ -12,6 +12,9 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.Identificacion)
+        </dt>
+        <dt>
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
         <dd>
@@ -40,22 +43,16 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Direccion)
-        </dd>
+        </dd>       
         <dt>
-            @Html.DisplayNameFor(model => model.Numeroruc)
+            @Html.DisplayNameFor(model => model.TipoCliente)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Numeroruc)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.IdtipoclienteNavigation)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.IdtipoclienteNavigation.Idtipocliente)
+            @Html.DisplayFor(model => model.TipoCliente.Id)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Identificacion">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

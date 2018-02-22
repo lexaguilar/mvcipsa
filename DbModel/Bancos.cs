@@ -8,7 +8,6 @@ namespace mvcIpsa.DbModel
         public Bancos()
         {
             BancosCuentas = new HashSet<BancosCuentas>();
-            IngresosEgresosCaja = new HashSet<IngresosEgresosCaja>();
         }
 
         public int Bancoid { get; set; }
@@ -17,6 +16,5 @@ namespace mvcIpsa.DbModel
         public int? Orden { get; set; }
 
         public ICollection<BancosCuentas> BancosCuentas { get; set; }
-        public ICollection<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
     }
 }

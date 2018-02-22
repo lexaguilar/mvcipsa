@@ -1,25 +1,27 @@
 ﻿@using mvcIpsa.DbModel
 @model IngresosEgresosCaja
 @{
-    ViewData["Title"] = "crear";
+    ViewData["Title"] = "Crear recibo";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Styles
 {
-    <environment include="Development">
+<environment include="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link href="~/css/animate.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+    <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+</environment>
+<environment exclude="Development">
         <link href="~/css/selectize.css" rel="stylesheet">
         <link href="~/css/animate.css" rel="stylesheet">
         <link href="~/css/site.css" rel="stylesheet">
         <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
         <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-    </environment>
-    <environment exclude="Development">      
-        <link href="~/css/selectize.css" rel="stylesheet">
-        <link href="~/css/animate.css" rel="stylesheet">
-        <link href="~/css/site.css" rel="stylesheet">
-        <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
-        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-    </environment>
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+</environment>
 }
 <div class="wrapper">
     <div class="chat-room">
@@ -33,142 +35,172 @@
             <div class="room-desk">               
                 <div class="room-box">
                     <form method="post" asp-action="Create">
-                        <input type="hidden" asp-for="Idrecibo" class="master" />
+                        <input type="hidden" asp-for="Id" class="master" />
                         <div class="panel-body">
                             <div class="row">
                                 <div>
                                     <div class="col-lg-12">
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="Idtipopago" class="control-label"></label>
-                                            <select data-error-message="Seleccione el Tipo de pago" asp-for="Idtipopago" class="select master" asp-items="ViewBag.Idtipopago"><option value="" disabled selected>--Seleccione--</option></select>
-
-                                            <span asp-validation-for="Idtipopago" class="text-danger"></span>
-                                        </div>
-                                        <div class="form-group col-lg-3 col-lg-offset-6">
                                             <label asp-for="FechaProceso" class="control-label"></label>
-                                            <input data-error-message="Seleccione la fecha de proceso" type="text" asp-for="FechaProceso" class="form-control master datepicker" />
+                                            <input data-required="true" data-error-message="Seleccione la fecha de proceso" type="text" asp-for="FechaProceso" class="form-control master datepicker" />
                                             <span asp-validation-for="FechaProceso" class="text-danger"></span>
                                         </div>
-                                    </div>
-
-                                    <div class="col-lg-12">
-                                        <div class="form-group col-lg-3 monto Montoefectivo">
-                                            <label asp-for="Montoefectivo" class="control-label"></label>
-                                            <input type="number" asp-for="Montoefectivo" class="form-control master clear-monto" />
-                                            <span asp-validation-for="Montoefectivo" class="text-danger"></span>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="NoOrdenPago" class="control-label"></label>
+                                            <input asp-for="NoOrdenPago" class="form-control master" />
+                                            <span asp-validation-for="NoOrdenPago" class="text-danger"></span>
                                         </div>
-                                        <div class="form-group col-lg-3 monto Montocheque">
-                                            <label asp-for="Montocheque" class="control-label"></label>
-                                            <input type="number" asp-for="Montocheque" class="form-control master clear-monto" />
-                                            <span asp-validation-for="Montocheque" class="text-danger"></span>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="TipoMonedaId" class="control-label"></label>
+                                            <select asp-for="TipoMonedaId" class="select master" asp-items="ViewBag.TipoMonedaId"></select>
+                                            <span asp-validation-for="TipoMonedaId" class="text-danger"></span>
                                         </div>
-                                        <div class="form-group col-lg-3 monto Montominuta">
-                                            <label asp-for="Montominuta" class="control-label"></label>
-                                            <input type="number" asp-for="Montominuta" class="form-control master clear-monto" />
-                                            <span asp-validation-for="Montominuta" class="text-danger"></span>
-                                        </div>
-                                        <div class="form-group col-lg-3 monto Montotransferencia">
-                                            <label asp-for="Montotransferencia" class="control-label"></label>
-                                            <input type="number" asp-for="Montotransferencia" class="form-control master clear-monto" />
-                                            <span asp-validation-for="Montotransferencia" class="text-danger"></span>
-                                        </div>
-                                       
-                                        <div class="form-group col-lg-3 monto Noreferencia">
-                                            <label asp-for="Noreferencia" class="control-label lblNoreferencia"></label>
-                                            <input asp-for="Noreferencia" class="form-control master"/>
-                                            <span asp-validation-for="Noreferencia" class="text-danger"></span>
-                                        </div>
-                                        <div class="form-group col-lg-3 monto Cuentabanco">
-                                            <label asp-for="Cuentabanco" class="control-label"></label>
-                                            <input asp-for="Cuentabanco" class="form-control master" />
-                                            <span asp-validation-for="Cuentabanco" class="text-danger"></span>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="TipoIngresoId" class="control-label"></label>
+                                            <select data-required="true" data-error-message="Seleccione el tipo de ingreso" asp-for="TipoIngresoId" class="select master" asp-items="ViewBag.TipoIngresoId"></select>
+                                            <span asp-validation-for="TipoIngresoId" class="text-danger"></span>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-12">
-                                        <div class="form-group col-lg-3">
-                                            <label asp-for="Noordenpago" class="control-label"></label>
-                                            <input data-error-message="Ingrese el número de orden de pago" asp-for="Noordenpago" class="form-control master" />
-                                            <span asp-validation-for="Noordenpago" class="text-danger"></span>
-                                        </div>
-                                        <div class="form-group col-lg-3 col-lg-offset-6">
-                                            <label asp-for="Idtipomoneda" class="control-label"></label>
-                                            <select asp-for="Idtipomoneda" class="select master" asp-items="ViewBag.Idtipomoneda"></select>
-                                            <span asp-validation-for="Idtipomoneda" class="text-danger"></span>
-                                        </div>
+
+                                    </div>
+
+                                    <div class="col-lg-12">
+
                                     </div>
 
                                     <div class="col-lg-12">
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="Idtipoingreso" class="control-label"></label>
-                                            <select data-error-message="Seleccione el tipo de ingreso" asp-for="Idtipoingreso" class="select master" asp-items="ViewBag.Idtipoingreso"></select>
-                                            <span asp-validation-for="Idtipoingreso" class="text-danger"></span>
+                                            <label class="control-label">Identificación</label>
+                                            <select class="master" data-error-message="Seleccione un cliente" asp-for="ClienteId"><option value="">Seleccione</option></select>
                                         </div>
-                                    </div>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="TipoCleinteId" class="control-label"></label>
+                                            <select asp-for="TipoCleinteId" class="select master" asp-items="ViewBag.TipoCliente"></select>
+                                            <span asp-validation-for="TipoCleinteId" class="text-danger"></span>
 
-                                    <div class="col-lg-12">
-                                        <div class="form-group col-lg-3">
-                                            <label  class="control-label">Identificación</label>
-                                            <select class="master" data-error-message="Seleccione un cliente" asp-for="Identificacioncliente" ><option value="">Seleccione</option></select>                                            
-                                        </div>
-                                        <div class="form-group col-lg-3">
-                                            <label class="control-label" >Tipo cliente</label>
-                                            <input class="form-control" id="tipoCliente"/>
+
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label class="control-label" >Beneficiario</label>
-                                            <input asp-for="Cuentacontablebanco" class="form-control master"/>
+                                            <label class="control-label">Beneficiario</label>
+                                            <input data-required="true" data-error-message="Ingrese un beneficiario" asp-for="Beneficiario" class="form-control master" />
                                         </div>
                                         <div class="form-group col-lg-12">
                                             <label asp-for="Concepto" class="control-label"></label>
-                                            <input data-error-message="Ingrese el concepto" asp-for="Concepto" class="form-control master" />
+                                            <input data-required="true" data-error-message="Ingrese el concepto" asp-for="Concepto" class="form-control master" />
                                             <span asp-validation-for="Concepto" class="text-danger"></span>
                                         </div>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="Muestra" class="control-label"></label>
+                                            <input asp-for="Muestra" class="form-control master" />
+                                            <span asp-validation-for="Muestra" class="text-danger"></span>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-                        <div class="panel-body">
-                            <section class="panel">
-                                <div class="col-sm-12">
-                                    <header class="panel-heading">
-                                        Venta de servicios
-                                    </header>
-                                    <table id="servicios" class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>                                                                                             
-                                                <th class="w20">Tipo de servicio</th>                                               
-                                                <th>Precio</th>
-                                                <th>Cantidad </th>
-                                                <th>Dolares</th>
-                                                <th>Cordobas</th>                                               
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody></tbody>
-                                        <tfoot><tr><td colspan="10"><button type="button" class="btn btn-primary w100" onclick="addNewRow();"><span class="fa fa-plus"></span> Agregar otro servicio</button></td></tr></tfoot>
-                                    </table>
-                                    <div class="row">
-                                        <div class="col-lg-4 pull-left">
-                                            <label asp-for="Bancoid" class="control-label"></label>
-                                            <select data-error-message="Seleccione un banco" asp-for="Bancoid" class="select master" asp-items="ViewBag.Banco"><option value="">Seleccione</option></select>
-                                            <span asp-validation-for="Bancoid" class="text-danger"></span>
+                       
+                        
+                        <section class="panel" style="margin: 20px 28px;box-shadow: 6px 6px 15px 2px rgba(0, 0, 0, 0.05);">
+                            <header class="panel-heading tab-bg-dark-navy-blue ">
+                                <ul class="nav nav-tabs">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#services"><span class="fa fa-list"></span> Servicios</a>
+                                    </li>
+                                    <li class="">
+                                        <a data-toggle="tab" href="#detailsPay"><span class="fa fa-money"></span> Detalle de pago</a>
+                                    </li>
+                                </ul>
+                            </header>
+                            <div class="panel-body">
+                                <div class="tab-content">
+                                    <div id="services" class="tab-pane active">
+                                        <div class="panel-body">
+                                            <section class="panel">
+                                                <div class="col-sm-12">
+                                                    <table id="servicios" class="table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="w20">Tipo de servicio</th>
+                                                                <th>Precio</th>
+                                                                <th>Cantidad </th>
+                                                                <th>Dolares</th>                                                                
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td colspan="10">
+
+                                                                    <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-primary w100" onclick="addNewRow();"><span class="fa fa-plus"></span> Agregar otro servicio</button>
+                                                                </td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </section>
                                         </div>
-                                        <div class="col-lg-4 invoice-block pull-right">
-                                            <ul class="unstyled amounts">
-                                                <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
-                                                <li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>                                                
-                                            </ul>
+                                    </div>
+                                    <div id="detailsPay" class="tab-pane">
+                                        <div class="panel-body">
+                                            <section class="panel">
+                                                <div class="col-sm-12">
+                                                    <table id="referencias" class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Fecha</th>
+                                                                <th>Tipo pago</th>
+                                                                <th>Banco</th>
+                                                                <th>Referencia</th>
+                                                                <th>Efectivo</th>
+                                                                <th>Cheque</th>
+                                                                <th>Minuta</th>
+                                                                <th>Transf</th>
+                                                                <th>Tipo Cambio</th>
+                                                                <th>C$</th>
+                                                                <th>$</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th></th>
+                                                                <td colspan="8"><button type="button" id="btnAddReference" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect  btn-block btn-primary">Agregar una referencia</button></td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </section>
                                         </div>
                                     </div>
                                 </div>
-                            </section>
-                        </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 invoice-block pull-right">
+                                    <ul class="unstyled amounts amountsDetalle">
+                                        <li class="text-left"><strong>Detalle de pago</strong></li>
+                                        <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
+                                        @*<li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>*@
+                                    </ul>
+                                </div>
+                                <div class="col-lg-4 invoice-block pull-left">
+                                    <ul class="unstyled amounts amountsServicio">
+                                        <li class="text-left"><strong>Servicios</strong></li>
+                                        <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
+                                        @*<li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>*@
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
                         <div class="panel-footer">
                             <div class="text-center invoice-btn">
                                 <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect pull-left" asp-action="index"><span class="fa fa-arrow-left"></span> Regresar</a>
-                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-success" type="button" onclick="save(this);"><span class="fa fa-check"></span> Guardar </button>                            
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-success" type="button" onclick="save(this);"><span class="fa fa-check"></span> Guardar </button>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-default" id="print" style="display: none" type="button" onclick="printReport(this);"><span class="fa fa-file"></span> Imprimir </button>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect btn-default pull-right" type="button" onclick="newRecibo();"><span class="fa fa-plus"></span> Nuevo </button>
                             </div>
                         </div>
                     </form>
@@ -193,69 +225,102 @@
                         Estado :
                         <span class="text-muted">Pendiente</span>
                     </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <i class="fa fa-money text-success"></i>
-                        Tipo cambio:
-                        <span class="text-muted" id="TasaDelDia">@ViewBag.TasaDelDia</span>
-                    </a>
-                </li>              
+                </li>                              
             </ul>
         </aside>
     </div>
 </div>
 @section Scripts
 {
-    <environment include="Development">
-        <script src="~/js/site.js"></script>
-        <script src="~/js/selectize.js"></script>
-        <script src="~/js/bootstrap-editable.min.js"></script>
-        <script src="~/lib/numeral/src/numeral.js"></script>
-        <script src="~/lib/material-design-lite/material.js"></script>
-        <script src="~/js/notify.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="~/js/site.js"></script>
-        <script src="~/js/selectize.js"></script>
-        <script src="~/js/bootstrap-editable.min.js"></script>
-        <script src="~/lib/numeral/src/numeral.js"></script>
-        <script src="~/lib/material-design-lite/material.js"></script>
-        <script src="~/js/notify.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
-    </environment>
+<environment include="Development">
+    <script src="~/js/site.js"></script>
+    <script src="~/js/selectize.js"></script>
+    <script src="~/js/bootstrap-editable.min.js"></script>
+    <script src="~/lib/numeral/src/numeral.js"></script>
+    <script src="~/lib/material-design-lite/material.js"></script>
+    <script src="~/js/notify.js"></script>
+    <script src="~/lib/moment/moment.js"></script>  
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/site.js"></script>
+    <script src="~/js/selectize.js"></script>
+    <script src="~/js/bootstrap-editable.min.js"></script>
+    <script src="~/lib/numeral/src/numeral.js"></script>
+    <script src="~/lib/material-design-lite/material.js"></script>
+    <script src="~/js/notify.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+</environment>
 
 
     <script>
+       
+        var referencias = [];
+        var detalle = [];  
+
+               
+
+        $('#btnSaveReferences').click(function () {
+            referencias = [];
+            $('#referencias tbody tr').each(function (index, element) {
+
+                let fecha = $(this).find("td:eq(0)").find('input').val();
+                let noreferencia = $(this).find("td:eq(1)").find('a').editable('getValue').referencia;
+                let monto = $(this).find("td:eq(2)").find('a').editable('getValue').monto;
+                let cuentabanco = $(this).find("td:eq(3)").find('a').editable('getValue').banco;
+            
+                referencias.push({
+                    fecha,
+                    noreferencia,
+                    monto,
+                    cuentabanco
+                });            
+            }); 
+            $('#referencesModal').modal('hide');
+            $('#countReferencias').html(referencias.length + ' referencias');
+            //countReferencias
+        });
+           
+        $('#btnAddReference').click(function () {
+            $('#referencias').addNewReference();
+        });
+        
+
         var now = moment();
         $('.datepicker')
             .val(now.format("DD-MM-YYYY"))
             .datepicker({
                 autoclose: true,
-                format: 'dd-mm-yyyy'
+                format: 'dd-mm-yyyy',
+                language: 'es'
          });
 
         var servicios = @Html.Raw(Json.Serialize(ViewBag.servicios, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
         var clientes = @Html.Raw(Json.Serialize(ViewBag.clientes, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
-        var detalle = [];
-        var tasaCambio = @ViewBag.TasaDelDia;
+             
         var NumRecibo = @ViewBag.NumRecibo;
 
 
         $(document).ready(function () {
             addNewRow();
             var selectClient = function () {
+               
                 return function () {
                     var selectize = $cliente[0].selectize;
-                    $.map(selectize.items, function (value) {      
-                        $('#tipoCliente').val(selectize.options[value].tipoCliente);
+                    $.map(selectize.items, function (value) {   
+
+                        var _selectize = $select[2].selectize;
+                        _selectize.setValue(selectize.options[value].idTipo, false);
+                     
                         $('#Beneficiario').val(selectize.options[value].nombre);
                     });
                 };
             };
-            var $cliente = $('#Identificacioncliente').selectize({
-                valueField: 'identificacion',
+            var $cliente = $('#ClienteId').selectize({
+                valueField: 'Id',
                 labelField: 'identificacion',
                 searchField: 'nombre',
                 options: clientes,
@@ -263,144 +328,63 @@
                     option: function (item, escape) {
                         return '<div>' +
                             '<span class="title">' +
-                            '<span class="cuenta"><i class="fa fa-user"></i> ' + escape(item.identificacion) + '</span>' +
+                            '<span class="cedulaCliente"><i class="fa fa-user"></i> ' + escape(item.identificacion) + '</span>' +
                             '</span>' +
-                            '<p class="description">' + escape(item.nombre) + '</p>' +
+                            '<p class="nombreCliente">' + escape(item.nombre) + '</p>' +
                             '</div>';
                     }
                 },
                 onChange: selectClient()
+                
             });
         });
-        function addNewRow() {
-            var d = new Date();
-            var t = d.getTime();
-            $('#servicios').addNewRow(t);
 
-
-            $('.dolares, .cantidad, .precio, .cordobas').editable({
-                validate: function (value) {
-                    if ($.trim(value) == '')
-                        return 'El valor es requerido';
-                    if (!isNumber($.trim(value)))
-                        return 'El valor debe ser numerico';
-                },
-                display: function (value) {
-                    $(this).text(parseFloat(value).toFixed(2));
-                }                
-            });
-
-
-
-
-            $('.selector' + t).on("shown", function (e, editable) {
-                editable.input.postrender = function () {
-                    editable.input.$input.select();
-                };
-            });
-
-
-            $('.selector' + t).on('hidden', function (e, reason) {
-                if (reason === 'save')
-                    calculate();
-
-                if (e.target.className.toString().indexOf("precio") >= 0) {
-                    let selector = e.target.classList[2];
-                    let elemt = $('.' + selector + '')[1];
-                    $(elemt).editable('toggle');
-                }
-            });
-
-            selectAccount(t);
-            $('.select40').removeClass('data-ajax');
-            $('.select20').removeClass('fuente');
+        function addNewRow() {           
+            $('#servicios').addNewServicio();         
         }
+
         var $select ={}
-        var selectAccount = function (t) { 
-            $select[t] = $('.data-ajax').selectize({
-                valueField: 'Cuenta',
-                labelField: 'Nombre',
-                searchField: 'Nombre',
-                options: servicios.slice(0,1000),
-                create: false,
-                render: {
-                    option: function (item, escape) {
-
-                        return '<div>' +
-                            '<span class="title">' +
-                            '<span class="cuenta"><i class="fa fa-book"></i> ' + escape(item.Cuenta) + '</span>' +
-                            '</span>' +
-                            '<p class="description"><i class="fa fa-' + (item.TipoCta != 4 ? "user user" :"money money")+'"></i> ' + escape(item.Nombre) + '</p>' +
-                            '<p class="descriptionPadre">' + escape(item.padre) + '</p>' +
-                            '</div>';
-                    },
-                    item: function (item, escape) {
-                        return '<div>' +
-                            ('<span class="name">' + escape(item.Nombre) + '</span>') +
-                            ('<span class="account">' + escape(item.Cuenta) + '</span>') +
-                            '</div>';
-                    },
-                },
-                //onChange: eventHandler()
-            });
-            var selectizePre = $select[t][0].selectize;
-
-
-            $('.data-ajax').change(function () {
-                $(this).blur();
-                var selector = $(this).data('selector');
-                var elemt = $('.' + selector + '')[0];
-                $(elemt).editable('toggle');
-            });          
-        }
-        Monto.hidden();
-        $('#Idtipopago').change(function () {          
-            Monto['tipo' + $(this).val()]();
-        });
-             
-        $('.select').selectize();
+        var $select = $('.select').selectize();
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('#FechaProceso').change(function (e) {
-                var d = moment(this.value, 'DD-MM-YYYY').utc().format()
-                console.log(d);
-                $.get(pathBase + "IngresosEgresosCajas/FindTipoCambio", { fecha: d },
-                    function (data, textStatus, jqXHR) {
-                        tasaCambio = data.dolares;
-                        $('#TasaDelDia').text(data.dolares);                        
-                    },
-                    "json"                    
-                ).fail(function (xhr, status, error) {
-                    $('#TasaDelDia').text('No hay datos');
-                });
-            });
-        });     
+      
 
         var save = (b) => {
             if (fieldsIsValid('master')) {
-                $(b).saving();
+                calculate();
+                calcularDetallePago();  
+
                 var master = findEntity('master');
                 master['NumRecibo'] = NumRecibo;
-                var iECajaViewModel = { master: master, details: detalle };
-                console.log('entro1');
-                $.ajax({
-                    type: "POST",
-                    url: pathBase + "ingresosEgresosCajas/create",
-                    data: iECajaViewModel,
-                    dataType: "json",
-                    error: function (err) { 
-                        console.log(err);
-                    },
-                    success: function (response) {
-                        $(b).reset();
-                        window.location.href = pathBase + 'ingresosEgresosCajas';
-                    },
-                });
+                var iECajaViewModel = { master: master, details: detalle, referencias: referencias };  
+
+                var isValid = validateModel(master);
+                if (isValid) {
+                    $(b).saving();
+                    $.ajax({
+                        type: "POST",
+                        url: pathBase + "ingresosEgresosCajas/create",
+                        data: iECajaViewModel,
+                        dataType: "json",
+                        error: function (err) {
+                            $(b).html('<span class="fa fa-check"></span> Guardar ');
+                            $.notification(err.responseJSON);
+                        },
+                        success: function (response) {
+                            $(b).hide();
+                            $.notification('Se guardó correctamente el recibo ' + response.numRecibo , 'success');     
+                            Id.value = response.id;
+                            $('#print').show();                       
+                        },
+                    });
+                }
+                
             }
             
         }
+
+        
     </script>
 
 }

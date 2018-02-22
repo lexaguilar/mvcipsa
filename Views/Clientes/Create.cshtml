@@ -1,7 +1,7 @@
 ﻿@model mvcIpsa.DbModel.Cliente
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nuevo cliente";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,7 +10,7 @@
 <h4>Cliente</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 col-lg-offset-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -40,26 +40,21 @@
             </div>
             <div class="form-group">
                 <label asp-for="Direccion" class="control-label"></label>
-                <input asp-for="Direccion" class="form-control" />
+                <textarea asp-for="Direccion" cols="2" class="form-control"></textarea>              
                 <span asp-validation-for="Direccion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Idtipocliente" class="control-label"></label>
-                <select asp-for="Idtipocliente" class ="form-control" asp-items="ViewBag.Idtipocliente"></select>
-            </div>
+                <label asp-for="TipoClienteId" class="control-label"></label>
+                <select asp-for="TipoClienteId" class ="form-control" asp-items="ViewBag.TipoClienteId"></select>
+            </div>           
             <div class="form-group">
-                <label asp-for="Numeroruc" class="control-label"></label>
-                <input asp-for="Numeroruc" class="form-control" />
-                <span asp-validation-for="Numeroruc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Guardar" class="btn btn-success btn-block" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regresar a la lista</a>
 </div>
 

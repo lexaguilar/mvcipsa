@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace mvcIpsa.DbModel
 {
@@ -9,55 +8,36 @@ namespace mvcIpsa.DbModel
         public IngresosEgresosCaja()
         {
             IngresosEgresosCajaDetalle = new HashSet<IngresosEgresosCajaDetalle>();
+            IngresosEgresosCajaReferencias = new HashSet<IngresosEgresosCajaReferencias>();
         }
 
-        public int Idrecibo { get; set; }
-        public int Tipomov { get; set; }
-        public string Numrecibo { get; set; }
-        public short Nestado { get; set; }
-        [Required]
-        [Display(Name = "Tipo de pago")]
-        public int Idtipopago { get; set; }
-        
-        [Display(Name = "Monto efectivo")]
-        public decimal Montoefectivo { get; set; }
-        [Display(Name = "Monto cheque")]
-        public decimal Montocheque { get; set; }
-        [Display(Name = "Monto minuta")]
-        public decimal Montominuta { get; set; }
-        [Display(Name = "Monto tranferencia")]
-        public decimal Montotransferencia { get; set; }
-        [Display(Name = "Monto total")]
-        public decimal Monto { get; set; }
-        [Display(Name = "Mo. transferencia")]
-        public string Noreferencia { get; set; }
-        [Display(Name = "Banco")]
-        public string Cuentabanco { get; set; }
+        public int Id { get; set; }
+        public int TipoMovimientoId { get; set; }
+        public string NumRecibo { get; set; }
+        public short EstadoId { get; set; }
+        public decimal Total { get; set; }
         public string Concepto { get; set; }
-        [Display(Name = "No orden pago")]
-        public string Noordenpago { get; set; }
-        [Display(Name = "Tipo ingreso")]
-        public int? Idtipoingreso { get; set; }
-        [Display(Name = "Moneda")]
-        public int? Idtipomoneda { get; set; }
+        public string NoOrdenPago { get; set; }
+        public int? TipoIngresoId { get; set; }
+        public int? TipoMonedaId { get; set; }
         public string Username { get; set; }
-        public int? Bancoid { get; set; }
-        [Display(Name = "Cliente")]
-        public string Identificacioncliente { get; set; }
-        public string Cuentacontablebanco { get; set; }
-        public decimal Tipocambio { get; set; }
-        public int IdCaja { get; set; }
-        public DateTime Fecharegistro { get; set; }
-        [Display(Name = "Fecha de proceso")]
+        public int ClienteId { get; set; }
+        public int CajaId { get; set; }
+        public DateTime FechaRegistro { get; set; }
         public DateTime FechaProceso { get; set; }
+        public string Muestra { get; set; }
+        public string MotivoAnulado { get; set; }
+        public string Beneficiario { get; set; }
+        public short? TipoCleinteId { get; set; }
+        public short Referencias { get; set; }
 
-        public Bancos Banco { get; set; }
-        public Caja IdCajaNavigation { get; set; }
-        public TipoIngreso IdtipoingresoNavigation { get; set; }
-        public TipoMoneda IdtipomonedaNavigation { get; set; }
-        public TipoPago IdtipopagoNavigation { get; set; }
-        public CajaEstado NestadoNavigation { get; set; }
-        public TipoMovimiento TipomovNavigation { get; set; }
+        public Caja Caja { get; set; }
+        public CajaEstado Estado { get; set; }
+        public TipoIngreso TipoIngreso { get; set; }
+        public TipoMoneda TipoMoneda { get; set; }
+        public TipoMovimiento TipoMovimiento { get; set; }
+        public Profile UsernameNavigation { get; set; }
         public ICollection<IngresosEgresosCajaDetalle> IngresosEgresosCajaDetalle { get; set; }
+        public ICollection<IngresosEgresosCajaReferencias> IngresosEgresosCajaReferencias { get; set; }
     }
 }

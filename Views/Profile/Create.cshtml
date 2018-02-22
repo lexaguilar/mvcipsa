@@ -52,27 +52,22 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label asp-for="IdcajaNavigation.Description"></label>
+                            <label asp-for="Caja.Description"></label>
                             <div class="iconic-input">
-                                <select asp-for="Idcaja" class="">
+                                <select asp-for="CajaId" class="">
                                     @foreach (var caja in ViewBag.Cajas)
                                      {
                                         <option value="@caja.Id">@caja.Description</option>
                                      }
                                 </select>
-                                <span asp-validation-for="Idcaja" class="text-danger"></span>
+                                <span asp-validation-for="CajaId" class="text-danger"></span>
                             </div>
                         </div>
                         <button class="btn btn-success btn-block" type="submit"><i class="fa fa-check"></i> Guardar </button>
                     </div>
                 </div>
             </div>
-            <div class="panel-footer">
-                <div class="text-left invoice-btn">
-                    <a class="btn btn-default" asp-action="index"> Regresar a la lista</a>
-                    
-                </div>
-            </div>
+            <button asp-action="index" class="btn btn-default"><span class="fa fa-arrow-left"></span> Regresar a la lista </button>
         </form>
     </section>
 </div>
@@ -82,11 +77,11 @@
     <environment include="Development">       
         <script src="~/js/selectize.js"></script>        
     </environment>
-    <environment exclude="Development">       
-        <script src="~/js/selectize.js"></script>         
+    <environment exclude="Development">
+        <script src="~/js/selectize.js"></script>
     </environment>
         <script>
-            var $cliente = $('#Idcaja').selectize({              
+            var $cliente = $('#CajaId').selectize({              
             });
         </script>
 }

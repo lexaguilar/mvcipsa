@@ -1,0 +1,274 @@
+﻿@model mvcIpsa.DbModel.IngresosEgresosCaja
+
+@{
+    Layout = null;
+    var estado = "";
+    if (Model.EstadoId == 2){
+        estado = "ANULADO";
+    }
+       
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Imprimir @Model.NumRecibo</title>
+</head>
+<body>
+    <style>
+        p {
+            padding: 2px;
+            margin: 2px;
+        }
+
+        .text-logo-big{
+            font-size:60px;      
+            font-family:'fantasy'
+        }
+        .text-logo-small {
+            font-size: 4px;
+        }
+        .rotate {
+            -webkit-transform: rotate(7deg);
+            transform: rotate(-35deg);
+            position: absolute;
+            font-size: 67px;
+            left: 350px;
+            top: 350px;
+            color: #ff00004a;
+            z-index: -1;
+        }
+        .text-right{
+            text-align: right
+        }
+    </style>
+    <style type="text/css" media="print">
+        @@page 
+        {
+            size:  auto;   
+            margin: 0mm;  
+        }
+
+        html
+        {
+            background-color: #FFFFFF; 
+            margin: 0px;
+        }
+
+        body
+        {        
+            margin: 10mm 15mm 10mm 15mm;
+        }
+
+        a{
+            display: none
+        }
+    </style>
+    <div class="rotate">@estado</div>
+    <div>       
+        <table style="width: 910px">
+            <tbody>
+                <tr>
+                    <td style="width:12%"><img src="~/images/gobierno_sandinista.ai_.png" alt="no se encontro la imagen" /></td>
+                    <td style="width:76%;text-align:center">
+                        <p style="font-size:26px;font-weight: bold;text-transform: uppercase">REPúBLICA DE NICARAGUA</p>
+                        <p style="font-size:19px">INSTITUTO DE PROTECCION Y SANIDAD AGROPECUARIA</p>
+                        <p style="font-size:19px">Km 5 ½  Carretea Norte, Puente Desnuvel 100 mts al este, 50 mts al Sur</p>
+                        <p style="font-size:16px">RUC No J0810000219519</p>
+                    </td>
+                    <td style="width:12%">
+                        <div class="text-logo-big">IPSA</div>
+                        <div class="text-logo-small">INSTITUTO DE PROTECCION Y SANIDAD AGROPECUARIA</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <style>
+            .resp-table {                
+                width: 910px ;
+                display: table;
+            }
+
+            .resp-table-header {
+                display: table-header-group;              
+            }
+
+            .table-header-cell {
+                display: table-cell;
+                padding: 10px;
+                text-align: justify;
+            }
+
+            .resp-table-body {
+                display: table-row-group;
+            }
+
+            .resp-table-row {
+                display: table-row;
+            }
+
+            .table-body-cell {
+                display: table-cell;
+                padding: 5px
+            }
+
+
+            .other-cell {
+                border-left: 2px solid grey;
+            }
+            .other-cell-last {
+                border-left: 2px solid grey;
+                border-right: 2px solid grey;
+            }
+
+
+            .last-row {
+                border-left: 2px solid grey;
+                border-bottom: 2px solid grey;
+            }
+
+            .last-row-cell-right {
+            
+                border-left: 2px solid grey;
+                border-bottom: 2px solid grey;
+                border-radius: 0px 0px 0px 10px;
+            }
+            .last-row-cell-left {
+            
+                border-left: 2px solid grey;
+                border-bottom: 2px solid grey;
+                border-radius: 0px 0px 10px 0px;
+            }
+        </style>
+
+        <div class="resp-table">
+            <div class="table-header-cell" style="border-top: 2px solid grey;border-left: 2px solid grey;border-right: 2px solid grey;border-radius: 10px 10px 0px 0px;">
+                FECHA : @Model.FechaProceso.ToShortDateString()
+            </div>
+            <div class="table-header-cell" style="text-align:right;">
+                RECIBO OFICIAL DE CAJA SERIE "A" No <strong>@Model.NumRecibo</strong>
+            </div>
+        </div>
+
+        <div class="resp-table">
+            <div class="table-header-cell" style="text-align:left;border: 2px solid grey;border-radius: 0px 0px 10px 10px;">
+                RECIBIMOS DE : @Model.Concepto
+            </div>
+        </div>
+
+        <div style="width:910px;padding:8px;text-align:center"><strong>EN CONCEPTO DE LOS SIGUIENTE SERVICIOS</strong> </div>
+             
+        <div class="resp-table">
+            <div class="resp-table-header">
+                <div class="table-header-cell" style="width: 140px; text-align:left;border-top: 2px solid grey;border-left: 2px solid grey;border-bottom: 2px solid grey;border-radius: 10px 0px 0px 0px;">
+                    CODIGO
+                </div>
+                <div class="table-header-cell" style="width: 390px; text-align:left;border-top: 2px solid grey;border-left: 2px solid grey;border-bottom: 2px solid grey">
+                    DESCRIPCION
+                </div>
+                <div class="table-header-cell" style="width: 140px; text-align:right;border-top: 2px solid grey;border-left: 2px solid grey;border-bottom: 2px solid grey">
+                    PREC UNITARIO
+                </div>
+                <div class="table-header-cell" style="width: 100px; text-align:right;border-top: 2px solid grey;border-left: 2px solid grey;border-bottom: 2px solid grey">
+                    CANTIDAD
+                </div>
+                <div class="table-header-cell" style="width: 140px; text-align:right;border-top: 2px solid grey;border-left: 2px solid grey;border-bottom: 2px solid grey;border-right: 2px solid grey;border-radius: 0px 10px 0px 0px;">
+                    TOTAL
+                </div>
+            </div>   
+            <div class="resp-table-body">
+              
+                    @{ 
+                        var conteo = 1;
+
+                        foreach (var servicio in Model.IngresosEgresosCajaDetalle)
+                        {
+
+                            var classCss = "other-cell";
+                            var classCssFirst = "";
+                            var classCssLast = "";
+                            if (Model.IngresosEgresosCajaDetalle.Count == conteo)
+                            {
+                                classCss = "last-row";
+                                classCssFirst = "last-row-cell-right";
+                                classCssLast = "last-row-cell-left";
+                            }
+                            conteo++;
+
+                            <div class="resp-table-row">
+                                <div class="table-body-cell @classCss @classCssFirst"  style="text-align:left;">
+                                    @servicio.CtaContable
+                                </div>
+                                <div class="table-body-cell @classCss" style="text-align:left;">
+                                    Pendiente
+                                </div>
+                                <div class="table-body-cell @classCss" style="text-align:right;">
+                                    @servicio.Precio
+                                </div>
+                                <div class="table-body-cell @classCss" style="text-align:right;">
+                                    @servicio.Cantidad
+                                </div>
+                                <div class="table-body-cell @classCss other-cell-last @classCssLast" style="text-align:right;">
+                                    @servicio.Montodolar
+                                </div>   
+                            </div>
+                        } 
+                    }
+
+            </div>
+        </div>
+
+        
+        <table style="width:910px;">
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        @Model.MotivoAnulado
+                    </td>
+                    <td>
+                        <p>CUC No.</p>
+                        <p>EFECTIVO</p>
+                        <p>VALOR EL CHEQUE</p>
+                    </td>
+                    <td style="text-align: right">
+                        <p></p>
+                        <b>@Math.Round(Model.Total,2)</b>
+                        <p></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                       
+                            <p>TIPO MONEDA : @Model.TipoMoneda.Descripcion</p>
+                            <p>CHEQUE No</p>
+                            <p>ORDEN DE PAGO</p>                       
+                    </td>
+                    <td>                        
+                            <p>TIPO CAMBIO</p>
+                            <p>BANCO</p>
+                            <p>TRANSFERENCIA</p>
+                        
+                    </td>
+                    <td style="text-align: center;vertical-align: bottom;" colspan="2">
+                        <div></div>
+                        <div><p style="border-top: solid 1px grey">FIRMA DEL CAJEORO</p></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="width:910px;text-align: center"><b> NOTA: este recibo no es valido sin la firma y el sello de Caja, No es válido con borrones o enmiendas</b></p>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+        <a asp-action="Index">Regresar a la lista</a>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+           print();
+        }); 
+    </script>
+</body>
+</html>

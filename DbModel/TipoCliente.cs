@@ -10,7 +10,7 @@ namespace mvcIpsa.DbModel
             Cliente = new HashSet<Cliente>();
         }
 
-        public int Idtipocliente { get; set; }
+        public short Id { get; set; }
         public string Tipocliente { get; set; }
 
         public ICollection<Cliente> Cliente { get; set; }

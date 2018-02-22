@@ -7,12 +7,12 @@ namespace mvcIpsa.DbModel
     {
         public TipoPago()
         {
-            IngresosEgresosCaja = new HashSet<IngresosEgresosCaja>();
+            IngresosEgresosCajaReferencias = new HashSet<IngresosEgresosCajaReferencias>();
         }
 
-        public int Idtipopago { get; set; }
+        public short Id { get; set; }
         public string Descripcion { get; set; }
 
-        public ICollection<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
+        public ICollection<IngresosEgresosCajaReferencias> IngresosEgresosCajaReferencias { get; set; }
     }
 }

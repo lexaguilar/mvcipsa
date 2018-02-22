@@ -23,19 +23,15 @@ namespace mvcIpsa.Controllers
 
         // GET: Clientes
         public async Task<IActionResult> Index()
-        {
-            
-
-
-            var clients = db.Cliente.Include(c => c.IdtipoclienteNavigation).Select(c=> new ClienteViewModel {
+        {    
+            var clients = db.Cliente.Include(c => c.TipoCliente).Select(c=> new ClienteViewModel {
                 Identificacion = c.Identificacion,
                 Nombre =c.Nombre,
                 Apellido=c.Apellido,
                 Telefono =c.Telefono,
                 Correo =c.Correo,
                 Direccion=c.Direccion,
-                tipocliente= c.IdtipoclienteNavigation.Tipocliente,
-                Numeroruc =c.Numeroruc
+                tipocliente= c.TipoCliente.Tipocliente               
             });
             return View(await clients.ToListAsync());
         }
@@ -49,7 +45,7 @@ namespace mvcIpsa.Controllers
             }
 
             var cliente = await db.Cliente
-                .Include(c => c.IdtipoclienteNavigation)
+                .Include(c => c.TipoCliente)
                 .SingleOrDefaultAsync(m => m.Identificacion == id);
             if (cliente == null)
             {
@@ -62,7 +58,7 @@ namespace mvcIpsa.Controllers
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            ViewData["Idtipocliente"] = new SelectList(db.TipoCliente, "Idtipocliente", "Idtipocliente");
+            ViewData["TipoClienteId"] = new SelectList(db.TipoCliente, "Id", "Tipocliente");
             return View();
         }
 
@@ -71,7 +67,7 @@ namespace mvcIpsa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Identificacion,Nombre,Apellido,Telefono,Correo,Direccion,Idtipocliente,Numeroruc")] Cliente cliente)
+        public async Task<IActionResult> Create([Bind("Identificacion,Nombre,Apellido,Telefono,Correo,Direccion,TipoClienteId")] Cliente cliente)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +75,7 @@ namespace mvcIpsa.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idtipocliente"] = new SelectList(db.TipoCliente, "Idtipocliente", "Idtipocliente", cliente.Idtipocliente);
+            ViewData["TipoClienteId"] = new SelectList(db.TipoCliente, "Id", "Tipocliente", cliente.Id);
             return View(cliente);
         }
 
@@ -96,7 +92,7 @@ namespace mvcIpsa.Controllers
             {
                 return NotFound();
             }
-            ViewData["Idtipocliente"] = new SelectList(db.TipoCliente, "Idtipocliente", "Idtipocliente", cliente.Idtipocliente);
+            ViewData["TipoClienteId"] = new SelectList(db.TipoCliente, "Id", "Tipocliente", cliente.Id);
             return View(cliente);
         }
 
@@ -105,7 +101,7 @@ namespace mvcIpsa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Identificacion,Nombre,Apellido,Telefono,Correo,Direccion,Idtipocliente,Numeroruc")] Cliente cliente)
+        public async Task<IActionResult> Edit(string id, [Bind("Identificacion,Nombre,Apellido,Telefono,Correo,Direccion,TipoClienteId")] Cliente cliente)
         {
             if (id != cliente.Identificacion)
             {
@@ -132,7 +128,7 @@ namespace mvcIpsa.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Idtipocliente"] = new SelectList(db.TipoCliente, "Idtipocliente", "Idtipocliente", cliente.Idtipocliente);
+            ViewData["TipoClienteId"] = new SelectList(db.TipoCliente, "Id", "Tipocliente", cliente.Id);
             return View(cliente);
         }
 
@@ -145,7 +141,7 @@ namespace mvcIpsa.Controllers
             }
 
             var cliente = await db.Cliente
-                .Include(c => c.IdtipoclienteNavigation)
+                .Include(c => c.TipoCliente)
                 .SingleOrDefaultAsync(m => m.Identificacion == id);
             if (cliente == null)
             {

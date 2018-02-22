@@ -7,13 +7,13 @@ namespace mvcIpsa.Models
     {
         public IngresosEgresosCaja master { get; set; }
         public IEnumerable<IngresoEgresosCajaDetalleViewModel> details { get; set; }
+        public IEnumerable<IngresosEgresosCajaReferencias> referencias { get; set; }
     }
 
     public class IngresoEgresosCajaDetalleViewModel {
         public string cta_cuenta{ get; set; }
         public decimal precio { get; set; }
-        public short cantidad { get; set; }
-        public decimal montocordoba { get; set; }
+        public short cantidad { get; set; }     
         public decimal montodolar { get; set; }
     }
 }
