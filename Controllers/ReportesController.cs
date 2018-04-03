@@ -7,15 +7,19 @@ using mvcIpsa.DbModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using mvcIpsa.Models;
+using mvcIpsa.DbModelIPSA;
+
 namespace mvcIpsa.Controllers
 {   
     [Authorize(Policy = "Admin")]
     public class ReportesController : Controller
     {
         private readonly IPSAContext db;
-        public ReportesController(IPSAContext _db)
+        private readonly DBIPSAContext DbIpsa;
+        public ReportesController(IPSAContext _db, DBIPSAContext _DbIpsa)
         {
             db = _db;
+            DbIpsa = _DbIpsa;
         }
         public IActionResult RecibosCaja_Detelle1()
         {                       
@@ -23,29 +27,19 @@ namespace mvcIpsa.Controllers
         }
 
         public IActionResult RecibosCaja_Detelle1_GetList(DateTime desde,DateTime hasta){
-            // var reporte = db.IngresosEgresosCaja
-            // .Include(i=>i.Caja)
-            // .Include(i=>i.IngresosEgresosCajaDetalle)
-            // .Include(i=>i.IngresosEgresosCajaReferencias.Select(ii=> new {
-            //     ii.Fecha,
-            //     TipoPago=ii.TipoPago.Descripcion,
-            //     ii.totalC,
-            //     ii.totalD,
-            //     ii.Referencia,
-            //     ii.TipoCambio
-            // }))          
-            // .Include(i=>i.TipoMoneda)
-            // .Where(i => i.FechaProceso >= desde && i.FechaProceso <= hasta).ToArray();
 
-              var reporte = db.IngresosEgresosCaja
+            var reporte = db.IngresosEgresosCaja
             .Include(i=>i.Caja)
             .Include(i=>i.IngresosEgresosCajaDetalle)
             .Include(i=>i.IngresosEgresosCajaReferencias).ThenInclude(c => c.TipoPago)      
             .Include(i=>i.TipoMoneda)
             .Where(i => i.FechaProceso >= desde && i.FechaProceso <= hasta).ToArray();
 
-            //var detalle = from dt in db.IngresosEgresosCajaDetalle
+            //var detalle = reporte.Select(s => s.IngresosEgresosCajaDetalle).ToArray();
 
+            var servicios = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
 
             var result = reporte.Select(rep => new {
                 rep.Id,
@@ -68,7 +62,11 @@ namespace mvcIpsa.Controllers
                     c.Referencia    
                 }), 
                 IngresosEgresosCajaDetalle = rep.IngresosEgresosCajaDetalle.Select(c => new{
-                    c.Cantidad,c.CtaContable,c.Montodolar,c.Precio
+                    c.Cantidad,
+                    c.CtaContable,
+                    c.Montodolar,
+                    c.Precio,
+                    servicio = servicios.Where(s=>s.CtaContable == c.CtaContable).FirstOrDefault().Nombre
                 })
             });           
 

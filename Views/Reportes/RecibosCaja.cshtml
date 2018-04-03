@@ -88,7 +88,6 @@
         padding-left: 3px;
     }
 </style>
-</style>
 <div class="wrapper">
     <ul id="sortable" class="task-list ui-sortable">
                 <li class="list-primary">
@@ -185,12 +184,21 @@
                 $("#gridContainer").dxDataGrid({
                     dataSource: result,
                     allowColumnReordering: true,
+                    allowColumnResizing: true,
+                    columnChooser: {
+                        enabled: true
+                    },
+                    groupPanel: {
+                        visible: true
+                    },
                     filterRow: {
                         visible: true
                     },
-                    selection: {
-                        mode: "multiple"
+                    headerFilter: {
+                        visible: true,
+                        allowSearch: true
                     },
+                    
                     showRowLines: true,
                     showBorders: true,
                     rowAlternationEnabled: true,
@@ -218,17 +226,52 @@
                             dataType: "date",
                             width: 120,
                             format:'dd/MM/yyyy'
-                        },
-                        "NumRecibo",
+                        },                        
+                        {
+                            dataField: "NumRecibo",
+                            width: 100
+                        },  
                         "Caja",                      
                         {
                             dataField: "Beneficiario",                            
-                            width: 300                  
+                            width: 280                  
                         },  
                         {
-                            dataField: "Referencias",                            
-                            width: 100                  
-                        },   
+                            caption: "Tipo Pago",               
+                            calculateCellValue: function (data) {
+                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.TipoPago);
+                                return arr.join(" -");
+                            },
+                            cellTemplate: function (container, options) {
+                                options.data.IngresosEgresosCajaReferencias.forEach(ref => {
+                                    $(container).append('<p>' + ref.TipoPago + '</p>');
+                                });
+                            }
+                        },
+                        {
+                            caption: "Referencias",
+                            calculateCellValue: function (data) {
+                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.Referencia);
+                                return arr.join(" -");
+                            },
+                            cellTemplate: function (container, options) {
+                                options.data.IngresosEgresosCajaReferencias.forEach(ref => {
+                                    $(container).append('<p>' +  ref.Referencia + '</p>');
+                                });
+                            }
+                        },
+                        {
+                            caption: "Servicios",      
+                            calculateCellValue: function (data) {
+                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.servicio);
+                                return arr.join(" -");
+                            },
+                            cellTemplate: function (container, options) {
+                                options.data.IngresosEgresosCajaDetalle.forEach(ref => {
+                                    $(container).append('<p>' + ref.servicio + '</p>');
+                                });
+                            }
+                        },                        
                         "TipoMoneda",     
                         {
                             dataField: "Cordoba",                            
@@ -294,7 +337,7 @@
                                     .dxDataGrid({
                                         columnAutoWidth: true,
                                         showBorders: true,
-                                        columns: ["CtaContable",{
+                                        columns: ["CtaContable", "servicio",{
                                             dataField: "Precio",
                                             precision: 2                       
                                         },{

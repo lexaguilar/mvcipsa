@@ -259,7 +259,7 @@
 }
 .selectize-dropdown [data-selectable],
 .selectize-dropdown .optgroup-header {
-  padding: 5px 8px;
+  padding: 2px 8px;
 }
 .selectize-dropdown .optgroup:first-child .optgroup-header {
   border-top: 0 none;

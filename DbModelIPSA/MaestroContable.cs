@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace mvcIpsa.DbModel
+namespace mvcIpsa.DbModelIPSA
 {
     public partial class MaestroContable
     {
-        public MaestroContable()
-        {
-            CajaCuentaContable = new HashSet<CajaCuentaContable>();
-            IngresosEgresosCajaDetalle = new HashSet<IngresosEgresosCajaDetalle>();
-        }
-
         public string CtaContable { get; set; }
-        public char? Centro { get; set; }
+        public string Centro { get; set; }
         public string Cuenta { get; set; }
         public string Nombre { get; set; }
         public int TipoDh { get; set; }
@@ -42,8 +36,5 @@ namespace mvcIpsa.DbModel
         public decimal? MovDebitoshist { get; set; }
         public decimal? MovCreditoshist { get; set; }
         public decimal? SaldoFinalhist { get; set; }
-
-        public ICollection<CajaCuentaContable> CajaCuentaContable { get; set; }
-        public ICollection<IngresosEgresosCajaDetalle> IngresosEgresosCajaDetalle { get; set; }
     }
 }

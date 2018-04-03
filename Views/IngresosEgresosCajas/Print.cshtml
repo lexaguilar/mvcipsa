@@ -1,4 +1,4 @@
-﻿@model mvcIpsa.DbModel.IngresosEgresosCaja
+﻿@model mvcIpsa.Models.ReciboViewModel
 
 @{
     Layout = null;
@@ -155,7 +155,7 @@
 
         <div class="resp-table">
             <div class="table-header-cell" style="text-align:left;border: 2px solid grey;border-radius: 0px 0px 10px 10px;">
-                RECIBIMOS DE : @Model.Concepto
+                RECIBIMOS DE : @Model.Beneficiario
             </div>
         </div>
 
@@ -184,13 +184,13 @@
                     @{ 
                         var conteo = 1;
 
-                        foreach (var servicio in Model.IngresosEgresosCajaDetalle)
+                        foreach (var servicio in Model.detalles)
                         {
 
                             var classCss = "other-cell";
                             var classCssFirst = "";
                             var classCssLast = "";
-                            if (Model.IngresosEgresosCajaDetalle.Count == conteo)
+                            if (Model.detalles.Count() == conteo)
                             {
                                 classCss = "last-row";
                                 classCssFirst = "last-row-cell-right";
@@ -203,7 +203,7 @@
                                     @servicio.CtaContable
                                 </div>
                                 <div class="table-body-cell @classCss" style="text-align:left;">
-                                    Pendiente
+                                    @servicio.servicio
                                 </div>
                                 <div class="table-body-cell @classCss" style="text-align:right;">
                                     @servicio.Precio
@@ -242,7 +242,7 @@
                 <tr>
                     <td colspan="2">
                        
-                            <p>TIPO MONEDA : @Model.TipoMoneda.Descripcion</p>
+                            <p>TIPO MONEDA : @Model.TipoMoneda</p>
                             <p>CHEQUE No</p>
                             <p>ORDEN DE PAGO</p>                       
                     </td>

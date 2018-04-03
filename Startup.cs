@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using mvcIpsa.Data;
-using mvcIpsa.Models;
+using mvcIpsa.DbModelIPSA;
 using mvcIpsa.Services;
 using mvcIpsa.DbModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,6 +36,8 @@ namespace mvcIpsa
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<IPSAContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("CustomConnection")));
+            services.AddDbContext<DBIPSAContext>(options =>
+               options.UseNpgsql(Configuration.GetConnectionString("DBIPSAConnection")));
 
             //services.AddIdentity<ApplicationUser, IdentityRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -78,16 +80,16 @@ namespace mvcIpsa
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
             }
-            //else
-            //{
-               // app.UseExceptionHandler("/Home/Error");
-            //}
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
 
             app.UseStaticFiles();
 

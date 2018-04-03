@@ -6,13 +6,13 @@
 }
 @section Styles
     {
-    <environment include="Development">      
+    <environment include="Development">
         <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
         <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
         <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
         <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
     </environment>
-    <environment exclude="Development">       
+    <environment exclude="Development">
         <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
         <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
         <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
@@ -25,11 +25,13 @@
         min-height: 500px;
         width: 880px
     }
+
     #cuentas > tbody > tr > td {
         font-size: 11px;
     }
-    .resalto{
-        background-color:aqua;
+
+    .resalto {
+        background-color: aqua;
     }
 </style>
 
@@ -38,17 +40,17 @@
         <header class="panel-heading">
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <h2><span class="fa fa-caret-right"></span> Cuentas de la caja <code>@Model.description</code></h2> 
+                    <h2><span class="fa fa-caret-right"></span> Cuentas de la caja <code>@Model.description</code></h2>
                     <button onclick="addAccount()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"><span class="fa fa-plus"></span> Agregar una cuenta a la caja</button>
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><span class="fa fa-remove"></span> Elimniar una cuenta a la caja</button>
+                    <button onclick="removeAccount();" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><span class="fa fa-remove"></span> Elimniar una cuenta a la caja</button>
                 </div>
             </div>
-            
+
         </header>
         <form method="post" asp-controller="Profile" asp-action="Create" class="animated bounceInLeft">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-md-8 col-md-offset-2">   
+                    <div class="col-md-8 col-md-offset-2">
                         <table class="table table-striped table-hover">
                             @if (Model.MaestroContableMembers.Count() == 0)
                             {
@@ -56,12 +58,12 @@
                                     <td colspan="2" class="text-danger">
                                         <div class="alert alert-danger" role="alert">
                                             La caja <strong>@Model.description</strong> no contiene cuentas contables asociadas
-                                        </div>                                        
+                                        </div>
                                     </td>
                                 </tr>
                             }
-                             else
-                                {
+                            else
+                            {
                                 <thead>
                                     <tr>
                                         <th>
@@ -73,18 +75,18 @@
                                         <th>
                                             Cuenta contable
                                         </th>
-                                       
+
                                     </tr>
-                                </thead>                                   
-                                    foreach (var members in Model.MaestroContableMembers)
-                                    {
-                                        <tr>
-                                            <td>@members.Padre</td>
-                                            <td>@members.Nombre</td>
-                                            <td>@members.Cuenta</td>                                            
-                                        </tr>
-                                    }
+                                </thead>
+                                foreach (var members in Model.MaestroContableMembers)
+                                {
+                                    <tr>
+                                        <td>@members.Padre</td>
+                                        <td>@members.Nombre</td>
+                                        <td>@members.Cuenta</td>
+                                    </tr>
                                 }
+                            }
                         </table>
                     </div>
                 </div>
@@ -97,30 +99,42 @@
         </form>
 
     </section>
-    <dialog class="mdl-dialog">
+    <dialog class="mdl-dialog add" id="dialogAdd">
         <h4 class="mdl-dialog__title">Buscar una cuenta</h4>
-        
-        <div class="mdl-dialog__content" style="max-height:380px;min-height:380px;overflow:scroll">         
+
+        <div class="mdl-dialog__content" style="max-height:380px;min-height:380px;overflow:scroll">
 
             <div class="row">
                 <div class="col-md-6">
                     <input id="searchRow" onkeyup="search(this)" indice="2" class="form-control col-md-6" type="text" placeholder="Buscar por nombre de la cuenta" />
                 </div>
                 <div class="col-md-6">
-                    <input id="searchRow" onkeyup="search(this)" indice="3"  class="form-control col-md-6" type="text" placeholder="Buscar cuenta contable" />
+                    <input onkeyup="search(this)" indice="3" class="form-control col-md-6" type="text" placeholder="Buscar cuenta contable" />
                 </div>
             </div>
             <br />
-            
-            <div class="mdl-spinner mdl-js-spinner is-active" id="waiting" style="margin:auto;left:50%;top:100px"></div>
-           
-            <table class="table table-hover table-striped table-responsive" id="cuentas" style="max-height:350px;overflow:scroll">
-              
-            </table>
+
+            <div class="mdl-spinner mdl-js-spinner is-active waiting" style="margin:auto;left:50%;top:100px"></div>
+
+            <table class="table table-hover table-striped table-responsive" id="cuentasToAdd" style="max-height:350px;overflow:scroll"></table>
         </div>
         <div class="mdl-dialog__actions">
             <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="addAccounts();">Agregar</button>
-            <button type="button" class="mdl-button" onclick="cerrar();">Cancelar</button>
+            <button type="button" class="mdl-button" onclick="cerrarDialogAdd();">Cancelar</button>
+        </div>
+    </dialog>
+    <dialog class="mdl-dialog remove" id="dialogRemove">
+        <h4 class="mdl-dialog__title">Buscar una cuenta</h4>
+
+        <div class="mdl-dialog__content" style="max-height:380px;min-height:380px;overflow:scroll">   
+
+            <div class="mdl-spinner mdl-js-spinner is-active waiting" style="margin:auto;left:50%;top:100px"></div>
+
+            <table class="table table-hover table-striped table-responsive" id="cuentasToRemove" style="max-height:350px;overflow:scroll"></table>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored" onclick="removeAccounts();">Eliminar seleccionados</button>
+            <button type="button" class="mdl-button" onclick="cerrarDialogRemove();">Cancelar</button>
         </div>
     </dialog>
 </div>
@@ -136,32 +150,32 @@
     <environment exclude="Development">
         <script src="~/js/site.js"></script>
         <script src="~/js/notify.js"></script>
-        <script src="~/lib/dialog-polyfill/dialog-polyfill.min.js"></script>
-        <script src="~/lib/material-design-lite/material.min.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
         <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
     </environment>
-    <script>       
-        var dialog = document.querySelector('dialog');
+    <script>
         var id = '@Model.idCaja';
-        var addAccount = () => {
-            
-            //var showDialogButton = document.querySelector('#show-dialog');
-            if (!dialog.showModal) {
-                dialogPolyfill.registerDialog(dialog);
-            }
-            $('#cuentas').html('');
-            dialog.showModal();
+        var dialogAdd = document.querySelector('#dialogAdd');
 
-            $('#waiting').show();
-            $.get(pathBase + `Cajas/GetAccounting/${id}`, null, function (data) {
+        var addAccount = () => {
+
+            if (!dialogAdd.showModal) 
+                dialogPolyfill.registerDialog(dialogAdd);
+            
+            $('#cuentasToAdd').html('');
+            dialogAdd.showModal();
+
+            $('.waiting').show();
+            $.get(pathBase + `Cajas/GetAccounting/${id}/nomembers`, null, function (data) {
                 var head = ' <thead><tr><th></th><th>Cuenta padre</th><th>Nombre de la cuenta</th><th>Cuenta contable</th></tr></thead>';
                 var tr = '';
                 data.forEach(cuenta => {
                     tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.padre + '</td>' + '<td>' + cuenta.nombre + '</td>' + '<td>' + cuenta.ctaContable + '</td>' + '</tr>';
                 });
-                $('#cuentas').html(head + '<tbody>' + tr + '</tbody>');
+                $('#cuentasToAdd').html(head + '<tbody>' + tr + '</tbody>');
 
-                $('#waiting').hide();
+                $('.waiting').hide();
 
                 //table = document.getElementById("cuentas");
                 //tr = table.getElementsByTagName("tr");
@@ -182,8 +196,8 @@
 
         }
 
-        var cerrar = () => {
-            dialog.close();
+        var cerrarDialogAdd = () => {
+            dialogAdd.close();
         }
 
         var timer;
@@ -192,7 +206,7 @@
             var input, filter, table, tr, td, i;
             input = el;//document.getElementById("searchRow");
             filter = input.value.toUpperCase();
-            table = document.getElementById("cuentas");
+            table = document.getElementById("cuentasToAdd");
             tr = table.getElementsByTagName("tr");
 
 
@@ -220,28 +234,83 @@
 
         var addAccounts = () => {
             var CtaContables = [];
-            var t = $('#cuentas tbody tr')
+            var t = $('#cuentasToAdd tbody tr')
             t.each(function (i, e) {
                 if ($(this).find("td:eq(0)").find('label').find('input').is(':checked')) {
                     CtaContables.push($(this).find("td:eq(3)").text());
-                }                
+                }
             });
             if (CtaContables.length) {
                 $.ajax({
-                    url: pathBase + `Cajas/AddAccounting/${id}`,
+                    url: pathBase + `Cajas/AddAccounting/${id}/add`,
                     type: 'POST',
-                    dataType: 'json',                  
+                    dataType: 'json',
                     data: {
                         CtaContables: CtaContables
                     },
-                    success: function (data) {                       
-                        dialog.close();
+                    success: function (data) {
+                        dialogAdd.close();
                         document.location.reload();
                     }
                 });
             }
-            
+        }
+    </script>
 
+    <script>
+
+        var dialogRemove = document.querySelector('#dialogRemove');
+       
+        var removeAccount = () => {          
+            if (!dialogRemove.showModal) 
+                dialogPolyfill.registerDialog(dialogRemove);
+           
+            $('#cuentasToRemove').html('');
+            dialogRemove.showModal();
+
+            $('.waiting').show();
+            $.get(pathBase + `Cajas/getServices/${id}/members`, null, function (data) {
+                var head = ' <thead><tr><th></th><th>Cuenta padre</th><th>Nombre de la cuenta</th><th>Cuenta contable</th></tr></thead>';
+                var tr = '';
+                data.forEach(cuenta => {
+                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.padre + '</td>' + '<td>' + cuenta.nombre + '</td>' + '<td>' + cuenta.ctaContable + '</td>' + '</tr>';
+                });
+                $('#cuentasToRemove').html(head + '<tbody>' + tr + '</tbody>');
+
+                $('.waiting').hide();
+
+                componentHandler.upgradeDom();
+
+            });
+
+        }
+
+        var cerrarDialogRemove = () => {
+            dialogRemove.close();
+        }
+              
+        var removeAccounts = () => {
+            var CtaContables = [];
+            var t = $('#cuentasToRemove tbody tr')
+            t.each(function (i, e) {
+                if ($(this).find("td:eq(0)").find('label').find('input').is(':checked')) {
+                    CtaContables.push($(this).find("td:eq(3)").text());
+                }
+            });
+            if (CtaContables.length) {
+                $.ajax({
+                    url: pathBase + `Cajas/AddAccounting/${id}/remove`,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        CtaContables: CtaContables
+                    },
+                    success: function (data) {
+                        dialogRemove.close();
+                        document.location.reload();
+                    }
+                });
+            }
         }
     </script>
 }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using mvcIpsa.DbModel;
 using mvcIpsa.Models;
 using Microsoft.AspNetCore.Authorization;
+using mvcIpsa.DbModelIPSA;
 
 namespace mvcIpsa.Controllers
 {
@@ -15,10 +16,12 @@ namespace mvcIpsa.Controllers
     public class CajasController : Controller
     {
         private readonly IPSAContext _context;
+        private readonly DBIPSAContext DbIpsa;
 
-        public CajasController(IPSAContext context)
+        public CajasController(IPSAContext context, DBIPSAContext _DbIpsa)
         {
             _context = context;
+            DbIpsa = _DbIpsa;
         }
 
         // GET: Cajas
@@ -172,10 +175,13 @@ namespace mvcIpsa.Controllers
                 return NotFound();
             }
 
-            var servicios = from mc in _context.MaestroContable
-                            join mcp in _context.MaestroContable
+            var cuentas = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
+
+             var servicios = from mc in cuentas
+                            join mcp in cuentas
                             on mc.CtaPadre equals mcp.CtaContable
-                            where mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105")
                             select new
                             {
                                 mc.Cuenta,
@@ -242,13 +248,16 @@ namespace mvcIpsa.Controllers
             return Json(LoteActual);
         }
 
-        [HttpGet("Cajas/GetAccounting/{id}")]
+        [HttpGet("Cajas/GetAccounting/{id}/nomembers")]
         public IActionResult GetAccounting(int id)
         {
-            var servicios = from mc in _context.MaestroContable
-                            join mcp in _context.MaestroContable
+            var cuentas = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
+
+            var servicios = from mc in cuentas
+                            join mcp in cuentas
                             on mc.CtaPadre equals mcp.CtaContable
-                            where mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105")
                             select new
                             {
                                 mc.Cuenta,
@@ -264,7 +273,7 @@ namespace mvcIpsa.Controllers
             return Json(NoMembers);
         }
 
-        [HttpPost("Cajas/AddAccounting/{idCaja}")]
+        [HttpPost("Cajas/AddAccounting/{idCaja}/add")]
         public async Task<IActionResult> AddAccounting(string[] CtaContables, int idCaja)
         {
             //var _CtaContables = CtaContables.Split(',');
@@ -279,6 +288,47 @@ namespace mvcIpsa.Controllers
                     _context.CajaCuentaContable.Add(newCajaCuentaContable);
                 }
 
+            }
+            _context.SaveChanges();
+            return Ok(0);
+        }
+
+
+        [HttpGet("Cajas/getServices/{id}/members")]
+        public IActionResult Execept(int id)
+        {
+            var cuentas = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
+
+            var servicios = from mc in cuentas
+                            join mcp in cuentas
+                            on mc.CtaPadre equals mcp.CtaContable
+                            select new
+                            {
+                                mc.Cuenta,
+                                mc.Nombre,
+                                Padre = mcp.Nombre,
+                                mc.CtaContable
+                            };
+
+            string[] CuentaList = _context.CajaCuentaContable.Where(x => x.CajaId == id).Select(x => x.CtaCuenta).ToArray();
+
+            var Members = servicios.Where(x => CuentaList.Contains(x.CtaContable)).ToList();
+
+            return Json(Members);
+        }
+
+        [HttpPost("Cajas/AddAccounting/{idCaja}/remove")]
+        public async Task<IActionResult> removeCaja(string[] CtaContables, int idCaja)
+        {           
+            foreach (var item in CtaContables)
+            {
+                var cajaCuentaContable = _context.CajaCuentaContable.Where(c => c.CtaCuenta == item && c.CajaId == idCaja).FirstOrDefault();
+                if (cajaCuentaContable != null)
+                {
+                    _context.CajaCuentaContable.Remove(cajaCuentaContable);
+                }
             }
             _context.SaveChanges();
             return Ok(0);

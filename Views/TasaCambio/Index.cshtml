@@ -6,82 +6,118 @@
 }
 
 <environment include="Development">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
     <link href="~/css/animate.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
 </environment>
 <environment exclude="Development">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
     <link href="~/css/animate.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">    
 </environment>
-<style>
-    .table > thead > tr > th,
-    .table > tbody > tr > th,
-    .table > tfoot > tr > th,
-    .table > thead > tr > td,
-    .table > tbody > tr > td,
-    .table > tfoot > tr > td {
-        padding: 4px;       
-    }
-</style>
+
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
             Cambio oficial
         </header>
         <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-money"></span> Agregar nuevo registro</a>           
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FechaCambioOficial)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Dolares)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Euros)
-                        </th>                                         
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FechaCambioOficial)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Dolares)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Euros)
-                            </td>                                               
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-money"></span> Agregar nuevo registro</a>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="dx-viewport">
+                        <div class="demo-container">
+                            <div id="gridContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
         </div>
     </section>
 </div>
 @section Scripts
     {
-
     <environment include="Development">
-        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
         <script src="~/lib/moment/moment.js"></script>
+        <script src="~/js/site.js"></script>
+        <script src="~/js/notify.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
         <script src="~/lib/moment/moment.js"></script>
+        <script src="~/js/site.js"></script>
+        <script src="~/js/notify.js"></script>
     </environment>
+
     <script>
-        $('table').DataTable({
-            
+        $(document).ready(function () {
+            $.get(pathBase + "TasaCambio/obtenerLista", function (data) {
+                $("#gridContainer").dxDataGrid({
+                    dataSource: data,
+                    allowColumnReordering: true,
+                    showRowLines: true,
+                    showBorders: true,
+                    rowAlternationEnabled: true,
+                    sorting: {
+                        mode: "multiple"
+                    },
+                    filterRow: {
+                        visible: true
+                    },
+                    headerFilter: {
+                        visible: true,
+                        allowSearch: true
+                    },
+                    selection: {
+                        mode: "multiple"
+                    },
+                    "export": {
+                        enabled: true,
+                        fileName: "TasaCambio",
+                        allowExportSelectedData: true
+                    },
+                    paging: {
+                        pageSize: 31
+                    },
+                    columns: [{
+                        caption: "Fecha",
+                        dataField: "fechaCambioOficial",
+                        dataType: "date",
+                        width: 120,
+                        format: 'dd/MM/yyyy'
+                    },
+                    {
+                        caption: "Dolares",
+                        dataField: "dolares",
+                        precision: 2
+                    }
+
+                    ]
+                });
+            });
         });
     </script>
 }

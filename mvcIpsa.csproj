@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DbModelIPSA\" />
     <Folder Include="reports\" />
   </ItemGroup>
 

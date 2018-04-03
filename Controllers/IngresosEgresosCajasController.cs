@@ -12,13 +12,18 @@ namespace mvcIpsa.Controllers
     using System;
     using System.Threading.Tasks;
     using Extensions;
+    using mvcIpsa.DbModelIPSA;
+
     [Authorize(Policy = "Admin,User")]
     public class IngresosEgresosCajasController : Controller
     {
         private readonly IPSAContext db;
-        public IngresosEgresosCajasController(IPSAContext _db)
+        private readonly DBIPSAContext DbIpsa;
+
+        public IngresosEgresosCajasController(IPSAContext _db, DBIPSAContext _DbIpsa)
         {
             db = _db;
+            DbIpsa = _DbIpsa;
         }
 
         public IActionResult Index()
@@ -128,10 +133,15 @@ namespace mvcIpsa.Controllers
 
             ViewBag.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
 
-            var servicios = from mc in db.MaestroContable
-                            join mcp in db.MaestroContable on mc.CtaPadre equals mcp.CtaContable
+
+            var cuentas = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
+         
+            var servicios = from mc in cuentas
+                            join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
                             join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
-                            where ccc.CajaId == user.cajaid
+                            where ccc.CajaId == user.cajaid 
                             select new
                             {
                                 mc.Cuenta,
@@ -166,7 +176,10 @@ namespace mvcIpsa.Controllers
         public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
         {
             var user = this.GetServiceUser();
-            
+            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
+            {
+                return BadRequest("El usuario solo puede registrar información para el año 2017");
+            }
             var ingresosEgresosCaja = iECajaViewModel.master;
 
             //Numero de recibo actual
@@ -307,8 +320,12 @@ namespace mvcIpsa.Controllers
                 .Select(c => new { c.Id, nombre = c.Nombre + " " + c.Apellido, identificacion = c.Identificacion, idTipo = c.TipoCliente.Id, tipoCliente = c.TipoCliente.Tipocliente })
                 .ToList();
 
-            ViewBag.servicios = from mc in db.MaestroContable
-                                join mcp in db.MaestroContable on mc.CtaPadre equals mcp.CtaContable
+            var cuentas = DbIpsa.MaestroContable
+                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+                .ToArray();
+    
+            ViewBag.servicios = from mc in cuentas
+                                join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
                                 join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
                                 where ccc.CajaId == user.cajaid                               
                                 select new
@@ -325,8 +342,7 @@ namespace mvcIpsa.Controllers
 
             return View(recibo);
         }
-
-     
+             
 
         [HttpPost]
         [Produces("application/json")]
@@ -335,6 +351,9 @@ namespace mvcIpsa.Controllers
             // db.Entry(recibos).CurrentValues.SetValues(iECajaViewModel.master);
 
             var user = this.GetServiceUser();
+
+            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            
+                return BadRequest("El usuario solo puede registrar información para el año 2017");            
 
             var recibos = db.IngresosEgresosCaja.Find(iECajaViewModel.master.Id);
 
@@ -444,11 +463,33 @@ namespace mvcIpsa.Controllers
 
         public async Task<IActionResult> Print(int Id)
         {
+            var servicios = DbIpsa.MaestroContable
+               .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
+               .ToArray();
+
             var recibo = db.IngresosEgresosCaja
                 .Include(c => c.Estado)
                 .Include(c => c.IngresosEgresosCajaDetalle)
                 .Include(c => c.TipoMoneda)
-                .Where(c => c.Id == Id).FirstOrDefault();
+                .Where(c => c.Id == Id)
+                .Select(r => new ReciboViewModel{
+                    FechaProceso = r.FechaProceso,
+                    NumRecibo = r.NumRecibo,
+                    Beneficiario = r.Beneficiario,
+                    EstadoId = r.EstadoId,
+                    MotivoAnulado = r.MotivoAnulado,
+                    Total = r.Total,
+                    TipoMoneda = r.TipoMoneda.Descripcion,
+                    Id = r.Id,
+                    detalles = r.IngresosEgresosCajaDetalle.Select(c => new ReciboDetalle{
+                        Cantidad = c.Cantidad,
+                        CtaContable = c.CtaContable,
+                        Montodolar = c.Montodolar,
+                        Precio = c.Precio,
+                        servicio = servicios.Where(s => s.CtaContable == c.CtaContable).FirstOrDefault().Nombre
+                    })
+                }).FirstOrDefault();          
+           
             return View(recibo);
         }
     }

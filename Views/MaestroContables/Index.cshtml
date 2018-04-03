@@ -1,0 +1,133 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<environment include="Development">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />  
+</environment>
+<environment exclude="Development">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+</environment>
+
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de cuentas 
+        </header>
+        <div class="panel-body">           
+            <div class="col-lg-12">
+                <div class="mdl-spinner mdl-js-spinner is-active waiting" style="margin:auto;left:50%;top:10px"></div>
+                <div class="dx-viewport">
+                    <div class="demo-container">
+                        <div id="gridContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+<environment include="Development">
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/notify.js"></script>
+    <script src="~/lib/material-design-lite/material.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/notify.js"></script>
+    <script src="~/lib/material-design-lite/material.js"></script>
+</environment>
+    <script>
+        $(document).ready(function () {
+            $.get(pathBase + "MaestroContable/obtenerLista", function (data) {
+                $("#gridContainer").dxDataGrid({
+                    dataSource: data,
+                    allowColumnReordering: true,
+                    showRowLines: true,
+                    showBorders: true,
+                    rowAlternationEnabled: true,
+                    keyExpr: "Id",
+                    sorting: {
+                        mode: "multiple"
+                    },
+                    filterRow: {
+                        visible: true
+                    },
+                    headerFilter: {
+                        visible: true,
+                        allowSearch: true
+                    },
+                   
+                    paging: {
+                        pageSize: 20
+                    },
+                    pager: {
+                        showInfo: true,
+                        showNavigationButtons: true,
+                        showPageSizeSelector: true,
+                        visible: true,
+                        allowedPageSizes: [20, 50, 100]
+                    },      
+                    keyExpr: "id",
+                    "export": {
+                        enabled: true,
+                        fileName: "TasaCambio",
+                        allowExportSelectedData: true
+                    },                                    
+                    columns: [
+                    {
+                        caption: "Cuenta Padre",
+                        dataField: "nombrePadre"                       
+                    },
+                    {
+                        caption: "Nombre Cuenta Padre",
+                        dataField: "ctaPadre",
+                    }, {
+                        caption: "Cuenta",
+                        dataField: "cuenta",
+                    }, {
+                        caption: "Nombre Cuenta",
+                        dataField: "nombre",
+                    }, {
+                        caption: "Cta Contable",
+                        dataField: "ctaContable",
+                    },
+                    ]
+                });   
+                $('.waiting').hide();
+            });
+        });       
+    </script>
+}
