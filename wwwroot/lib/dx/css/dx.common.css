@@ -4607,7 +4607,7 @@ input.dx-hidden {
 }
 .dx-datagrid-header-panel {
   text-align: left;
-  overflow: hidden;
+  overflow: unset;
 }
 .dx-datagrid-header-panel .dx-toolbar-menu-container .dx-button {
   margin-left: 10px;

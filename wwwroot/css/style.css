@@ -4728,6 +4728,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
     bottom: 0;
     width: 100%;
     z-index: 1;
+    /* margin-left: 100px; */
 }
 
 .go-top {

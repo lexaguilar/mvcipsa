@@ -20,6 +20,9 @@
     </environment>
 }
 <style>
+    p {
+  font-size: 12px;
+  }
     #gridContainer td {
         vertical-align: middle;
     }
@@ -181,6 +184,7 @@
             var data = findEntity('CajaParameter');
             $('#btnSearch').searching();
              $.get(pathBase + 'Reportes/RecibosCaja_Detelle1_GetList',data,result => {
+                 console.log(result);
                 $("#gridContainer").dxDataGrid({
                     dataSource: result,
                     allowColumnReordering: true,
@@ -218,6 +222,8 @@
                         showPageSizeSelector: true,
                         visible: true
                     },
+                    showScrollbar: 'Always',
+                    columnAutoWidth: true,
                     paging: {
                         pageSize: 10
                     },
@@ -229,12 +235,12 @@
                         },                        
                         {
                             dataField: "NumRecibo",
-                            width: 100
+                           // width: 100
                         },  
                         "Caja",                      
                         {
                             dataField: "Beneficiario",                            
-                            width: 280                  
+                           // width: 280                  
                         },  
                         {
                             caption: "Tipo Pago",               
@@ -263,7 +269,7 @@
                         {
                             caption: "Servicios",      
                             calculateCellValue: function (data) {
-                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.servicio);
+                                let arr = data.IngresosEgresosCajaDetalle.map(r => r.servicio);
                                 return arr.join(" -");
                             },
                             cellTemplate: function (container, options) {
@@ -271,7 +277,19 @@
                                     $(container).append('<p>' + ref.servicio + '</p>');
                                 });
                             }
-                        },                        
+                        },  
+                        {
+                            caption: "Precios",      
+                            calculateCellValue: function (data) {
+                                let arr = data.IngresosEgresosCajaDetalle.map(r => r.Montodolar);
+                                return arr.join(" -");
+                            },
+                            cellTemplate: function (container, options) {
+                                options.data.IngresosEgresosCajaDetalle.forEach(ref => {
+                                    $(container).append('<p>$ ' + ref.Montodolar + '</p>');
+                                });
+                            }
+                        },                      
                         "TipoMoneda",     
                         {
                             dataField: "Cordoba",                            

@@ -32,7 +32,7 @@ namespace mvcIpsa.Controllers
             ViewData["EstadoId"] = new SelectList(db.CajaEstado, "Id", "Descripcion", 1);
 
             var cajas = db.Caja.Select(p => new Caja { Id = p.Id, Description =p.Description });
-            if (!usr.roles.Contains(1))
+            if (!usr.roles.Contains((int)Roles.Administrador))
                 cajas = cajas.Where(p => p.Id ==  usr.cajaid);
 
 
@@ -72,7 +72,7 @@ namespace mvcIpsa.Controllers
             if (p.searchByNum)
             {
                 query = query.Where(x => x.NumRecibo == p.numRecibo.PadLeft(10,'0'));
-                if (!user.roles.Contains(1))
+                if (!user.roles.Contains((int)Roles.Administrador))
                     query = query.Where(x => x.CajaId == user.cajaid);
 
                 result.Count = query.Count();
@@ -83,7 +83,7 @@ namespace mvcIpsa.Controllers
             {
                 query = query.Where(x => x.FechaProceso >= p.Desde && x.FechaProceso <= p.Hasta );
 
-                if (!user.roles.Contains(1))
+                if (!user.roles.Contains((int)Roles.Administrador))
                     query = query.Where(x => x.CajaId == user.cajaid);
                 else
                 {
@@ -293,11 +293,11 @@ namespace mvcIpsa.Controllers
         public async Task<IActionResult> CancelRecibo(int idrecibo,string motivo)
         {
             var recibo = db.IngresosEgresosCaja.Find(idrecibo);
-            if (recibo.EstadoId == 2)
+            if (recibo.EstadoId == (int)IngresosEgresosCajaEstado.Anulado)
             {
                 return BadRequest($"No se puede anular el recibo {recibo.NumRecibo} por que ya estaba anulado" );
             }
-            recibo.EstadoId = 2;
+            recibo.EstadoId = (int)IngresosEgresosCajaEstado.Anulado;
             recibo.MotivoAnulado = motivo;
             await db.SaveChangesAsync();
             return Ok();

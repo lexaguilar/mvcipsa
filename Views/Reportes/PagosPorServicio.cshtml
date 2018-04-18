@@ -1,0 +1,277 @@
+@model IEnumerable<mvcIpsa.Models.CajaViewModel>
+@using mvcIpsa.Extensions
+@{
+    ViewData["Title"] = "Reportes recibo ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usr = this.User.GetServiceUser();
+}
+@section Styles
+    {
+    <environment include="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    </environment>
+}
+<style>
+    p {
+  font-size: 12px;
+  }
+    #gridContainer td {
+        vertical-align: middle;
+    }
+
+    #gridContainer .chart-cell {
+        overflow: visible;
+    }
+
+    #gridContainer span.current-value {
+        display: inline-block;
+        position: relative;
+    }
+
+    #gridContainer span.diff {
+        float: right;
+    }
+
+    #gridContainer .inc span.diff {
+        color: #2ab71b;
+    }
+
+    #gridContainer .inc span.diff:before {
+        content: '+';
+    }
+
+    #gridContainer .dec span.diff:before {
+        content: '-';
+    }
+
+    #gridContainer .dec span.diff {
+        color: #f00;
+    }
+
+    #gridContainer .inc span.current-value:after,
+    #gridContainer .dec span.current-value:after {
+        content: '';
+        display: block;
+        height: 10px;
+        width: 10px;
+        position: absolute;
+        right: -12px;
+        top: 5px;
+        background-repeat: no-repeat;
+        background-size: 10px 10px;
+    }
+
+    #gridContainer .inc span.current-value:after {
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADKSURBVHjaYtTaLs1ABEiG0nPRJa56PEHhsxBhmCUQT4OyrwHxcXyKmQgYJgHE64CYDYrXQcXIMhCbAcgWkGzgNKh38QUB0QamIUUErkhKI9ZAGyCeTERkTYaqxWsgKA2txhdG6GGsvUNGGpeBRMUiGhCFGsqGzUBQQJsxkA5AemaiG5hDIBIIgQSgK0FmMDACs549kN5FZLjhA7+A2A2U9YSAOBeLAk4gnoBDczoOcSFGPIUDPxB/wCHHiKtwYGKgMhg1cBAaCBBgAJTUIL3ToPZfAAAAAElFTkSuQmCC');
+    }
+
+    #gridContainer .dec span.current-value:after {
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');    
+    }
+    <style>
+    .inbox-head {
+        padding: 10px;
+        background: #ffffff;
+        color: #fff;
+        border-radius: 0 4px 0 0;
+        -webkit-border-radius: 0 4px 0 0;
+        min-height: 20px;
+    }
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+      
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+</style>
+<div class="wrapper">
+    <ul id="sortable" class="task-list ui-sortable">
+        <li class="list-primary">
+            <div class="row">
+                <div class="form-group col-lg-2 col-md-4">
+                    <div class="col-lg-4 col-md-4">
+                        <label for="desde" class="control-label ">Desde :</label>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <input type="text" class="form-control datepicker CajaParameter" id="desde" placeholder="Fecha inicio">
+                    </div>                            
+                </div>
+                <div class="form-group col-lg-2 col-md-4">
+                    <div class="col-lg-4 col-md-4">
+                        <label for="hasta" class="control-label">Hasta :</label>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <input type="text" class="form-control datepicker CajaParameter" id="hasta" placeholder="Fecha final">
+                    </div>                                
+                </div>                        
+                <div class="form-group col-lg-4 col-md-4">
+                    <div class="col-lg-2 col-md-4">
+                        <label for="hasta" class="control-label">Caja :</label>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                            <select class="form-control CajaParameter" id="Caja" asp-items="ViewBag.Caja">
+                            @if (usr.roles.Contains(1))
+                            {
+                                <option value="0">Todas</option>
+                            }                                    
+                        </select>
+                    </div>                                
+                </div>     
+                <div class="form-group col-lg-2 col-md-4">                      
+                    <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <div class="dx-viewport">
+        <div class="demo-container">            
+            <div id="gridContainer"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    </environment>
+    <script>       
+        $(document).ready(function(){
+            var now = moment();
+            $('.datepicker')
+                .val(now.format("DD-MM-YYYY"))
+                .datepicker({
+                    autoclose: true,
+                    format: 'dd-mm-yyyy',
+                    language: 'es'
+            });
+
+            $('#btnSearch').click(function () {           
+                getList();
+            });
+           
+        });
+
+
+        var getList = ()=>{
+            var data = findEntity('CajaParameter');
+            $('#btnSearch').searching();
+             $.get(pathBase + 'Reportes/RecibosCaja_Detelle2_GetList',data,result => {
+                 console.log(result);
+                $("#gridContainer").dxDataGrid({
+                    dataSource: result,
+                    allowColumnReordering: true,
+                    allowColumnResizing: true,
+                    columnChooser: {
+                        enabled: true
+                    },
+                    groupPanel: {
+                        visible: true
+                    },
+                    filterRow: {
+                        visible: true
+                    },
+                    headerFilter: {
+                        visible: true,
+                        allowSearch: true
+                    },
+                    
+                    showRowLines: true,
+                    showBorders: true,
+                    rowAlternationEnabled: true,
+                    keyExpr: "Id",
+                    sorting: {
+                        mode: "multiple"
+                    },   
+                    "export": {
+                        enabled: true,
+                        fileName: "RecibosCaja",
+                        allowExportSelectedData: true
+                    },
+                    pager: {
+                        allowedPageSizes: [10, 20, 30, 50],
+                        showInfo: true,
+                        showNavigationButtons: true,
+                        showPageSizeSelector: true,
+                        visible: true
+                    },
+                    showScrollbar: 'Always',
+                    columnAutoWidth: true,
+                    paging: {
+                        pageSize: 10
+                    },
+                    columns: [{
+                            dataField: "fechaProceso",
+                            dataType: "date",
+                            width: 120,
+                            format:'dd/MM/yyyy'
+                        },                        
+                        {
+                            dataField: "numRecibo",                          
+                        },  
+                        "caja",                      
+                        {
+                            dataField: "beneficiario",                            
+                           // width: 280                  
+                        },                                  
+                        "moneda",
+                        "minutaReferencia",  
+                        {
+                            dataField: "minutaFecha",
+                            dataType: "date",
+                            format:'dd/MM/yyyy'
+                        },                       
+                        "montoCordoba",   
+                        "montoDolar",    
+                        "servicioNombre",      
+                        "servicioPrecio",      
+                        "servicioCantidad",      
+                        "servicioTotal"       
+                    ]                           
+                });      
+                $('#btnSearch').reset();   
+            });
+        }
+    </script>
+    }

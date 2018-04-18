@@ -39,10 +39,6 @@ namespace mvcIpsa
             services.AddDbContext<DBIPSAContext>(options =>
                options.UseNpgsql(Configuration.GetConnectionString("DBIPSAConnection")));
 
-            //services.AddIdentity<ApplicationUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>()
-            //    .AddDefaultTokenProviders();
-
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -57,7 +53,7 @@ namespace mvcIpsa
                 {
                     p.RequireAssertion(rol =>
                     {
-                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == 1));
+                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == (int)Roles.Administrador));
                     });
                 });
             });
@@ -67,10 +63,21 @@ namespace mvcIpsa
                 {
                     p.RequireAssertion(rol =>
                     {
-                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == 1 || Convert.ToInt32(x) == 2));
+                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == (int)Roles.Administrador || Convert.ToInt32(x) == (int)Roles.Usuario));
                     });
                 });
             });
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("Admin,Reportes", p =>
+                {
+                    p.RequireAssertion(rol =>
+                    {
+                        return rol.User.Claims.Any(c => c.Type == "roles" && c.Value.Split(',').Any(x => Convert.ToInt32(x) == (int)Roles.Administrador || Convert.ToInt32(x) == (int)Roles.Reportes));
+                    });
+                });
+            });
+
             string enUSCulture = "en-US";
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(19466);
 

@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 namespace mvcIpsa.Extensions
 {
     enum IngresosEgresosCajaEstado { Indefinido, Registrado, Anulado, Cerrado }
-   
+    enum Roles { Ninguno, Administrador, Usuario, Reportes }
+
 }

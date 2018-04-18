@@ -28,7 +28,16 @@
                 <div data-original-title="Toggle Navigation" data-placement="right" class="fa fa-bars tooltips"></div>
             </div>          
             <a href="/" class="logo">IPSA</a>          
-            <div class="nav notify-row" id="top_menu">                
+            <div class="nav notify-row" id="top_menu">   
+                  <ul class="nav top-menu">
+              <!-- settings start -->
+              <li class="dropdown">
+                    <a asp-controller="IngresosEgresosCajas" asp-action="create"><span class="fa fa-laptop"></span>Nuevo recibo</a>       
+              </li>
+              <li id="header_inbox_bar" class="dropdown">
+                   <a href="#"><span class="fa fa-exchange"></span> Transferencia</a>             
+              </li>            
+          </ul>             
             </div>
            @await Html.PartialAsync("_LoginPartial")
         </header>      
@@ -87,6 +96,7 @@
                         </a>
                         <ul class="sub">
                             <li><a asp-controller="reportes" asp-action="recibosCaja_Detelle1"><span class="fa fa-file-o"></span> Reporte de recibos</a></li>                         
+                            <li><a asp-controller="reportes" asp-action="recibosCaja_Detelle2"><span class="fa fa-file-o"></span> Pagos por servicios</a></li>                         
                         </ul>
                     </li>
                 </ul>                
@@ -98,7 +108,7 @@
         </section>
        
         <footer class="site-footer">       
-            <div style="float:left">
+            <div style="float:left; margin-left: 220px;">
                  @await Html.PartialAsync("_Info")
             </div>
             <div class="text-center">
@@ -139,16 +149,31 @@
     <script>
         var pathBase = '@Url.Content("~/")';
 
-        var url = window.location.pathname.split('/')[1].toLowerCase();
-        if (url=='ipsacore') {
-            url = window.location.pathname.split('/')[2]
+        var url = window.location.pathname.toLowerCase();
+        var path = '';
+
+       
+
+        if (url.indexOf('ipsacore') >= 0) 
+        {
+            path = url.split('/')[2];
+            if(url.indexOf('reportes') >= 0)
+                path = url.split('/')[3];
         }
-        if (url.length > 0) {
+        else
+        {
+            path = url.split('/')[1];
+            if(url.indexOf('reportes') >= 0)
+                path = url.split('/')[2];
+        }
+      
+
+        if (path.length > 0) {
             $('#nav-accordion li').each(function () {
                 $(this).find('ul').each(function () {
                     $(this).find('li').each(function () {
                         var n = $(this).find('a').attr('href').toLowerCase();                                           
-                        if (n.indexOf(url) >= 0) {                          
+                        if (n.indexOf(path) >= 0) {                          
                             $(this).addClass('active');
                             $(this).parent().parent().find('a').addClass('active');
                         }

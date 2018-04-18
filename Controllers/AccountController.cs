@@ -50,7 +50,7 @@ namespace mvcIpsa.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View("Login2");
         }
-
+        
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
