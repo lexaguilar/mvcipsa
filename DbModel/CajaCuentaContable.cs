@@ -10,6 +10,5 @@ namespace mvcIpsa.DbModel
         public string CtaCuenta { get; set; }
 
         public Caja Caja { get; set; }
-        
     }
 }

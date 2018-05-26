@@ -7,6 +7,7 @@ namespace mvcIpsa.DbModel
     {
         public Profile()
         {
+            IngresosEgresosBanco = new HashSet<IngresosEgresosBanco>();
             IngresosEgresosCaja = new HashSet<IngresosEgresosCaja>();
             Profilerole = new HashSet<Profilerole>();
         }
@@ -21,6 +22,7 @@ namespace mvcIpsa.DbModel
         public int CajaId { get; set; }
 
         public Caja Caja { get; set; }
+        public ICollection<IngresosEgresosBanco> IngresosEgresosBanco { get; set; }
         public ICollection<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
         public ICollection<Profilerole> Profilerole { get; set; }
     }

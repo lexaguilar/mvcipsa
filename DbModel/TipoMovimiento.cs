@@ -7,6 +7,7 @@ namespace mvcIpsa.DbModel
     {
         public TipoMovimiento()
         {
+            IngresosEgresosBanco = new HashSet<IngresosEgresosBanco>();
             IngresosEgresosCaja = new HashSet<IngresosEgresosCaja>();
         }
 
@@ -14,6 +15,7 @@ namespace mvcIpsa.DbModel
         public string Descripcion { get; set; }
         public short? TipoDoc { get; set; }
 
+        public ICollection<IngresosEgresosBanco> IngresosEgresosBanco { get; set; }
         public ICollection<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
     }
 }

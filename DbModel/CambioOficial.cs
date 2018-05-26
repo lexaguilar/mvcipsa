@@ -8,6 +8,6 @@ namespace mvcIpsa.DbModel
         public DateTime FechaCambioOficial { get; set; }
         public decimal Dolares { get; set; }
         public decimal? Euros { get; set; }
-        public string Usuarioid { get; set; }
+        public char? Usuarioid { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace mvcIpsa.DbModel
         public int? TipoIngresoId { get; set; }
         public int? TipoMonedaId { get; set; }
         public string Username { get; set; }
-        public int ClienteId { get; set; }
+        public int? ClienteId { get; set; }
         public int CajaId { get; set; }
         public DateTime FechaRegistro { get; set; }
         public DateTime FechaProceso { get; set; }
