@@ -225,7 +225,11 @@ namespace mvcIpsa.Controllers
             }
 
             ViewBag.Caja = _context.Caja.Find(id).Description;
-            var porcentaje = (Convert.ToDecimal(lote.Actual - lote.Inicio) / Convert.ToDecimal(lote.Final - lote.Inicio)) * 100;
+
+            decimal porcentaje = 0;
+            if(Convert.ToInt16(lote.Final - lote.Inicio)!=0)              
+                porcentaje = (Convert.ToDecimal(lote.Actual - lote.Inicio) / Convert.ToDecimal(lote.Final - lote.Inicio)) * 100;
+
             ViewBag.Porcentaje = Math.Round(porcentaje, 2);
             return View(lote);
         }

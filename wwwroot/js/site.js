@@ -403,6 +403,8 @@ var  getURL = (a) => a.join('/');
 
             $('.precio, .cantidad').editable({
                 validate: function (value) {
+                    if ($.trim(value) <= 0)
+                        return 'El valor debe ser mayor a 0';
                     if ($.trim(value) == '')
                         return 'El valor es requerido';
                     if (!isNumber($.trim(value)))

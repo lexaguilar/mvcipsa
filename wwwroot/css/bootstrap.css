@@ -2635,12 +2635,12 @@ input[type="search"] {
 .checkbox {
   position: relative;
   display: block;
-  margin-top: 10px;
+  margin-top: 6px;
   margin-bottom: 10px;
 }
 .radio label,
 .checkbox label {
-  min-height: 20px;
+  min-height: 15px;
   padding-left: 20px;
   margin-bottom: 0;
   font-weight: normal;

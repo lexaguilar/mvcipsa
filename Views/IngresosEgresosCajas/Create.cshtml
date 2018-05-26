@@ -9,7 +9,7 @@
 <environment include="Development">
     <link href="~/css/selectize.css" rel="stylesheet">
     <link href="~/css/animate.css" rel="stylesheet">
-    <link href="~/css/site.css" rel="stylesheet">
+    <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
     <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
     <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
     <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
@@ -17,7 +17,7 @@
 <environment exclude="Development">
         <link href="~/css/selectize.css" rel="stylesheet">
         <link href="~/css/animate.css" rel="stylesheet">
-        <link href="~/css/site.css" rel="stylesheet">
+        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
         <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
         <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
         <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
@@ -159,8 +159,8 @@
                                                                 <th>Minuta</th>
                                                                 <th>Transf</th>
                                                                 <th>Tipo Cambio</th>
-                                                                <th>C$</th>
                                                                 <th>$</th>
+                                                                <th>C$</th>
 
                                                             </tr>
                                                         </thead>
@@ -233,7 +233,7 @@
 @section Scripts
 {
 <environment include="Development">
-    <script src="~/js/site.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/selectize.js"></script>
     <script src="~/js/bootstrap-editable.min.js"></script>
     <script src="~/lib/numeral/src/numeral.js"></script>
@@ -244,7 +244,7 @@
     <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
 </environment>
 <environment exclude="Development">
-    <script src="~/js/site.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/selectize.js"></script>
     <script src="~/js/bootstrap-editable.min.js"></script>
     <script src="~/lib/numeral/src/numeral.js"></script>
@@ -260,34 +260,10 @@
        
         var referencias = [];
         var detalle = [];  
-
-               
-
-        $('#btnSaveReferences').click(function () {
-            referencias = [];
-            $('#referencias tbody tr').each(function (index, element) {
-
-                let fecha = $(this).find("td:eq(0)").find('input').val();
-                let noreferencia = $(this).find("td:eq(1)").find('a').editable('getValue').referencia;
-                let monto = $(this).find("td:eq(2)").find('a').editable('getValue').monto;
-                let cuentabanco = $(this).find("td:eq(3)").find('a').editable('getValue').banco;
-            
-                referencias.push({
-                    fecha,
-                    noreferencia,
-                    monto,
-                    cuentabanco
-                });            
-            }); 
-            $('#referencesModal').modal('hide');
-            $('#countReferencias').html(referencias.length + ' referencias');
-            //countReferencias
-        });
-           
+        
         $('#btnAddReference').click(function () {
             $('#referencias').addNewReference();
-        });
-        
+        });        
 
         var now = moment();
         $('.datepicker')

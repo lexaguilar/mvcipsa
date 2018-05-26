@@ -13,6 +13,9 @@ namespace mvcIpsa.Controllers
     using System.Threading.Tasks;
     using Extensions;
     using mvcIpsa.DbModelIPSA;
+    using Newtonsoft.Json;
+    using Microsoft.Extensions.Options;
+    using System.IO;
 
     [Authorize(Policy = "Admin,User")]
     public class IngresosEgresosCajasController : Controller
@@ -20,10 +23,13 @@ namespace mvcIpsa.Controllers
         private readonly IPSAContext db;
         private readonly DBIPSAContext DbIpsa;
 
-        public IngresosEgresosCajasController(IPSAContext _db, DBIPSAContext _DbIpsa)
+        private readonly AppSettings settings;
+
+        public IngresosEgresosCajasController(IPSAContext _db, DBIPSAContext _DbIpsa,IOptions<AppSettings> _settings)
         {
             db = _db;
             DbIpsa = _DbIpsa;
+            settings = _settings.Value;
         }
 
         public IActionResult Index()
@@ -175,6 +181,8 @@ namespace mvcIpsa.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
         {
+            createLogs(iECajaViewModel,"Create");
+
             var user = this.GetServiceUser();
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
             {
@@ -202,6 +210,11 @@ namespace mvcIpsa.Controllers
                 return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
             }
 
+            if (Math.Round(totalServicioDolar,2) != Math.Round(totalPagoDolar, 2))
+            {
+                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
+            }
+
             var totalPagoCordoba = iECajaViewModel.referencias.Sum(p => p.totalC);
 
             if (iECajaViewModel.master.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba)
@@ -211,6 +224,10 @@ namespace mvcIpsa.Controllers
 
             foreach (var item in iECajaViewModel.details)
             {
+                if (item.precio <= 0 || item.cantidad <= 0)
+                {
+                    return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
+                }
                 var _montoDolar = item.precio * item.cantidad;
                 ingresosEgresosCaja.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
                 {
@@ -307,6 +324,16 @@ namespace mvcIpsa.Controllers
         {
             var user = this.GetServiceUser();
 
+            var serviciosDetalle = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == id).ToArray();
+            var cuentasContables = db.CajaCuentaContable.Where(c => c.CajaId == user.cajaid).Select(ccc => ccc.CtaCuenta).ToArray();
+            var hasAllAccounting = serviciosDetalle.Select(r => r.CtaContable).All(cta => cuentasContables.Contains(cta));
+
+            if(!hasAllAccounting)
+            {
+                var cccs = serviciosDetalle.Where(s => !cuentasContables.Contains(s.CtaContable)).Select( p => p.CtaContable);
+                return View("Error",$"El usuario {user.username} asignado a la caja {user.description} no contiene la(s) cuenta(s) {string.Join(",",cccs)} para poder editar recibo {db.IngresosEgresosCaja.Find(id).NumRecibo}");
+            }
+
             var recibo = db.IngresosEgresosCaja
                 .Include(iec => iec.Estado).FirstOrDefault(iec => iec.Id == id);
                 
@@ -338,18 +365,27 @@ namespace mvcIpsa.Controllers
 
 
             ViewBag.referencias = db.IngresosEgresosCajaReferencias.Where(r => r.ReciboId == id).ToArray();
-            ViewBag.detalle = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == id).ToArray();
+            ViewBag.detalle = serviciosDetalle;
 
             return View(recibo);
         }
              
+        private void createLogs(IngresoEgresosCajaViewModel iECajaViewModel,string action)
+        {
+            var detalle = "\r\n=======" + action + "=>" + DateTime.Now.ToString();
+            string json = JsonConvert.SerializeObject(iECajaViewModel);
+           // System.IO.File.WriteAllText(settings.url + iECajaViewModel.master.NumRecibo + ".txt", detalle + json);
+            using (StreamWriter writer = new StreamWriter(settings.url + iECajaViewModel.master.NumRecibo+ ".txt", true)){ 
+                writer.Write( detalle +"\r\n"+ json);
+            }
+        }
 
         [HttpPost]
         [Produces("application/json")]
         public async Task<IActionResult> Edit(IngresoEgresosCajaViewModel iECajaViewModel)
         {
-            // db.Entry(recibos).CurrentValues.SetValues(iECajaViewModel.master);
-
+           
+            createLogs(iECajaViewModel,"Edit");
             var user = this.GetServiceUser();
 
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            
@@ -390,6 +426,10 @@ namespace mvcIpsa.Controllers
 
             foreach (var item in iECajaViewModel.details)
             {
+                if (item.precio <= 0 || item.cantidad <= 0)
+                {
+                    return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
+                }
                 var _montoDolar = item.precio * item.cantidad;
                 recibos.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
                 {

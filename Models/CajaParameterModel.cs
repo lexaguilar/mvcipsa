@@ -24,6 +24,7 @@ namespace mvcIpsa.Models
         public string numRecibo { get; set; }
 
         public bool searchByNum { get; set; }
+        public bool all { get; set; }
 
         public int? caja { get; set; }
 
