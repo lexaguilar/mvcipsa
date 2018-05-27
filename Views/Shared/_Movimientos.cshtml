@@ -1,0 +1,81 @@
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" asp-action="create"><span class="fa fa-plus"></span> Nuevo recibo</a>
+        </header>
+        <div class="panel-body">
+            <ul id="sortable" class="task-list ui-sortable">
+                <li class="list-primary">
+                    <div class="row">
+                        <div class="form-group col-lg-2 col-md-4">
+                            <div class="col-lg-4 col-md-4">
+                                <label for="Desde" class="control-label ">Desde :</label>
+                            </div>
+                            <div class="col-lg-8 col-md-8">
+                                <input type="text" class="form-control datepicker Parameter" id="Desde" placeholder="Fecha inicio">
+                            </div>                            
+                        </div>
+                        <div class="form-group col-lg-2 col-md-4">
+                            <div class="col-lg-4 col-md-4">
+                                <label for="Hasta" class="control-label">Hasta :</label>
+                            </div>
+                            <div class="col-lg-8 col-md-8">
+                                <input type="text" class="form-control datepicker Parameter" id="Hasta" placeholder="Fecha final">
+                            </div>                                
+                        </div>
+                        <div class="form-group col-lg-2 col-md-4">
+                            <div class="col-lg-4 col-md-4">
+                                <label for="Estado" class="control-label">Estado :</label>
+                            </div>
+                            <div class="col-lg-8 col-md-8">
+                                <select class="form-control Parameter" id="Estado" asp-items="ViewBag.EstadoId"><option value="">Todos</option></select>
+                            </div>
+                        </div>
+                        <div class="form-group col-lg-4 col-md-4">
+                            <div class="col-lg-2 col-md-4">
+                                <label for="Caja" class="control-label">Caja :</label>
+                            </div>
+                            <div class="col-lg-10 col-md-8">
+                                <select class="form-control Parameter" id="Caja" asp-items="ViewBag.Caja">
+                                    @if (usr.roles.Contains(1))
+	                                {
+                                    <option value="">Todas</option>
+	                                }                                    
+                                </select>
+                            </div>      
+                        </div>
+                        <div class="form-group col-lg-2 col-md-4">                      
+                            <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+
+            <div class="inbox-head">
+                <h3>Lista de movimientos</h3>
+                <div class="pull-left position" action="#">
+                    <div class="input-append">
+                        <input id="numRecibo" type="text" placeholder="Buscar referencia" class="sr-input Parameter">
+                        <button type="button" id="btnSearchNumRecibo" class="btn sr-btn"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+
+
+            <table id="recibo" class="table table-hover table-striped table-responsive table-condensed"></table>
+        </div>
+    </section>
+</div>
+<dialog class="mdl-dialog">
+    <h4 class="mdl-dialog__title">Anular movimiento</h4>
+    <div class="mdl-dialog__content">
+        <textarea cols="3" class="form-control" id="MotivoAnular" placeholder="Escriba el motivo de la anulación"></textarea>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button type="button" class="anular mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="continuar(idrecibotext.value);">Anular</button>
+        <button type="button" class="mdl-button close">Cancelar</button>
+    </div>
+</dialog>
+<input id="idrecibotext" hidden="hidden" value="0" />
+<input id="tipoDoc" hidden="hidden" value="@(ViewBag.TipoDoc ?? String.Empty)" />

@@ -27,52 +27,73 @@ namespace mvcIpsa.Controllers
             db = _db;         
         }
 
-        public IActionResult Index()
+        public IActionResult NotasDebito()
+        {
+            Index(TipoDocumentos.NotaDebito);
+            return View();
+        }
+
+        public IActionResult NotasCredito()
+        {
+            Index(TipoDocumentos.NotaCredito);
+            return View();
+        }
+
+        public IActionResult Transferencia()
+        {
+            Index(TipoDocumentos.Despositos);
+            return View();
+        }
+
+        ///        
+        public void Index(TipoDocumentos TipoDoc)
         {
             var usr = this.GetServiceUser();
-            ViewData["EstadoId"] = new SelectList(db, "Id", "Descripcion", 1);
+            
 
             var cajas = db.Caja.Select(p => new Caja { Id = p.Id, Description =p.Description });
             if (!usr.roles.Contains((int)Roles.Administrador))
                 cajas = cajas.Where(p => p.Id ==  usr.cajaid);
 
-
+            ViewData["EstadoId"] = new SelectList(db.IngresosEgresosBancoEstado, "Id", "Descripcion", 1);
             ViewData["Caja"] = new SelectList(cajas, "Id", "Description");
-            return View();
+           // ViewData["TipoDoc"] = new SelectList(db.TipoDocumento, "Id", "Description");
+            ViewData["TipoDoc"] = TipoDoc;
         }
 
         public IActionResult GetList(CajaParameterModel p)
         {
             var user = this.GetServiceUser();
-            PaginationResult<IEnumerable<CajaViewModel>> result = new PaginationResult<IEnumerable<CajaViewModel>>();
-            var query = db.IngresosEgresosCaja
-                .Include(c => c.TipoIngreso)
+            PaginationResult<IEnumerable<BancoViewModel>> result = new PaginationResult<IEnumerable<BancoViewModel>>();
+            var query = db.IngresosEgresosBanco
+                .Include(c => c.Estado)
                 .Include(c => c.TipoMovimiento)                
                 .Include(c => c.TipoMoneda)
-                .Include(c => c.Estado)                
-                .Select(c => new CajaViewModel
+                .Include(c => c.Caja)                
+                .Select(c => new BancoViewModel
                 {
-                    Id = c.Id,
-                    TipoMovimiento = c.TipoMovimiento.Descripcion,                    
-                    NumRecibo = c.NumRecibo,
-                    EstadoId = c.EstadoId,
-                    Estado = c.Estado.Descripcion,
-                    FechaProceso = c.FechaProceso,     
-                    Total = c.Total,
-                    Beneficiario  = c.Beneficiario,
-                    Concepto = c.Concepto,
-                    NoOrdenPago =c.NoOrdenPago,
-                    TipoIngreso = c.TipoIngreso.Descripcion,
-                    TipoMoneda = c.TipoMoneda.Descripcion,
-                    Username = c.Username,
-                    FechaCreacion = c.FechaRegistro,
-                    CentroCosto = "IPSA Central",
-                    CajaId = c.CajaId
+                   Id=c.Id,
+                   FechaRegistro = c.FechaRegistro,
+                   Monto = c.Monto,
+                   TipoMonedaId = c.TipoMonedaId,
+                   TipoMoneda = c.TipoMoneda.Descripcion,
+                   CuentaContableBanco = c.CuentaContableBanco,
+                   TipoMovimientoId = c.TipoMovimientoId,
+                   TipoMovimiento = c.TipoMovimiento.Descripcion,
+                   Concepto = c.Concepto,
+                   FechaProceso = c.FechaProceso,
+                   Username = c.Username,
+                   CajaId = c.CajaId,
+                   Caja = c.Caja.Description,
+                   EstadoId = c.EstadoId,
+                   Estado = c.Estado.Descripcion,
+                   TipoCambio = c.TipoCambio,
+                   MotivoAnulado =c.MotivoAnulado
                 });
 
             if (p.searchByNum)
             {
-                query = query.Where(x => x.NumRecibo == p.numRecibo.PadLeft(10,'0'));
+                query = query.Where(x => x.Referencia == p.Referecnia);
                 if (!user.roles.Contains((int)Roles.Administrador))
                     query = query.Where(x => x.CajaId == user.cajaid);
 
@@ -133,31 +154,7 @@ namespace mvcIpsa.Controllers
             }
 
             ViewBag.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
-
-
-            var cuentas = DbIpsa.MaestroContable
-                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
-                .ToArray();
-         
-            var servicios = from mc in cuentas
-                            join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
-                            join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
-                            where ccc.CajaId == user.cajaid 
-                            select new
-                            {
-                                mc.Cuenta,
-                                mc.Nombre,
-                                padre = mcp.Nombre,
-                                mc.TipoCta
-                            };
-
-            if (servicios == null)
-            {
-                return NotFound(new string[] { "La caja " + user.description + " no contiene ninguna cuenta contable asociada" });
-            }
-
-            ViewBag.servicios = servicios;
-                      
+          
             ViewBag.fondos = db.Fondos.Select(mc => new
             {
                 fondoid = mc.Fondoid,
@@ -176,7 +173,7 @@ namespace mvcIpsa.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
         {
-            createLogs(iECajaViewModel,"Create");
+           
 
             var user = this.GetServiceUser();
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
@@ -337,28 +334,7 @@ namespace mvcIpsa.Controllers
             ViewData["TipoMonedaId"] = new SelectList(db.TipoMoneda, "Id", "Descripcion", recibo.TipoMonedaId);
             ViewData["TipoCliente"] = new SelectList(db.TipoCliente, "Id", "Tipocliente");
 
-            ViewBag.clientes = db.Cliente
-                .Include(c => c.TipoCliente)
-                .Select(c => new { c.Id, nombre = c.Nombre + " " + c.Apellido, identificacion = c.Identificacion, idTipo = c.TipoCliente.Id, tipoCliente = c.TipoCliente.Tipocliente })
-                .ToList();
-
-            var cuentas = DbIpsa.MaestroContable
-                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
-                .ToArray();
-    
-            ViewBag.servicios = from mc in cuentas
-                                join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
-                                join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
-                                where ccc.CajaId == user.cajaid                               
-                                select new
-                                {
-                                    mc.Cuenta,
-                                    mc.Nombre,
-                                    padre = mcp.Nombre,
-                                    mc.TipoCta
-                                };
-
-
+          
             ViewBag.referencias = db.IngresosEgresosCajaReferencias.Where(r => r.ReciboId == id).ToArray();
             ViewBag.detalle = serviciosDetalle;
 
@@ -370,7 +346,7 @@ namespace mvcIpsa.Controllers
         public async Task<IActionResult> Edit(IngresoEgresosCajaViewModel iECajaViewModel)
         {
            
-            createLogs(iECajaViewModel,"Edit");
+          
             var user = this.GetServiceUser();
 
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            

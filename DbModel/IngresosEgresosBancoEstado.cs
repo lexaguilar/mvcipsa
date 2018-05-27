@@ -11,7 +11,7 @@ namespace mvcIpsa.DbModel
         }
 
         public short Id { get; set; }
-        public string Description { get; set; }
+        public string Descripcion { get; set; }
 
         public ICollection<IngresosEgresosBanco> IngresosEgresosBanco { get; set; }
     }

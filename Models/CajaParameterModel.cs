@@ -22,11 +22,14 @@ namespace mvcIpsa.Models
         public DateTime Desde { get; set; }
         public DateTime Hasta { get; set; }
         public string numRecibo { get; set; }
+        public string Referecnia { get; set; }
 
         public bool searchByNum { get; set; }
         public bool all { get; set; }
 
         public int? caja { get; set; }
+
+        public int tipoDoc { get; set; }
 
     }
 

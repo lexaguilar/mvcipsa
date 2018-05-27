@@ -371,6 +371,12 @@ namespace mvcIpsa.DbModel
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PK_tipo_movimiento_id");
 
+                 entity.HasOne(d => d.TipoDocumento)
+                    .WithMany(p => p.IngresosEgresosBanco)
+                    .HasForeignKey(d => d.TipoDocumento)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("PK_tipo_documento_id");
+
                 entity.HasOne(d => d.UsernameNavigation)
                     .WithMany(p => p.IngresosEgresosBanco)
                     .HasForeignKey(d => d.Username)
@@ -386,7 +392,7 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("id")
                     .HasDefaultValueSql("nextval('siscb_core.ingresos_egresos_banco_estado_id_seq'::regclass)");
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.Descripcion)
                     .IsRequired()
                     .HasColumnName("description");
             });

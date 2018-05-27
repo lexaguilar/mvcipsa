@@ -1,0 +1,182 @@
+
+@using mvcIpsa.Extensions
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usr = this.User.GetServiceUser();
+}
+@section Styles
+    {
+
+    <environment include="Development">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+        <link href="~/css/notifIt.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
+        <link href="~/css/notifIt.css" rel="stylesheet" />        
+    </environment>
+}
+<style>
+    .inbox-head {
+        padding: 10px;
+        background: #ffffff;
+        color: #fff;
+        border-radius: 0 4px 0 0;
+        -webkit-border-radius: 0 4px 0 0;
+        min-height: 20px;
+    }
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+      
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+</style>
+ @await Html.PartialAsync("_Movimientos")
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/material-design-lite/material.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+        <script src="~/js/notifIt.js"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/material-design-lite/material.min.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+        <script src="~/js/notifIt.js"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.min.js"></script>
+    </environment>
+    <script>
+        var currentPage = 1;
+        var dialog = document.querySelector('dialog');
+        dialog.querySelector('.close').addEventListener('click', function () {
+            dialog.close();
+        });
+        $('#btnSearchNumRecibo').click(function (e) {
+            buscarReciboPorNumero(numRecibo);
+        });
+        $('#btnSearch').click(function () {
+            numRecibo.value = '';
+            init(1, false);
+        });
+        $(document).ready(function () {
+            var now = moment();
+            $('.datepicker')
+                .val(now.format("DD-MM-YYYY"))
+                .datepicker({
+                    autoclose: true,
+                    format: 'dd-mm-yyyy',
+                    language: 'es'
+                });
+            init(1);
+
+        });
+
+
+        var init = (pag, searchByNum) => {
+            currentPage = pag;
+            $('#btnSearch').searching();
+            var data = findEntity('Parameter');
+            data['Page'] = pag;
+            data['Rows'] = 10;
+            data['searchByNum'] = searchByNum;
+            var f = function (response) {
+                $('#recibo').datatable({
+                    columnsHead: ['', 'Fecha', 'Movimiento', 'Monto', 'Tipo Moneda', 'Banco', 'Usuario', 'Registrado el', 'Estado'],
+                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular'] }, 'FechaProceso', 'Monto', 'TipoMoneda', 'CuentaContableBanco',  'Username', 'FechaRegistro', 'Estado'],
+                    data: response.result,
+                    pag: pag,
+                    rows: data.Rows,
+                    totalRows: response.count,
+                    controller: 'ingresosegresoscajas',
+                    id: 'id',
+                    columnsWithFormatDate: ['fechaProceso', 'fechacreacion'],
+                    columnsWithFormatMoney: ['monto']
+                });
+                $('#btnSearch').reset();
+            }
+            context.ajax.get('IngresosEgresosBanco/GetList', data, f);
+
+        }
+
+        var botonclick = false;
+        var anular = elemt => {
+            if (!botonclick) {
+                notif_confirm({
+                    'message': 'Esta seguro de anular?',
+                    'textaccept': 'Si',
+                    'textcancel': 'No',
+                    'fullscreen': true,
+                    'callback': function (choice) {
+                        if (choice == true) {
+                            process(elemt);
+                        }
+                    }
+                })
+            }
+            return botonclick;
+        }
+
+
+
+        var process = elemt => {
+            var idrecibo = $(elemt).data('currentid');
+
+            var showDialogButton = document.querySelector('#show-dialog');
+            if (!dialog.showModal) {
+                dialogPolyfill.registerDialog(dialog);
+            }
+            $('#cuentas').html('');
+            dialog.showModal();
+            MotivoAnular.value = '';
+            idrecibotext.value = idrecibo;
+        }
+
+        var continuar = idrecibo => {
+            if (MotivoAnular.textLength == 0) {
+                $(MotivoAnular).notification('Por favor ingrese un motivo válido');
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: pathBase + 'IngresosEgresosCajas/CancelRecibo',
+                    data: {
+                        idrecibo: idrecibo, motivo: MotivoAnular.value
+                    },
+                }).done(function () {
+                    dialog.close();
+                    init(currentPage);
+                }).fail(function (err) {
+                    $.notification(err.responseText);
+                    dialog.close();
+                });
+            }
+        }
+
+
+        $('#numRecibo').keypress(function (e) {
+            if (e.which == 13)
+                buscarReciboPorNumero(numRecibo);
+        });
+
+        var buscarReciboPorNumero = recibo => {
+            if (recibo.value.length)
+                init(1, true);
+            else
+                $('#numRecibo').notification('Ingrese un numero válido');
+        }
+
+    </script>
+}

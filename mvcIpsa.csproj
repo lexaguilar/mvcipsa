@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-mvcIpsa-B09FE4D5-7AF2-40B4-8B27-3A0AF7985137</UserSecretsId>
     <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
+    
   </PropertyGroup>
 
 
