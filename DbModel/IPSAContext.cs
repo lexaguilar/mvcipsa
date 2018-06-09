@@ -36,7 +36,7 @@ namespace mvcIpsa.DbModel
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseNpgsql(@"Server=192.168.0.21;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
+                optionsBuilder.UseNpgsql(@"Server=192.168.0.14;Port=5432;User Id=postgres;Password=123456*;Database=IPSA;");
             }
         }
 
@@ -297,6 +297,9 @@ namespace mvcIpsa.DbModel
                 entity.HasIndex(e => e.FechaProceso)
                     .HasName("Ix_ieb_fecha_proceso");
 
+                entity.HasIndex(e => e.TipoDocumentoId)
+                    .HasName("Ixieb_tipo_documento_id");
+
                 entity.HasIndex(e => e.TipoMonedaId)
                     .HasName("Ix_ieb_tipo_moneda_id");
 
@@ -339,6 +342,8 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("tipo_cambio")
                     .HasColumnType("numeric(10, 4)");
 
+                entity.Property(e => e.TipoDocumentoId).HasColumnName("tipo_documento_id");
+
                 entity.Property(e => e.TipoMonedaId).HasColumnName("tipo_moneda_id");
 
                 entity.Property(e => e.TipoMovimientoId).HasColumnName("tipo_movimiento_id");
@@ -359,6 +364,12 @@ namespace mvcIpsa.DbModel
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PK_estado_id");
 
+                entity.HasOne(d => d.TipoDocumento)
+                    .WithMany(p => p.IngresosEgresosBanco)
+                    .HasForeignKey(d => d.TipoDocumentoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("PK_tipo_documento_id");
+
                 entity.HasOne(d => d.TipoMoneda)
                     .WithMany(p => p.IngresosEgresosBanco)
                     .HasForeignKey(d => d.TipoMonedaId)
@@ -370,12 +381,6 @@ namespace mvcIpsa.DbModel
                     .HasForeignKey(d => d.TipoMovimientoId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("PK_tipo_movimiento_id");
-
-                 entity.HasOne(d => d.TipoDocumento)
-                    .WithMany(p => p.IngresosEgresosBanco)
-                    .HasForeignKey(d => d.TipoDocumento)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("PK_tipo_documento_id");
 
                 entity.HasOne(d => d.UsernameNavigation)
                     .WithMany(p => p.IngresosEgresosBanco)
@@ -394,7 +399,7 @@ namespace mvcIpsa.DbModel
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
-                    .HasColumnName("description");
+                    .HasColumnName("descripcion");
             });
 
             modelBuilder.Entity<IngresosEgresosCaja>(entity =>

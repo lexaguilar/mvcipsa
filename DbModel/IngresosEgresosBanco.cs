@@ -19,12 +19,14 @@ namespace mvcIpsa.DbModel
         public short EstadoId { get; set; }
         public decimal TipoCambio { get; set; }
         public string MotivoAnulado { get; set; }
+        
+        public int TipoDocumentoId { get; set; }
 
         public Caja Caja { get; set; }
         public IngresosEgresosBancoEstado Estado { get; set; }
+        public TipoDocumento TipoDocumento { get; set; }
         public TipoMoneda TipoMoneda { get; set; }
         public TipoMovimiento TipoMovimiento { get; set; }
         public Profile UsernameNavigation { get; set; }
-        public TipoDocumento TipoDocumento { get; set; }
     }
 }
