@@ -94,7 +94,7 @@
             data['Rows'] = 10;
             data['searchByNum'] = searchByNum;
             var f = function (response) {
-                $('#recibo').datatable({
+                $('#movimientos').datatable({
                     columnsHead: ['', 'Fecha', 'Movimiento', 'Monto', 'Tipo Moneda', 'Banco', 'Usuario', 'Registrado el', 'Estado'],
                     columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular'] }, 'FechaProceso', 'Monto', 'TipoMoneda', 'CuentaContableBanco',  'Username', 'FechaRegistro', 'Estado'],
                     data: response.result,

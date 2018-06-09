@@ -29,24 +29,24 @@ namespace mvcIpsa.Controllers
 
         public IActionResult NotasDebito()
         {
-            Index(TipoDocumentos.NotaDebito);
-            return View();
+            Movimiento(TipoDocumentos.NotaDebito);
+            return View("Index");
         }
 
         public IActionResult NotasCredito()
         {
-            Index(TipoDocumentos.NotaCredito);
-            return View();
+            Movimiento(TipoDocumentos.NotaCredito);
+            return View("Index");
         }
 
         public IActionResult Transferencia()
         {
-            Index(TipoDocumentos.Despositos);
-            return View();
+            Movimiento(TipoDocumentos.Despositos);
+            return View("Index");
         }
 
         ///        
-        public void Index(TipoDocumentos TipoDoc)
+        public void Movimiento(TipoDocumentos TipoDoc)
         {
             var usr = this.GetServiceUser();
             
@@ -56,8 +56,7 @@ namespace mvcIpsa.Controllers
                 cajas = cajas.Where(p => p.Id ==  usr.cajaid);
 
             ViewData["EstadoId"] = new SelectList(db.IngresosEgresosBancoEstado, "Id", "Descripcion", 1);
-            ViewData["Caja"] = new SelectList(cajas, "Id", "Description");
-           // ViewData["TipoDoc"] = new SelectList(db.TipoDocumento, "Id", "Description");
+            ViewData["Caja"] = new SelectList(cajas, "Id", "Description");           
             ViewData["TipoDoc"] = TipoDoc;
         }
 
