@@ -1,0 +1,141 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Editar " + @Model;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <environment include="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/css/loading.css" rel="stylesheet"> 
+    </environment>
+    <environment exclude="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/css/loading.css" rel="stylesheet"> 
+    </environment>
+}
+<input type="hidden" id="Id" value="0">
+<div class="wrapper">
+    <section class="panel">
+        <header class="panel-heading">
+            Crear un movimiento
+        </header>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                            
+                    <div class="form-group">
+                        <label for="TipoDocumentoId" class="control-label">Tipo de documento</label>
+                        <select id="TipoDocumentoId" class="selectize">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="TipoMovimientoId" class="control-label">Tipo de movimiento</label>
+                        <select id="TipoMovimientoId"  class="selectize">
+                            <option value="">Seleccione</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="BancoCuenta" class="control-label">Cuenta bancaria</label>
+                        <select id="BancoCuenta" class="selectize"><option value="">Seleccione</option></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Referencia" class="control-label">Referencia</label>
+                        <input id="Referencia" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Monto" class="control-label">Monto</label>
+                        <input id="Monto" class="form-control" placeholder="0.00"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Concepto" class="control-label">Concepto</label>
+                        <textarea rows="3" id="Concepto"  class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="FechaProceso" class="control-label">Fecha</label>
+                        <input type="text" id="FechaProceso" class="form-control datepicker" />
+                    </div>
+
+                    <br />
+                    <br />
+
+                    <div class="form-group">
+                        <input type="button" id="guardar" value="Actualizar" onclick="save();" class="btn btn-primary btn-block" />
+                    </div>               
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <a asp-action="Index"><span class="fa fa-angle-left"></span> Regresar</a>
+            <a asp-action="create" class="pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/models/banco.js" asp-append-version="true"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/js/loading.js"></script>
+
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/plugins.js" asp-append-version="true"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+        <script src="~/js/jquery.mask.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/models/banco.js" asp-append-version="true"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/js/loading.js"></script>
+
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/plugins.js" asp-append-version="true"></script>
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+        <script src="~/js/jquery.mask.js"></script>
+    </environment>
+    <script>
+        $('#Monto').mask("#.0000", { reverse: true });
+        var now = moment();
+        $('.datepicker')
+            .val(now.format("DD-MM-YYYY"))
+            .datepicker({
+                autoclose: true,
+                format: 'dd-mm-yyyy',
+                language: 'es'
+            });
+
+    
+        var $selectizies = $('.selectize').selectize({
+            valueField: 'Id',
+            labelField: 'Text',
+            searchField: 'Text',
+        });
+
+        $(document).ready(function () {            
+            banco.load('@Model');
+        });        
+
+        var save = () => {
+            banco.save();
+        }
+
+    </script>
+}

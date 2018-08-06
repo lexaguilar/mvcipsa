@@ -1,0 +1,238 @@
+@media print {
+    @page {
+        margin: 0;
+        padding: 0;
+        border: none;
+        margin-left: 1cm;
+        margin-right: 1cm;
+        size:letter;
+    }
+
+    .page {
+        padding: 0 !important;
+        border: 0 !important;
+    }
+
+    .row {
+        margin-right: -15px;
+        margin-left: -15px;
+      }
+
+      .col-md-6{
+        float: left;
+        width: 50%;
+        padding-right: 40px;
+        padding-left: 40px;
+      }
+
+}
+
+body {
+    background: #525659 !important;
+}
+
+.page {
+    background: white;
+    width: 216mm;
+    height: 280mm;
+    size: letter;
+    margin: auto;
+    position: relative;
+    /* font-size: 9pt; */
+    page-break-after: always;
+    page-break-before: always;
+    border: 1px outset black;
+    padding: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-top: 10px;
+}
+
+.page-container{
+    padding-top: 5px;
+}
+
+table {
+    width: 100%;
+    font-size: 10pt;
+    border-spacing: 0;
+    border-collapse: 0;
+    padding: 0 48px 0 35px;
+}
+
+h4 {
+    font-size: 10.65pt;
+}
+
+h5 {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+h1 {
+    font-size: 12.35pt;
+}
+
+small {
+    font-size: 8pt;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.check-box {
+    border: 1px solid black;
+    height: 16px;
+    width: 16px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+    width: 100%
+}
+
+.child {
+    width: 100%;
+    margin: 0 auto;
+    vertical-align: text-top;
+    text-align: justify;
+    /* Magic! */
+}
+
+.underline {
+    border-bottom: solid 1px black;
+    display: inline-flex;
+}
+
+.underline-td {
+    border-bottom: solid 1px black;
+}
+
+.text-box {
+    padding: 0 5px;
+    border-bottom: 1px solid black;
+}
+
+.signature {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.separator {
+    border-bottom-color: black;
+    border-bottom-style: dashed;
+    border-bottom-width: 1px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.card-box {
+    width: 200px;
+    height: 296px;
+    border: 1px solid black;
+    position: relative;
+    padding: 10px;
+    font-size: 7pt;
+}
+
+    .card-box .footer {
+        position: absolute;
+        bottom: 3px;
+    }
+
+    .card-box h5 {
+        font-size: 9pt;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .card-box p {
+        text-align: justify;
+    }
+
+.pull-right {
+    float: right;
+}
+
+.margin-list-head {
+    margin-left: 20px;
+}
+
+.margin-list {
+    margin-left: 10px;
+}
+
+.text-bold{
+   font-weight :bold
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.encabezado {
+    font-size: 15px !important;
+    font-weight: bold !important;
+    border: 2px solid rgb(88, 88, 88) !important;
+    color: rgb(39, 39, 39) !important;
+}
+
+.rows {
+    color: rgb(39, 39, 39) !important;
+    font-size: 14px;
+}
+
+td, th {
+    padding: 5px 5px 2px 2px !important;
+}
+
+.usuario {
+    font-size: 15px !important;
+    border-top: 1.5px solid black !important;
+    font-weight: bold !important;
+}
+
+.firma {
+    text-align: center !important;
+    margin-bottom: 100px !important;
+}
+
+.no-visible{
+    display: none !important;
+}
+.col-md-6{
+    float: left !important;
+    width: 50% !important;
+    padding-right: 40px !important;
+    padding-left: 40px !important;
+}
+
+.width-33{
+    width:33%
+}

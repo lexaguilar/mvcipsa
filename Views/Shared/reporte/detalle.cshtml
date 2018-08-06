@@ -1,0 +1,19 @@
+@model IEnumerable<mvcIpsa.Models.ReporteDetalleViewModel>
+<table>
+    <tr>
+        <th>Fecha</th><th>Num Documento</th><th>Monto</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>@item.Fecha</td>
+        <td>@item.NumDocumento</td>
+        <td>@item.Monto</td>
+    </tr>
+    }
+    <tr>
+        <td></td>
+        <td>TOTAL:</td>
+        <td>@Model.Sum(m=> m.Monto)</td>
+    </tr>
+</table>

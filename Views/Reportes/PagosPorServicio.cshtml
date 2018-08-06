@@ -219,8 +219,7 @@
                     
                     showRowLines: true,
                     showBorders: true,
-                    rowAlternationEnabled: true,
-                    keyExpr: "Id",
+                    rowAlternationEnabled: true,                   
                     sorting: {
                         mode: "multiple"
                     },   
@@ -242,32 +241,32 @@
                         pageSize: 10
                     },
                     columns: [{
-                            dataField: "fechaProceso",
+                            dataField: "FechaProceso",
                             dataType: "date",
                             width: 120,
                             format:'dd/MM/yyyy'
                         },                        
                         {
-                            dataField: "numRecibo",                          
+                            dataField: "NumRecibo",                          
                         },  
                         "caja",                      
                         {
-                            dataField: "beneficiario",                            
+                            dataField: "Beneficiario",                            
                            // width: 280                  
                         },                                  
-                        "moneda",
-                        "minutaReferencia",  
+                        "Moneda",
+                        "MinutaReferencia",  
                         {
-                            dataField: "minutaFecha",
+                            dataField: "MinutaFecha",
                             dataType: "date",
                             format:'dd/MM/yyyy'
                         },                       
-                        "montoCordoba",   
-                        "montoDolar",    
-                        "servicioNombre",      
-                        "servicioPrecio",      
-                        "servicioCantidad",      
-                        "servicioTotal"       
+                        "MontoCordoba",   
+                        "MontoDolar",    
+                        "ServicioNombre",      
+                        "ServicioPrecio",      
+                        "ServicioCantidad",      
+                        "ServicioTotal"       
                     ]                           
                 });      
                 $('#btnSearch').reset();   

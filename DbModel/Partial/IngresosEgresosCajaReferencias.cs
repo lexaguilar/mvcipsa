@@ -13,5 +13,7 @@ namespace mvcIpsa.DbModel
         public decimal totalD { get; set; }
         [NotMapped]
         public decimal totalC { get; set; }
+        [NotMapped]
+        public decimal TipoCambioManual { get; set; }
     }
 }

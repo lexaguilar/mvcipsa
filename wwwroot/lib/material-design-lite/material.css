@@ -7054,9 +7054,10 @@ input.mdl-button[type="submit"] {
 .mdl-progress {
   display: block;
   position: relative;
-  height: 4px;
+  height: 2px;
   width: 500px;
-  max-width: 100%; }
+  max-width: 100%;
+  }
 
 .mdl-progress > .bar {
   display: block;

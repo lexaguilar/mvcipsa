@@ -7,20 +7,20 @@
 @section Styles
 {
 <environment include="Development">
+    <link href="~/css/loading.css" rel="stylesheet">
     <link href="~/css/selectize.css" rel="stylesheet">
-    <link href="~/css/animate.css" rel="stylesheet">
     <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
     <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
     <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
     <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
 </environment>
 <environment exclude="Development">
-        <link href="~/css/selectize.css" rel="stylesheet">
-        <link href="~/css/animate.css" rel="stylesheet">
-        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
-        <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
-        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="~/css/loading.css" rel="stylesheet">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link href="~/css/site.css" asp-append-version="true" rel="stylesheet">
+    <link href="~/lib/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
 </environment>
 }
 <div class="wrapper">
@@ -41,22 +41,22 @@
                                 <div>
                                     <div class="col-lg-12">
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="FechaProceso" class="control-label"></label>
+                                            <label asp-for="FechaProceso" class="control-label">Fecha de proceso</label>
                                             <input data-required="true" data-error-message="Seleccione la fecha de proceso" type="text" asp-for="FechaProceso" class="form-control master datepicker" />
                                             <span asp-validation-for="FechaProceso" class="text-danger"></span>
                                         </div>
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="NoOrdenPago" class="control-label"></label>
+                                            <label asp-for="NoOrdenPago" class="control-label">No de orden</label>
                                             <input asp-for="NoOrdenPago" class="form-control master" />
                                             <span asp-validation-for="NoOrdenPago" class="text-danger"></span>
                                         </div>
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="TipoMonedaId" class="control-label"></label>
+                                            <label asp-for="TipoMonedaId" class="control-label">Moneda</label>
                                             <select asp-for="TipoMonedaId" class="select master" asp-items="ViewBag.TipoMonedaId"></select>
                                             <span asp-validation-for="TipoMonedaId" class="text-danger"></span>
                                         </div>
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="TipoIngresoId" class="control-label"></label>
+                                            <label asp-for="TipoIngresoId" class="control-label">Tipo de Ingreso</label>
                                             <select data-required="true" data-error-message="Seleccione el tipo de ingreso" asp-for="TipoIngresoId" class="select master" asp-items="ViewBag.TipoIngresoId"></select>
                                             <span asp-validation-for="TipoIngresoId" class="text-danger"></span>
                                         </div>
@@ -76,7 +76,7 @@
                                             <select class="master" data-error-message="Seleccione un cliente" asp-for="ClienteId"><option value="">Seleccione</option></select>
                                         </div>
                                         <div class="form-group col-lg-3">
-                                            <label asp-for="TipoCleinteId" class="control-label"></label>
+                                            <label asp-for="TipoCleinteId" class="control-label">Tipo de cliente</label>
                                             <select asp-for="TipoCleinteId" class="select master" asp-items="ViewBag.TipoCliente"></select>
                                             <span asp-validation-for="TipoCleinteId" class="text-danger"></span>
 
@@ -113,7 +113,7 @@
                                     </li>
                                 </ul>
                             </header>
-                            <div class="panel-body">
+                            <div class="panel-body" style="padding:0px">
                                 <div class="tab-content">
                                     <div id="services" class="tab-pane active">
                                         <div class="panel-body">
@@ -166,9 +166,8 @@
                                                         </thead>
                                                         <tbody></tbody>
                                                         <tfoot>
-                                                            <tr>
-                                                                <th></th>
-                                                                <td colspan="8"><button type="button" id="btnAddReference" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect  btn-block btn-primary">Agregar una referencia</button></td>
+                                                            <tr>                                                                
+                                                                <td colspan="11"><button type="button" id="btnAddReference" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect  btn-block btn-primary">Agregar una referencia</button></td>
                                                             </tr>
                                                         </tfoot>
                                                     </table>
@@ -182,15 +181,13 @@
                                 <div class="col-lg-4 invoice-block pull-right">
                                     <ul class="unstyled amounts amountsDetalle">
                                         <li class="text-left"><strong>Detalle de pago</strong></li>
-                                        <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
-                                        @*<li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>*@
+                                        <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>                                        
                                     </ul>
                                 </div>
                                 <div class="col-lg-4 invoice-block pull-left">
                                     <ul class="unstyled amounts amountsServicio">
                                         <li class="text-left"><strong>Servicios</strong></li>
                                         <li><span class="pull-left"> Total Dólares : </span><strong>0.00</strong></li>
-                                        @*<li><span class="pull-left">Total Córdobas : </span><strong>0.00</strong></li>*@
                                     </ul>
                                 </div>
                             </div>
@@ -223,9 +220,23 @@
                     <a href="#">
                         <i class="fa fa-circle text-danger"></i>
                         Estado :
-                        <span class="text-muted">Pendiente</span>
+                        <span id="lblEstado" class="text-muted">Pendiente</span>
                     </a>
-                </li>                              
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user text-success"></i>
+                        Usuario :
+                        <span id="lblusername" class="text-muted"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-clock-o text-success"></i>
+                        Creado el :
+                        <span id="creadoEl" class="text-muted"></span>
+                    </a>
+                </li>               
             </ul>
         </aside>
     </div>
@@ -233,19 +244,10 @@
 @section Scripts
 {
 <environment include="Development">
+    <script src="~/js/models/roles.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/selectize.js"></script>
-    <script src="~/js/bootstrap-editable.min.js"></script>
-    <script src="~/lib/numeral/src/numeral.js"></script>
-    <script src="~/lib/material-design-lite/material.js"></script>
-    <script src="~/js/notify.js"></script>
-    <script src="~/lib/moment/moment.js"></script>  
-    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
-</environment>
-<environment exclude="Development">
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/selectize.js"></script>
+    <script src="~/js/plugins.js" asp-append-version="true"></script>
     <script src="~/js/bootstrap-editable.min.js"></script>
     <script src="~/lib/numeral/src/numeral.js"></script>
     <script src="~/lib/material-design-lite/material.js"></script>
@@ -253,6 +255,21 @@
     <script src="~/lib/moment/moment.js"></script>
     <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    <script src="~/js/loading.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/models/roles.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/selectize.js"></script>
+    <script src="~/js/plugins.js" asp-append-version="true"></script>
+    <script src="~/js/bootstrap-editable.min.js"></script>
+    <script src="~/lib/numeral/src/numeral.js"></script>
+    <script src="~/lib/material-design-lite/material.js"></script>
+    <script src="~/js/notify.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+    <script src="~/js/loading.js"></script>
 </environment>
 
 
@@ -260,7 +277,7 @@
        
         var referencias = [];
         var detalle = [];  
-        
+       
         $('#btnAddReference').click(function () {
             $('#referencias').addNewReference();
         });        
@@ -275,8 +292,7 @@
          });
 
         var servicios = @Html.Raw(Json.Serialize(ViewBag.servicios, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
-        var clientes = @Html.Raw(Json.Serialize(ViewBag.clientes, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
-             
+        var userRols = @Html.Raw(Json.Serialize(ViewBag.roles));
         var NumRecibo = @ViewBag.NumRecibo;
 
 
@@ -289,29 +305,52 @@
                     $.map(selectize.items, function (value) {   
 
                         var _selectize = $select[2].selectize;
-                        _selectize.setValue(selectize.options[value].idTipo, false);
+                        _selectize.setValue(selectize.options[value].TipoClienteId, false);
                      
-                        $('#Beneficiario').val(selectize.options[value].nombre);
+                        $('#Beneficiario').val(selectize.options[value].NombreCompleto);
                     });
                 };
             };
+            var totalCount
+                , page
+                , perPage = 50;
             var $cliente = $('#ClienteId').selectize({
+                plugins: ['infinite_scroll'],
                 valueField: 'Id',
-                labelField: 'identificacion',
-                searchField: 'nombre',
-                options: clientes,
+                labelField: 'Identificacion',
+                searchField: ['NombreCompleto','Identificacion'],
+                //options: clientes,
+                create: false,
                 render: {
                     option: function (item, escape) {
                         return '<div>' +
                             '<span class="title">' +
-                            '<span class="cedulaCliente"><i class="fa fa-user"></i> ' + escape(item.identificacion) + '</span>' +
+                            '<span class="cedulaCliente"><i class="fa fa-user"></i> ' + escape(item.Identificacion) + '</span>' +
                             '</span>' +
-                            '<p class="nombreCliente">' + escape(item.nombre) + '</p>' +
+                            '<p class="nombreCliente">' + escape(item.NombreCompleto) + '</p>' +
                             '</div>';
                     }
                 },
-                onChange: selectClient()
-                
+                onChange: selectClient(),               
+                load: function (query, callback) {
+                    query = JSON.parse(query)
+                    page = query.page || 1
+                    if(query.search)
+                        if (!totalCount || totalCount > ((page - 1) * perPage)) {
+                            $.ajax({
+                                url: pathBase + 'api/catalogs/cliente/buscar/' + query.search + '/per_page/' + perPage + '/page/' + query.page,
+                                error: function () {
+                                    callback();
+                                },
+                                success: function (res) {
+                                    totalCount = res.Count;
+                                    callback(res.Result);
+                                }
+                            });
+                        } else {
+                            callback();
+                        }                    
+                }
             });
         });
 
@@ -319,7 +358,7 @@
             $('#servicios').addNewServicio();         
         }
 
-        var $select ={}
+      
         var $select = $('.select').selectize();
     </script>
 
@@ -338,6 +377,9 @@
                 var isValid = validateModel(master);
                 if (isValid) {
                     $(b).saving();
+                    $('.chat-room').loading({
+                        message: 'Guardando...'
+                    });
                     $.ajax({
                         type: "POST",
                         url: pathBase + "ingresosEgresosCajas/create",
@@ -345,22 +387,24 @@
                         dataType: "json",
                         error: function (err) {
                             $(b).html('<span class="fa fa-check"></span> Guardar ');
+                            $('.chat-room').loading('stop');
                             $.notification(err.responseJSON);
                         },
                         success: function (response) {
                             $(b).hide();
-                            $.notification('Se guardó correctamente el recibo ' + response.numRecibo , 'success');     
-                            Id.value = response.id;
-                            $('#print').show();                       
+                            $.notification('Se guardó correctamente el recibo ' + response.NumRecibo , 'success');     
+                            Id.value = response.Id;
+                            $('#print').show(); 
+
+                            $('#lblEstado').text('Registrado');
+                            $('#lblusername').text(response.Username);
+                            $('#creadoEl').text(moment(response.FechaRegistro).format('DD-MM-YYYY'));
+                            $('.chat-room').loading('stop');
                         },
                     });
-                }
-                
-            }
-            
+                }                
+            }            
         }
-
-        
     </script>
 
 }

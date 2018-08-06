@@ -1,7 +1,8 @@
+@model mvcIpsa.Extensions.AppUser;
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
-            <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" asp-action="create"><span class="fa fa-plus"></span> Nuevo recibo</a>
+            <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" asp-action="create"><span class="fa fa-plus"></span> Nuevo movimiento</a>
         </header>
         <div class="panel-body">
             <ul id="sortable" class="task-list ui-sortable">
@@ -28,54 +29,89 @@
                                 <label for="Estado" class="control-label">Estado :</label>
                             </div>
                             <div class="col-lg-8 col-md-8">
-                                <select class="form-control Parameter" id="Estado" asp-items="ViewBag.EstadoId"><option value="">Todos</option></select>
+                                <select class="Parameter" id="Estado" asp-items="ViewBag.EstadoId"><option value="">Todos</option></select>
                             </div>
                         </div>
+
                         <div class="form-group col-lg-4 col-md-4">
                             <div class="col-lg-2 col-md-4">
-                                <label for="Caja" class="control-label">Caja :</label>
+                                <label for="Caja" class="control-label">Tipo :</label>
                             </div>
                             <div class="col-lg-10 col-md-8">
-                                <select class="form-control Parameter" id="Caja" asp-items="ViewBag.Caja">
-                                    @if (usr.roles.Contains(1))
-	                                {
-                                    <option value="">Todas</option>
-	                                }                                    
+                                <select class="Parameter" id="TipoDoc" asp-items="ViewBag.TipoDoc">                                    
+                                        <option value="">Todas</option>                                                                       
                                 </select>
                             </div>      
                         </div>
+                        
                         <div class="form-group col-lg-2 col-md-4">                      
-                            <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
+                            <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch" onclick="buscar()"><span class="fa fa-filter"></span> Filtrar</button>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                <div class="panel2">
+                                    <div class="panel-heading" role="tab" id="headingTwo">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Mostrar mas filtros
+                                        </a>
+                                    </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                        <div class="panel-body">
+                                            <div class="row">
+                                                <div class="form-group col-lg-4 col-md-4">
+                                                    <div class="col-lg-2 col-md-4">
+                                                        <label for="Caja" class="control-label">Caja :</label>
+                                                    </div>
+                                                    <div class="col-lg-10 col-md-8">
+                                                        <select class="Parameter" id="Caja" asp-items="ViewBag.Caja">
+                                                            @if (Model.roles.Contains(1))
+                                                            {
+                                                            <option value="">Todas</option>
+                                                            }                                    
+                                                        </select>
+                                                    </div>      
+                                                </div>
+                                                <div class="form-group col-lg-4 col-md-4">
+                                                    <div class="col-lg-6 col-md-4">
+                                                        <label for="Referecnia" class="control-label">Referencia :</label>
+                                                    </div>
+                                                    <div class="col-lg-6 col-md-8">
+                                                        <input type="text" class="form-control Parameter" id="Referencia" placeholder="Referencia">
+                                                    </div>                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
                 </li>
-
             </ul>
-
-            <div class="inbox-head">
-                <h3>Lista de movimientos</h3>
-                <div class="pull-left position" action="#">
-                    <div class="input-append">
-                        <input id="numRecibo" type="text" placeholder="Buscar referencia" class="sr-input Parameter">
-                        <button type="button" id="btnSearchNumRecibo" class="btn sr-btn"><i class="fa fa-search"></i></button>
+             <div class="panel">
+                 <div class="panel-footer">
+                      <div class="dx-viewport">
+                        <div class="demo-container">
+                            <div id="dxGridMovimientos"></div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-
-            <table id="movimientos" class="table table-hover table-striped table-responsive table-condensed"></table>
+                 </div>
+             </div>           
         </div>
     </section>
 </div>
 <dialog class="mdl-dialog">
-    <h4 class="mdl-dialog__title">Anular movimiento</h4>
+    <h4 class="mdl-dialog__title">Anular recibo</h4>
     <div class="mdl-dialog__content">
         <textarea cols="3" class="form-control" id="MotivoAnular" placeholder="Escriba el motivo de la anulación"></textarea>
     </div>
     <div class="mdl-dialog__actions">
-        <button type="button" class="anular mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="continuar(idrecibotext.value);">Anular</button>
+        <button type="button" class="anular mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" onclick="continuar(idmovimiento.value);">Anular</button>
         <button type="button" class="mdl-button close">Cancelar</button>
     </div>
 </dialog>
-<input id="idrecibotext" hidden="hidden" value="0" />
-<input id="tipoDoc" hidden="hidden" value="@(ViewBag.TipoDoc ?? String.Empty)" />
+<input id="idmovimiento" hidden="hidden" value="0" />

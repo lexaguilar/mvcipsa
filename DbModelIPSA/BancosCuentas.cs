@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace mvcIpsa.DbModel
+namespace mvcIpsa.DbModelIPSA
 {
     public partial class BancosCuentas
     {
         public int BancoCuenta { get; set; }
         public int Bancoid { get; set; }
-        public char? CtaBancaria { get; set; }
-        public char NombreSucursal { get; set; }
-        public char? Descripcion { get; set; }
-        public char CtaContable { get; set; }
+        public string CtaBancaria { get; set; }
+        public string NombreSucursal { get; set; }
+        public string Descripcion { get; set; }
+        public string CtaContable { get; set; }
         public int? Moneda { get; set; }
         public int? Estado { get; set; }
         public bool? Multiminutas { get; set; }

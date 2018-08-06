@@ -10,7 +10,7 @@
         <header class="panel-heading">
             Editar un permiso
         </header>
-        <form method="post" asp-controller="Role" asp-action="Edit" class="animated bounceInLeft">
+        <form method="post" asp-controller="Role" asp-action="Edit" class="">
             <div class="panel-body">
                 <div class="row">
                     <input type="hidden" asp-for="Id" />
@@ -35,7 +35,10 @@
                     </div>
                 </div>
             </div>
-            <button asp-action="index" class="btn btn-default"><span class="fa fa-arrow-left"></span> Regresar a la lista </button>
+            <div class="panel-footer">
+                <a asp-action="Index"><span class="fa fa-angle-left"></span> Regresar</a>
+                <a asp-action="create" class="pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+            </div>
         </form>
     </section>
 </div>

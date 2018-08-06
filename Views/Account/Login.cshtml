@@ -2,12 +2,6 @@
 @{
     ViewData["Title"] = "Iniciar sesión";
 }
-<environment names="Development">
-    <link rel="stylesheet" href="~/css/animate.css" />
-</environment>
-<environment names="Staging,Production">
-    <link rel="stylesheet" href="~/css/animate.min.css" asp-append-version="true" />
-</environment>
 <style>
     /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
 
@@ -187,7 +181,7 @@
 
 
 <div class="wrapper">
-    <h2 class="text-center animated slideInUp">@ViewData["Title"].</h2>
+    <h2 class="text-center">@ViewData["Title"].</h2>
     <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal login">
         <hr />
         <div class="form-group">

@@ -10,7 +10,7 @@ namespace mvcIpsa.DbModel
             IngresosEgresosCajaReferencias = new HashSet<IngresosEgresosCajaReferencias>();
         }
 
-        public short Id { get; set; }
+        public int Id { get; set; }
         public string Descripcion { get; set; }
 
         public ICollection<IngresosEgresosCajaReferencias> IngresosEgresosCajaReferencias { get; set; }

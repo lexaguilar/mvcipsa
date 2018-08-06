@@ -32,10 +32,16 @@ namespace mvcIpsa.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Caja.ToListAsync());
+            return View();
+        }
+        [ActionName("getList")]
+        public async Task<IActionResult> getList()
+        {
+            return Json(await _context.Caja.ToListAsync());
         }
 
         // GET: Cajas/Details/5
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -219,12 +225,20 @@ namespace mvcIpsa.Controllers
             }
 
             var lote = _context.LoteRecibos.Where(l => l.CajaId == id.Value).FirstOrDefault();
-            if (lote == null)
-            {                
-                return View(lote);
-            }
-
             ViewBag.Caja = _context.Caja.Find(id).Description;
+            if (lote == null)
+            {
+                var newLote = new LoteRecibos
+                {
+                    CajaId = id.Value,
+                    Actual = 0,
+                    Final = 0,
+                    Inicio = 0
+                };
+                _context.LoteRecibos.Add(newLote);
+                _context.SaveChanges();
+                return View(newLote);
+            }
 
             decimal porcentaje = 0;
             if(Convert.ToInt16(lote.Final - lote.Inicio)!=0)              

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Microsoft.AspNetCore.Mvc
 {
-    public static class UrlHelperExtensions
+    public static class HelperExtensions
     {
         public static string ResetPasswordCallbackLink(this IUrlHelper urlHelper, string userId, string code, string scheme)
         {
@@ -17,6 +17,12 @@ namespace Microsoft.AspNetCore.Mvc
                 controller: "Account",
                 values: new { userId, code },
                 protocol: scheme);
+        }
+
+        public static string NombreDelMes(int mes)
+        {
+            string[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre","Noviembre", "Diciembre" };
+            return meses[mes];
         }
 
         public static string getPasswordHashed(string password) {
@@ -56,5 +62,20 @@ namespace Microsoft.AspNetCore.Mvc
 
             
         }
+
+        public static string HashSHA1(string value)
+        {
+            var sha1 = SHA1.Create();
+            var inputBytes = Encoding.ASCII.GetBytes(value);
+            var hash = sha1.ComputeHash(inputBytes);
+            var sb = new StringBuilder();
+            for (var i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+        
+
     }
 }

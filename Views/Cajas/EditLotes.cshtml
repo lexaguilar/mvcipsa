@@ -22,40 +22,43 @@
         <header class="panel-heading">
             Lote de la caja @ViewBag.Caja
         </header>
-        <div class="row">
-            <div class="col-md-6  col-md-offset-3">
-                @if (Model != null)
-                {
-                    <div class="col-md-4">
-                        <div class="easy-pie-chart">
-                            <div class="percentage easyPieChart" data-percent="@ViewBag.Porcentaje" style="width: 135px; height: 135px; line-height: 135px;"><span>@ViewBag.Porcentaje</span>%<canvas width="135" height="135"></canvas></div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6  col-md-offset-3">
+                    @if (Model != null)
+                    {
+                        <div class="col-md-4">
+                            <div class="easy-pie-chart">
+                                <div class="percentage easyPieChart" data-percent="@ViewBag.Porcentaje" style="width: 135px; height: 135px; line-height: 135px;"><span>@ViewBag.Porcentaje</span>%<canvas width="135" height="135"></canvas></div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="bio-row">
-                            <p><span>Lote inicial </span>: <i class="fa fa-clock-o"></i> <a href="#" class="myeditable" data-type="text" id="Inicio" data-name="Inicio">@Model.Inicio</a></p>
+                        <div class="row">
+                            <div class="bio-row">
+                                <p><span>Lote inicial </span>: <i class="fa fa-clock-o"></i> <a href="#" class="myeditable" data-type="text" id="Inicio" data-name="Inicio">@Model.Inicio</a></p>
+                            </div>
+                            <div class="bio-row">
+                                <p><span>Lote final </span>: <i class="fa fa-clock-o"></i> <a href="#" class="myeditable" data-type="text" id="Final" data-name="Final">@Model.Final</a></p>
+                            </div>
+                            <div class="bio-row">
+                                <p><span>Lote actual </span>: <i class="fa fa-bell-o"></i> <a href="#" class="myeditable" data-type="text" id="Actual" data-name="Actual">@Model.Actual</a></p>
+
+                                <button type="button" id="save-btn" class="btn btn-primary btn-block"><i class="fa fa-refresh"></i> Actualizar</button>
+                            </div>
+
                         </div>
-                        <div class="bio-row">
-                            <p><span>Lote final </span>: <i class="fa fa-clock-o"></i> <a href="#"class="myeditable" data-type="text" id="Final" data-name="Final">@Model.Final</a></p>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            La caja <strong>@ViewBag.Caja</strong> no contiene un lote asignado
                         </div>
-                        <div class="bio-row">
-                            <p><span>Lote actual </span>: <i class="fa fa-bell-o"></i> <a href="#" class="myeditable" data-type="text" id="Actual" data-name="Actual">@Model.Actual</a></p>
-                                                   
-                            <button type="button" id="save-btn" class="btn btn-primary btn-block"><i class="fa fa-refresh"></i> Actualizar</button>
-                        </div>       
-                       
-                    </div>                    
-                }
-                else
-                {
-                    <div class="alert alert-danger" role="alert">
-                        La caja <strong>@ViewBag.Caja</strong> no contiene un lote asignado
-                    </div>
-                }
-               
+                    }
+
+                </div>
             </div>
         </div>
-        <div>
+        <div class="panel-footer">
             <a class="btn btn-default" asp-action="Index">Regresar a la lista</a>
         </div>
     </section>
@@ -79,7 +82,7 @@
         
     <script>
         
-        var idCaja = '@Model.Id';
+        var id = '@Model.Id';
         
                 
         $(document).ready(function () {
@@ -92,24 +95,31 @@
                 },
             });
 
+            $('.myeditable').on("shown", function (e, editable) {
+                editable.input.postrender = function () {                   
+                    editable.input.$input.select();
+                };
+            });
+
             $('#save-btn').click(function () {
-                if (idCaja) { 
+                if (id) { 
                     var data,
                         $elems = $('.myeditable'),
                         errors = $elems.editable('validate');
                     if ($.isEmptyObject(errors)) {
                         data = $elems.editable('getValue');
-                        data["IdCaja"] = idCaja;
-                        console.log(data);
+                        data["Id"] = id;
+                        //console.log(data);
 
                         $.ajax({
                             type: 'POST',
-                            url: pathBase + `cajas/saveLote/${idCaja}`,
+                            url: pathBase + `cajas/saveLote/${id}`,
                             data: data,
                             dataType: 'json',
 
                         }).success(function (response) {
-                            $.notification('Lote guardado correctamente','success')
+                            $.notification('Lote guardado correctamente','success');  
+                            $('.myeditable').removeClass('editable-unsaved');                          
                         });
                     } else {
                         console.log(errors);

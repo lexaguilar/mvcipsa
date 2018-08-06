@@ -30,6 +30,10 @@ namespace mvcIpsa.DbModel
         public string Beneficiario { get; set; }
         public short? TipoCleinteId { get; set; }
         public short Referencias { get; set; }
+        public string UsernameAnulado { get; set; }
+        public string UsernameEditado { get; set; }
+        public DateTime? FechaAnulado { get; set; }
+        public DateTime? FechaEditado { get; set; }
 
         public Caja Caja { get; set; }
         public CajaEstado Estado { get; set; }

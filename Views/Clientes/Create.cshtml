@@ -4,57 +4,60 @@
     ViewData["Title"] = "Nuevo cliente";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Create</h2>
-
-<h4>Cliente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4 col-lg-offset-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Identificacion" class="control-label"></label>
-                <input asp-for="Identificacion" class="form-control" />
-                <span asp-validation-for="Identificacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Apellido" class="control-label"></label>
-                <input asp-for="Apellido" class="form-control" />
-                <span asp-validation-for="Apellido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Telefono" class="control-label"></label>
-                <input asp-for="Telefono" class="form-control" />
-                <span asp-validation-for="Telefono" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Correo" class="control-label"></label>
-                <input asp-for="Correo" class="form-control" />
-                <span asp-validation-for="Correo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Direccion" class="control-label"></label>
-                <textarea asp-for="Direccion" cols="2" class="form-control"></textarea>              
-                <span asp-validation-for="Direccion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoClienteId" class="control-label"></label>
-                <select asp-for="TipoClienteId" class ="form-control" asp-items="ViewBag.TipoClienteId"></select>
-            </div>           
-            <div class="form-group">
-                <input type="submit" value="Guardar" class="btn btn-success btn-block" />
-            </div>
-        </form>
-    </div>
+<div class="wrapper">
+    <section class="panel animated slideInLeft">
+        <header class="panel-heading">
+            Crear un cliente
+        </header>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4 col-lg-offset-4">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Identificacion" class="control-label"></label>
+                            <input asp-for="Identificacion" class="form-control" />
+                            <span asp-validation-for="Identificacion" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Nombre" class="control-label"></label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Apellido" class="control-label"></label>
+                            <input asp-for="Apellido" class="form-control" />
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Telefono" class="control-label"></label>
+                            <input asp-for="Telefono" class="form-control" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Correo" class="control-label"></label>
+                            <input asp-for="Correo" class="form-control" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Direccion" class="control-label"></label>
+                            <textarea asp-for="Direccion" cols="2" class="form-control"></textarea>              
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TipoClienteId" class="control-label"></label>
+                            <select asp-for="TipoClienteId" class ="form-control" asp-items="ViewBag.TipoClienteId"></select>
+                        </div>           
+                        <div class="form-group">
+                            <input type="submit" value="Guardar" class="btn btn-success btn-block" />
+                        </div>
+                    </form>
+                </div>
+            </div>         
+        </div>
+        <div class="panel-footer">
+            <a asp-action="Index"><span class="fa fa-angle-left"></span> Regresar</a>
+            <a asp-action="create" class="pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+        </div> 
+    </section>
 </div>
-
-<div>
-    <a asp-action="Index">Regresar a la lista</a>
-</div>
-

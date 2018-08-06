@@ -3,20 +3,29 @@
     ViewData["Title"] = "Usuarios";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<environment include="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
+@section Styles
+{
+<environment include="Development">   
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
 <environment exclude="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
+}
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
             Lista de Usuarios
+            <a class="btn btn-primary btn-sm" style="float: right" asp-action="Create"><span class="fa fa-user-plus"></span> Crear un usuario</a>
         </header>
         <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-user-plus"></span> Crear un usuario</a>
-            <table id="profile" class="table table-hover"></table>
+             <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridPerfiles"></div>
+                </div>
+            </div>
         </div>        
     </section>   
 </div>
@@ -25,26 +34,87 @@
 @section Scripts
 {
 <environment include="Development">
-    <script src="~/js/site.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+  
+    <script src="~/lib/dx/js/dx.all.js"></script>  
 </environment>
 <environment exclude="Development">
-    <script src="~/js/site.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+ 
+    <script src="~/lib/dx/js/dx.all.js"></script>  
 </environment>
 
 
     <script>
         var profiles = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
-        $(document).ready(function () {
-            $('#profile').datatable({
-                columnsHead: ['','Usuario', 'Nombre', 'Apellidos', 'Correo', 'Caja', 'Centro de costo', 'Estado'],
-                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove','otherAction'] },'Username', 'Nombre', 'Apellido', 'Correo', 'cajaDescripcion', 'centrocostoDescripcion', 'Nestado'],
-                data: profiles,
-                pag: 1,
-                rows: 10,
-                totalRows: profiles['length'],
-                controller: 'profile',
-                id:'Username'
-            });
-        });
+
+        $('#dxGridPerfiles').dxDataGrid({
+            dataSource: profiles,
+            columnsAutoWidth: true,     
+            allowColumnResizing: true,
+            rowAlternationEnabled: true,
+            headerFilter: {
+                visible: true
+            },
+            pager:{
+                showInfo : true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },               
+            columns: [
+                {                      
+                    caption: "",
+                    width : 250,
+                    dataField: "Username",                               
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(`<a href="${pathBase}profile/Edit/${options.value}"><span class="glyphicon glyphicon-pencil"></span> Editar</a> |                           
+                            <a href="${pathBase}profile/EditRols/${options.value}"><span class="glyphicon glyphicon-menu-hamburger text-primary"></span> Permisos</a> | 
+                            <a href="${pathBase}profile/EditAccountBank/${options.value}"><span class="fa fa-bank text-primary"></span> Cuentas</a>`)                               
+                            .appendTo(container);
+                    }
+                },
+                'Username', 'Nombre', 'Apellido', 'Correo', 'cajaDescripcion',
+                {                      
+                    caption: "",
+                    dataField: "Username",                               
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(`<a href="${pathBase}profile/Delete/${options.value}"><span class="glyphicon glyphicon-remove text-danger"></span> Eliminar</a>`)                               
+                            .appendTo(container);
+                    }
+                },    
+            ],
+            summary: {
+                totalItems: [{
+                    column: "Id",
+                    summaryType: "count",
+                    customizeText: function(data) {
+                        return  data.value +' cajas';
+                    }
+                }]
+            },    
+        }).dxDataGrid("instance");
+       
     </script>
 }

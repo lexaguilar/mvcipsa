@@ -1,28 +1,33 @@
+@using mvcIpsa.Extensions
 @{
     ViewData["Title"] = "Reportes recibo ";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var usr = this.User.GetServiceUser();
 }
 @section Styles
     {
-    <environment include="Development">
-        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
-        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
-        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
-        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
-        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
-        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
-        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
-        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
-        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-    </environment>
+<environment include="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+</environment>
+<environment exclude="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+</environment>
 }
 <style>
     p {
-  font-size: 12px;
-  }
+        font-size: 12px;
+    }
+
     #gridContainer td {
         vertical-align: middle;
     }
@@ -44,9 +49,9 @@
         color: #2ab71b;
     }
 
-    #gridContainer .inc span.diff:before {
-        content: '+';
-    }
+        #gridContainer .inc span.diff:before {
+            content: '+';
+        }
 
     #gridContainer .dec span.diff:before {
         content: '-';
@@ -74,9 +79,10 @@
     }
 
     #gridContainer .dec span.current-value:after {
-        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');    
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADJSURBVHjaYvzPgBfgkhYA4o8QFahKmBioDEYNHIQGsgBxIBCLkqgvAYi/g1mMjMjir0EJzR6If/6HpChKMMgMe3DKBeIcKhiY8x/MYoDj+RQYNgdkGLqBbEB8kgzDToL1YjEQhKWB+BUJhj0H64Eahs1AELYhMpJ+gtUiGYbLQBBOI8LANLBaIg1kAAc0vkiAqSPBQFAkHcNi2DGoHMkGgrAENOCRI0ECRQ2JBoKwJTQCfkLZDPgMZPxPXN5NhtJzMSsJVBMAAgwAyWSY2svfmrwAAAAASUVORK5CYII=');
     }
-    <style>
+
+    <style >
     .inbox-head {
         padding: 10px;
         background: #ffffff;
@@ -85,42 +91,54 @@
         -webkit-border-radius: 0 4px 0 0;
         min-height: 20px;
     }
+
     .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
-      
         padding-right: 3px;
         padding-left: 3px;
     }
 </style>
 <div class="wrapper">
     <ul id="sortable" class="task-list ui-sortable">
-                <li class="list-primary">
-                    <div class="row">
-                        <div class="form-group col-lg-2 col-md-4">
-                            <div class="col-lg-4 col-md-4">
-                                <label for="desde" class="control-label ">Desde :</label>
-                            </div>
-                            <div class="col-lg-8 col-md-8">
-                                <input type="text" class="form-control datepicker CajaParameter" id="desde" placeholder="Fecha inicio">
-                            </div>                            
-                        </div>
-                        <div class="form-group col-lg-2 col-md-4">
-                            <div class="col-lg-4 col-md-4">
-                                <label for="hasta" class="control-label">Hasta :</label>
-                            </div>
-                            <div class="col-lg-8 col-md-8">
-                                <input type="text" class="form-control datepicker CajaParameter" id="hasta" placeholder="Fecha final">
-                            </div>                                
-                        </div>                        
-                      
-                        <div class="form-group col-lg-2 col-md-4">                      
-                            <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
-                        </div>
+        <li class="list-primary">
+            <div class="row">
+                <div class="form-group col-lg-2 col-md-4">
+                    <div class="col-lg-4 col-md-4">
+                        <label for="desde" class="control-label ">Desde :</label>
                     </div>
-                </li>
+                    <div class="col-lg-8 col-md-8">
+                        <input type="text" class="form-control datepicker CajaParameter" id="desde" placeholder="Fecha inicio">
+                    </div>
+                </div>
+                <div class="form-group col-lg-2 col-md-4">
+                    <div class="col-lg-4 col-md-4">
+                        <label for="hasta" class="control-label">Hasta :</label>
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <input type="text" class="form-control datepicker CajaParameter" id="hasta" placeholder="Fecha final">
+                    </div>
+                </div>
+                <div class="form-group col-lg-4 col-md-4">
+                    <div class="col-lg-2 col-md-4">
+                        <label for="Caja" class="control-label">Caja :</label>
+                    </div>
+                    <div class="col-lg-10 col-md-8">
+                        <select class="CajaParameter" id="cajaId" asp-items="ViewBag.Caja">
+                            @if (usr.roles.Contains(1))
+                            {
+                                <option value="">Todas</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-lg-2 col-md-4">
+                    <button type="button" style="height: 28px;line-height: 30px;" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" id="btnSearch"><span class="fa fa-filter"></span> Filtrar</button>
+                </div>
+            </div>
+        </li>
 
-            </ul>
+    </ul>
     <div class="dx-viewport">
-        <div class="demo-container">            
+        <div class="demo-container">
             <div id="gridContainer"></div>
         </div>
     </div>
@@ -128,42 +146,44 @@
 
 @section Scripts
     {
-    <environment include="Development">
-        <script src="~/lib/dx/js/cldr.min.js"></script>
-        <script src="~/lib/dx/js/event.min.js"></script>
-        <script src="~/lib/dx/js/supplemental.min.js"></script>
-        <script src="~/lib/dx/js/unresolved.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
-        <script src="~/lib/dx/js/jszip.min.js"></script>
-        <script src="~/lib/dx/js/dx.all.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
-        <script src="~/js/site.js"></script>
-        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="~/lib/dx/js/cldr.min.js"></script>
-        <script src="~/lib/dx/js/event.min.js"></script>
-        <script src="~/lib/dx/js/supplemental.min.js"></script>
-        <script src="~/lib/dx/js/unresolved.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
-        <script src="~/lib/dx/js/jszip.min.js"></script>
-        <script src="~/lib/dx/js/dx.all.js"></script>
-        <script src="~/lib/moment/moment.js"></script>
-        <script src="~/js/site.js"></script>
-        <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-        <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
-    </environment>
-    <script>       
-        $(document).ready(function(){
+<environment include="Development">
+    <script src="~/js/selectize.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+</environment>
+<environment exclude="Development">
+    <script src="~/js/selectize.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.es.min.js"></script>
+</environment>
+    <script>
+        $(document).ready(function () {
             var now = moment();
             $('.datepicker')
                 .val(now.format("DD-MM-YYYY"))
@@ -171,20 +191,20 @@
                     autoclose: true,
                     format: 'dd-mm-yyyy',
                     language: 'es'
-            });
+                });
 
-            $('#btnSearch').click(function () {           
+            $('#btnSearch').click(function () {
                 getList();
             });
-           
+            $('select').selectize();
         });
 
 
-        var getList = ()=>{
+        var getList = () => {
             var data = findEntity('CajaParameter');
             $('#btnSearch').searching();
-             $.get(pathBase + 'Reportes/RecibosCaja_Detelle1_GetList',data,result => {
-                 console.log(result);
+            $.get(pathBase + 'Reportes/RecibosCaja_Detelle1_GetList', data, result => {
+                console.log(result);
                 $("#gridContainer").dxDataGrid({
                     dataSource: result,
                     allowColumnReordering: true,
@@ -202,14 +222,14 @@
                         visible: true,
                         allowSearch: true
                     },
-                    
+
                     showRowLines: true,
                     showBorders: true,
                     rowAlternationEnabled: true,
                     keyExpr: "Id",
                     sorting: {
                         mode: "multiple"
-                    },   
+                    },
                     "export": {
                         enabled: true,
                         fileName: "RecibosCaja",
@@ -228,81 +248,81 @@
                         pageSize: 10
                     },
                     columns: [{
-                            dataField: "FechaProceso",
-                            dataType: "date",
-                            width: 120,
-                            format:'dd/MM/yyyy'
-                        },                        
-                        {
-                            dataField: "NumRecibo",
-                           // width: 100
-                        },  
-                        "Caja",                      
-                        {
-                            dataField: "Beneficiario",                            
-                           // width: 280                  
-                        },  
-                        {
-                            caption: "Tipo Pago",               
-                            calculateCellValue: function (data) {
-                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.TipoPago);
-                                return arr.join(" -");
-                            },
-                            cellTemplate: function (container, options) {
-                                options.data.IngresosEgresosCajaReferencias.forEach(ref => {
-                                    $(container).append('<p>' + ref.TipoPago + '</p>');
-                                });
-                            }
+                        dataField: "FechaProceso",
+                        dataType: "date",
+                        width: 120,
+                        format: 'dd/MM/yyyy'
+                    },
+                    {
+                        dataField: "NumRecibo",
+                        // width: 100
+                    },
+                        "Caja",
+                    {
+                        dataField: "Beneficiario",
+                        // width: 280
+                    },
+                    {
+                        caption: "Tipo Pago",
+                        calculateCellValue: function (data) {
+                            let arr = data.IngresosEgresosCajaReferencias.map(r => r.TipoPago);
+                            return arr.join(" -");
                         },
-                        {
-                            caption: "Referencias",
-                            calculateCellValue: function (data) {
-                                let arr = data.IngresosEgresosCajaReferencias.map(r => r.Referencia);
-                                return arr.join(" -");
-                            },
-                            cellTemplate: function (container, options) {
-                                options.data.IngresosEgresosCajaReferencias.forEach(ref => {
-                                    $(container).append('<p>' +  ref.Referencia + '</p>');
-                                });
-                            }
+                        cellTemplate: function (container, options) {
+                            options.data.IngresosEgresosCajaReferencias.forEach(ref => {
+                                $(container).append('<p>' + ref.TipoPago + '</p>');
+                            });
+                        }
+                    },
+                    {
+                        caption: "Referencias",
+                        calculateCellValue: function (data) {
+                            let arr = data.IngresosEgresosCajaReferencias.map(r => r.Referencia);
+                            return arr.join(" -");
                         },
-                        {
-                            caption: "Servicios",      
-                            calculateCellValue: function (data) {
-                                let arr = data.IngresosEgresosCajaDetalle.map(r => r.servicio);
-                                return arr.join(" -");
-                            },
-                            cellTemplate: function (container, options) {
-                                options.data.IngresosEgresosCajaDetalle.forEach(ref => {
-                                    $(container).append('<p>' + ref.servicio + '</p>');
-                                });
-                            }
-                        },  
-                        {
-                            caption: "Precios",      
-                            calculateCellValue: function (data) {
-                                let arr = data.IngresosEgresosCajaDetalle.map(r => r.Montodolar);
-                                return arr.join(" -");
-                            },
-                            cellTemplate: function (container, options) {
-                                options.data.IngresosEgresosCajaDetalle.forEach(ref => {
-                                    $(container).append('<p>$ ' + ref.Montodolar + '</p>');
-                                });
-                            }
-                        },                      
-                        "TipoMoneda",     
-                        {
-                            dataField: "Cordoba",                            
-                            precision: 2                         
-                        }, {
-                            dataField: "Dolar",                           
-                            precision: 2                                   
-                        }             
-                                         
+                        cellTemplate: function (container, options) {
+                            options.data.IngresosEgresosCajaReferencias.forEach(ref => {
+                                $(container).append('<p>' + ref.Referencia + '</p>');
+                            });
+                        }
+                    },
+                    {
+                        caption: "Servicios",
+                        calculateCellValue: function (data) {
+                            let arr = data.IngresosEgresosCajaDetalle.map(r => r.servicio);
+                            return arr.join(" -");
+                        },
+                        cellTemplate: function (container, options) {
+                            options.data.IngresosEgresosCajaDetalle.forEach(ref => {
+                                $(container).append('<p>' + ref.servicio + '</p>');
+                            });
+                        }
+                    },
+                    {
+                        caption: "Precios",
+                        calculateCellValue: function (data) {
+                            let arr = data.IngresosEgresosCajaDetalle.map(r => r.Montodolar);
+                            return arr.join(" -");
+                        },
+                        cellTemplate: function (container, options) {
+                            options.data.IngresosEgresosCajaDetalle.forEach(ref => {
+                                $(container).append('<p>$ ' + ref.Montodolar + '</p>');
+                            });
+                        }
+                    },
+                        "TipoMoneda",
+                    {
+                        dataField: "Cordoba",
+                        precision: 2
+                    }, {
+                        dataField: "Dolar",
+                        precision: 2
+                    }
+
                     ],
                     masterDetail: {
                         enabled: true,
-                        template: function(container, options) { 
+                        template: function (container, options) {
                             var currentEmployeeData = options.data;
 
                             $("<div>")
@@ -310,99 +330,99 @@
                                 .text('Referencias de pago')
                                 .appendTo(container);
 
-                                $("<div>")
-                                    .dxDataGrid({
-                                        columnAutoWidth: true,
-                                        showBorders: true,
-                                        columns: [{
-                                            dataField: "Fecha",
-                                            dataType: "date",
-                                            format:'dd/MM/yyyy'
+                            $("<div>")
+                                .dxDataGrid({
+                                    columnAutoWidth: true,
+                                    showBorders: true,
+                                    columns: [{
+                                        dataField: "Fecha",
+                                        dataType: "date",
+                                        format: 'dd/MM/yyyy'
+                                    }, {
+                                        dataField: "TipoPago",
+                                    }, "Referencia", {
+                                        dataField: "TipoCambio",
+                                    }, {
+                                        dataField: "Cordoba",
+                                        precision: 2
+                                    }, {
+                                        dataField: "Dolar",
+                                        precision: 2
+                                    }],
+                                    summary: {
+                                        totalItems: [{
+                                            column: "Cordoba",
+                                            summaryType: "sum",
+                                            customizeText: function (data) {
+                                                return "C$ " + data.value;
+                                            }
                                         }, {
-                                            dataField: "TipoPago",                           
-                                        },"Referencia",{
-                                            dataField: "TipoCambio",                                                                     
-                                        },{
-                                            dataField: "Cordoba",                                          
-                                            precision: 2                         
-                                        }, {
-                                            dataField: "Dolar",                                           
-                                            precision: 2                             
-                                        }],
-                                        summary: {
-                                            totalItems: [{
-                                                column: "Cordoba",
-                                                summaryType: "sum",      
-                                                customizeText: function(data) {
-                                                    return "C$ " + data.value;
-                                                }                     
-                                            },{
-                                                column: "Dolar",
-                                                summaryType: "sum",
-                                                customizeText: function(data) {
-                                                    return "$ " + data.value;
-                                                }                           
-                                            }]
-                                        },
-                                        dataSource: currentEmployeeData.IngresosEgresosCajaReferencias
-                                    }).appendTo(container);
+                                            column: "Dolar",
+                                            summaryType: "sum",
+                                            customizeText: function (data) {
+                                                return "$ " + data.value;
+                                            }
+                                        }]
+                                    },
+                                    dataSource: currentEmployeeData.IngresosEgresosCajaReferencias
+                                }).appendTo(container);
 
-                                $("<div>")
+                            $("<div>")
                                 .addClass("master-detail-caption")
                                 .text('Servicios')
                                 .appendTo(container);
-                                     $("<div>")
-                                    .dxDataGrid({
-                                        columnAutoWidth: true,
-                                        showBorders: true,
-                                        columns: ["CtaContable", "servicio",{
-                                            dataField: "Precio",
-                                            precision: 2                       
-                                        },{
+                            $("<div>")
+                                .dxDataGrid({
+                                    columnAutoWidth: true,
+                                    showBorders: true,
+                                    columns: ["CtaContable", "servicio", {
+                                        dataField: "Precio",
+                                        precision: 2
+                                    }, {
                                             dataField: "Cantidad",
-                                            precision: 2                         
+                                            precision: 2
                                         }, {
                                             dataField: "Montodolar",
                                             caption: "Total",
-                                            precision: 2                             
+                                            precision: 2
                                         }],
-                                        summary: {
-                                            totalItems: [{
-                                                column: "Montodolar",
-                                                summaryType: "sum",      
-                                                customizeText: function(data) {
-                                                    return "$ " + data.value;
-                                                }                     
-                                            }]
-                                        },
-                                        dataSource: currentEmployeeData.IngresosEgresosCajaDetalle
-                                    }).appendTo(container);
+                                    summary: {
+                                        totalItems: [{
+                                            column: "Montodolar",
+                                            summaryType: "sum",
+                                            customizeText: function (data) {
+                                                return "$ " + data.value;
+                                            }
+                                        }]
+                                    },
+                                    dataSource: currentEmployeeData.IngresosEgresosCajaDetalle
+                                }).appendTo(container);
                         }
                     },
                     summary: {
                         totalItems: [{
                             column: "NumRecibo",
                             summaryType: "count",
-                             customizeText: function(data) {
+                            customizeText: function (data) {
                                 return data.value + " registros";
-                            }    
+                            }
                         }, {
                             column: "Cordoba",
-                            summaryType: "sum",      
-                            customizeText: function(data) {
+                            summaryType: "sum",
+                            customizeText: function (data) {
                                 return "C$ " + parseFloat(data.value).toFixed(2);
-                            }                     
-                        },{
+                            }
+                        }, {
                             column: "Dolar",
                             summaryType: "sum",
-                            customizeText: function(data) {
-                                return "$ " +parseFloat(data.value).toFixed(2);
-                            }                           
+                            customizeText: function (data) {
+                                return "$ " + parseFloat(data.value).toFixed(2);
+                            }
                         }]
                     }
-                });      
-                $('#btnSearch').reset();   
+                });
+                $('#btnSearch').reset();
             });
         }
     </script>
-    }
+}

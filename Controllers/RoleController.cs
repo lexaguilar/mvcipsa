@@ -25,23 +25,23 @@ namespace mvcIpsa.Controllers
             return View();
         }
 
-        public IActionResult Create()
-        {            
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create(Role role)
-        {
-            if (ModelState.IsValid)
-            {
-                role.Nestado = 1;
-                db.Role.Add(role);
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
+        //public IActionResult Create()
+        //{            
+        //    return View();
+        //}
+        //[HttpPost]
+        //public async Task<IActionResult> Create(Role role)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        role.Nestado = 1;
+        //        db.Role.Add(role);
+        //        await db.SaveChangesAsync();
+        //        return RedirectToAction("Index");
+        //    }
            
-            return View(role);
-        }
+        //    return View(role);
+        //}
 
         public IActionResult Edit(int id)
         {

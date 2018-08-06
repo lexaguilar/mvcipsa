@@ -26,6 +26,8 @@ namespace mvcIpsa.Models
         public string Estado { get; set; }
         public decimal TipoCambio { get; set; }
         public string MotivoAnulado { get; set; }
+        public int TipoDocumentoId { get; set; }
+        public string TipoDocumento { get; set; }
 
     }
 }

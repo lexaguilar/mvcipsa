@@ -5,20 +5,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Styles
+{
 <environment include="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
 <environment exclude="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
+}
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
             Lista de clientes
+            <a style="float: right" class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-user-plus"></span> Crear un cliente</a>
         </header>
         <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-user-plus"></span> Crear un cliente</a>
-            <table id="clientes" class="table table-hover"></table>
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridCliente"></div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -27,26 +36,67 @@
 @section Scripts
 {
     <environment include="Development">
-        <script src="~/js/site.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>   
     </environment>
     <environment exclude="Development">
-        <script src="~/js/site.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>   
     </environment>
 
 
     <script>
         var cliente = @Html.Raw(Json.Serialize(Model, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }));
-        $(document).ready(function () {
-            $('#clientes').datatable({
-                columnsHead: ['', 'Identificación', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'Tipo cliente'],
-                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Identificacion', 'Nombre', 'Apellido', 'Telefono', 'Correo', 'Direccion', 'tipocliente'],
+        
+        var sourceCliente = new DevExpress.data.DataSource({
+            store: {     
+                type: 'array',               
                 data: cliente,
-                pag: 1,
-                rows: 10,
-                totalRows: cliente['length'],
-                controller: 'clientes',
-                id:'Identificacion'
-            });
+                key: 'Identificacion'        
+            }
         });
+
+        $('#dxGridCliente').dxDataGrid({
+            dataSource: sourceCliente,                        
+            columnsAutoWidth: true,     
+            allowColumnResizing: true,
+            headerFilter: {
+                visible: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },          
+            columns: [ "Identificacion","Nombre","Apellido","Telefono","Correo","Direccion","tipocliente"],
+            summary: {
+                totalItems: [ {
+                    column: "Identificacion",
+                    summaryType: "count",
+                    customizeText: function(data) {
+                        return  data.value +' clientes';
+                    }
+                }]
+            },            
+        }).dxDataGrid("instance");
     </script>
 }

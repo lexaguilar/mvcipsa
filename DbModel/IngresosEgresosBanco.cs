@@ -10,7 +10,7 @@ namespace mvcIpsa.DbModel
         public string Referencia { get; set; }
         public decimal Monto { get; set; }
         public int TipoMonedaId { get; set; }
-        public string CuentaContableBanco { get; set; }
+        public int BancoCuenta { get; set; }
         public int TipoMovimientoId { get; set; }
         public string Concepto { get; set; }
         public DateTime FechaProceso { get; set; }
@@ -19,9 +19,12 @@ namespace mvcIpsa.DbModel
         public short EstadoId { get; set; }
         public decimal TipoCambio { get; set; }
         public string MotivoAnulado { get; set; }
-        
         public int TipoDocumentoId { get; set; }
-
+        public DateTime? FechaAnulado { get; set; }
+        public string UsernameAnulado { get; set; }
+        public string UsernameEditado { get; set; }
+        public DateTime? FechaEditado { get; set; }
+        public bool Procesado { get; set; }
         public Caja Caja { get; set; }
         public IngresosEgresosBancoEstado Estado { get; set; }
         public TipoDocumento TipoDocumento { get; set; }

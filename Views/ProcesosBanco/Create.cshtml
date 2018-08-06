@@ -1,0 +1,1248 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <environment include="Development">
+        <link href="~/lib/fileinput/css/fileinput.css" asp-append-version="true" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+        <link href="~/css/checkbox.css" rel="stylesheet" />
+        <link href="~/css/loading.css" rel="stylesheet" />
+        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/notifIt.css" rel="stylesheet" />
+        <!--<link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" /> -->
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+    <environment exclude="Development">
+        <link href="~/lib/fileinput/css/fileinput.css" asp-append-version="true" rel="stylesheet">
+        <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+        <link href="~/css/checkbox.css" rel="stylesheet" />
+        <link href="~/css/loading.css" rel="stylesheet" />
+        <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+        <link href="~/css/notifIt.css" rel="stylesheet" />
+        <!--<link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />-->
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+}
+<style>
+    .form-control {
+        height: 34px;
+    }
+
+    .room-box {
+        border: 1px solid #e7e7e7;
+        background: #f7f8fa;
+        padding: 5px;
+        display: inline-block;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+    }
+
+    .panel-body {
+        padding: 5px;
+        min-height: 130px;
+    }
+
+    .panel-footer {
+        min-height: 60px;
+    }
+
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    #btnDownloadInfo {
+        height: 33px;
+        margin: 0;
+        min-width: 17px;
+        padding: 0 15px;
+        font-size: 10px;
+        bottom: 0px;
+        position: relative;
+        float: right;
+        top: 23px;
+    }
+
+    .table {
+        margin-bottom: 5px;
+    }
+
+    .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        display: none;
+        margin: auto;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .percent {
+        width: 40px;
+        height: 40px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .ready {
+        width: 40px;
+        height: 40px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .tscroll {
+        overflow-y: scroll;
+        max-height: 470px;
+    }
+
+    .found {
+        background-color: #45f0cd
+    }
+
+    .foundOutDate {
+        background-color: #8af3de
+    }
+
+    .foundMixto {
+        background-color: #51afff
+    }
+
+    .foundOutDateMixto {
+        background-color: #7bc2ff
+    }
+
+    .foundManual {
+        background-color: #a6d5ff
+    }
+
+    .duplicated {
+        background-color: rgba(240, 86, 132, 0.68)
+    }
+
+    .duplicatedOutDate {
+        background-color: rgba(245, 121, 158, 0.68)
+    }
+
+    .for-review {
+        background-color: #b5e8b5
+    }
+
+
+    .matched {
+        background-color: #41cac0;
+        color: white;
+    }
+
+
+    .lbl-found {
+        border-bottom: 3px solid #45f0cd
+    }
+
+    .lbl-foundOutDate {
+        border-bottom: 3px solid #8af3de
+    }
+
+    .lbl-foundMixto {
+        border-bottom: 3px solid #51afff
+    }
+
+    .lbl-foundOutDateMixto {
+        border-bottom: 3px solid #7bc2ff
+    }
+
+    .lbl-foundManual {
+        border-bottom: 3px solid #a6d5ff
+    }
+
+    .lbl-duplicated {
+        border-bottom: 3px solid rgba(240, 86, 132, 0.68)
+    }
+
+    .lbl-duplicatedOutDate {
+        border-bottom: 3px solid rgba(245, 121, 158, 0.68)
+    }
+    .lbl-pendient {
+        border-bottom: 3px solid #ffffff
+    }
+
+    .resumen {
+        font-size: 18px
+    }
+
+    .dx-widget {
+        color: #333;
+        font-weight: normal;
+        font-size: 13px;
+        font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, sans-serif;
+        line-height: 1.35715;
+    }
+
+    .text-custom-16 {
+        font-size: 13px;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel">
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <label for="input-b2" class="control-label ">Seleccione el estado de cuenta</label>
+                        <input id="input-b2" name="input-b2" type="file" class="file" data-show-preview="false">
+                    </form>
+                    <div class="form-group col-lg-4">
+                        <label for="customFormat" class="control-label">Formato de la fecha</label>
+                        <select class="" id="customFormat">
+                            <option value="">Seleccione un formato</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="loader DataCB"></div>
+                    <div class="dx-viewport">
+                        <div class="demo-container">
+                            <div id="dxGridBanco"></div>
+                        </div>
+                    </div>
+                    <!-- <div id="dvDataCB" class="tscroll"></div>                                        -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="form-Year col-md-2">
+                        <label for="Desde" class="control-label ">Año :</label>
+                        <select id="Year" class="form-control Parameter" asp-items="ViewBag.Anios"></select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="Month" class="control-label ">Mes :</label>
+                        <select class="form-control Parameter" id="Month">
+                            <option value="1">Enero</option>
+                            <option value="2">Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="Desde" class="control-label ">Cuenta :</label>
+                        <select class="select Parameter" id="BancosCuenta" asp-items="ViewBag.Cuentas">
+                            <option value="">Seleccione una cuenta</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-1">
+                        <button type="button" id="btnDownloadInfo" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect"><span class="fa fa-search"></span></button>
+                    </div>
+                    <div id="dvDataInfo">
+
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="dx-viewport">
+                        <div class="demo-container">
+                            <div id="dxGridIecb"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="leyend">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="col-md-3">
+                    <i class="lbl-found" title="Conciliado automaticamente (Coinciden referencia,monto y fecha)">Encontrado F1</i>
+                </div>
+                <div class="col-md-3">
+                    <i class="lbl-foundOutDate" title="Conciliado automaticamente(Coinciden referencia, fecha y el monto del banco coincide con la suma de los auxiliares )">Encontrado F2</i>
+                </div>
+                 <div class="col-md-3">
+                    <i class="lbl-foundMixto" title="Conciliado automaticamente (Coinciden referencia,monto)">Encontrado F3</i>
+                </div>
+                 <div class="col-md-3">
+                    <i class="lbl-foundOutDateMixto" title="Conciliado automaticamente(Coinciden referencia y el monto del banco coincide con la suma de los auxiliares )">Encontrado F4</i>
+                </div>
+                <div class="col-md-3">
+                    <i class="lbl-foundManual" title="Existe dos o mas veces el registro en el auxiliar(Revisado por Referencia y monto)">Manual</i>
+                </div>
+                <div class="col-md-3">
+                    <i class="lbl-duplicated" title="Existe dos o mas veces el registro en el auxiliar(Revisado por Referencia, monto y fecha)">Duplicado F1</i>
+                </div>
+                <div class="col-md-3">
+                    <i class="lbl-duplicatedOutDate" title="Existe dos o mas veces el registro en el auxiliar(Revisado por Referencia y monto)">Duplicado F2</i>
+                </div>
+                <div class="col-md-3">
+                    <i class="lbl-pendient" title="Pendiente de conciliar">Pendiente</i>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="col-md-4">
+                    <button type="button" id="conciliar" disabled="disabled" onclick="_conciliarAutomatico()" class="conciliar mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"><span class="fa fa-exchange"></span> Conciliar</button>
+                </div>
+                <div class="col-md-4 col-md-offset-4">
+                    <button type="button" class="pull-right mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect" onclick="saveConciliacion()">Guardar datos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <a asp-action="Index"><span class="fa fa-angle-left"></span> Regresar</a>
+        <a asp-action="create" class="pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+    </div>
+</div>
+<dialog class="mdl-dialog" id="dialog-loading">
+    <h4 class="mdl-dialog__title text-center">Buscando resultados</h4>
+    <div class="mdl-dialog__content">
+        <div class="loader" id="loaderConciliando"></div>
+        <div class="percent" id="percentConciliando">0%</div>
+        <div class="ready" id="ready">
+            <div class="icon-element"><div class="dx-icon-check" style="font-size: 40px;color: #4CAF50;"></div></div>
+        </div>
+        <div style="width: 100%;text-align: center">
+            <label>Resolviendo <strong id="counting">0</strong> de <strong id="iterationTotal">0</strong></label>
+            <div id="p1" class="mdl-progress mdl-js-progress"></div>
+            <label>Items encontrados : <strong id="itemFounds">0</strong></label>
+        </div>
+    </div>
+    <div class="mdl-dialog__actions">
+        <button id="btnCloseDialog" type="button" class="mdl-button close" onclick="closeDialog()">Cerrar</button>
+
+    </div>
+</dialog>
+
+
+
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/lib/fileinput/js/fileinput.js" asp-append-version="true"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
+        <script src="~/lib/material-design-lite/material.min.js"></script>
+
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/js/loading.js"></script>
+        <script src="~/js/plugins.js"></script>
+        <script src="~/js/notifIt.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/fileinput/js/fileinput.js" asp-append-version="true"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/notify.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
+        <script src="~/lib/material-design-lite/material.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+
+        <script src="~/lib/numeral/src/numeral.js"></script>
+        <script src="~/js/loading.js"></script>
+        <script src="~/js/plugins.js"></script>
+        <script src="~/js/notifIt.js"></script>
+    </environment>
+    <script>
+        var tables = ['iecb','ccc'];
+        var formats;
+        var $moneda;
+
+        var estados ={
+            pendiente:-1,
+            found:1,
+            foundMixto : 2,
+            foundOutDate : 3,
+            foundOutDateMixto : 4,
+            duplicated : 5,
+            duplicatedOutDate : 6,
+            manual : 7
+        }
+
+        var _estados ={
+            1 : "Encontrado F1",
+            2 : "Encontrado F2",
+            3 : "Encontrado F3",
+            4 : "Encontrado F4",
+            5 : "Duplicado F1",
+            6 : "Duplicado F2",
+            7 : "Encontrado M",
+        }
+
+        var tipoMovimientos ={
+            deposito:1,
+            cheque:2,
+            notaDebito:3,
+            notaCredito:4
+        }
+
+        var $gridBanco ='#dxGridBanco';
+        var $gridIecb = '#dxGridIecb'
+
+        var $BancoData = [];
+        var $IecbData = [];
+
+        var sourceBanco = new DevExpress.data.DataSource({
+            store: {
+                type: 'array',
+                data: [],
+                key : 'Referencia'
+            }
+        });
+
+        $($gridBanco).dxDataGrid({
+            dataSource: sourceBanco,
+            pager: {
+                showInfo: true,
+            },
+            columnsAutoWidth: true,
+            allowColumnResizing: true,
+            headerFilter: {
+                visible: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            editing: {
+                allowUpdating: true,
+                mode: 'cell',
+            },
+            onContextMenuPreparing: function (e) {
+                if (e.row.rowType === "data") {
+                    e.items = [{
+                        text: "Conciliar manual",
+                        onItemClick: function () {
+                            _conciliarManual();
+                        }
+                    }];
+                }
+            },
+            columns: [
+                {
+                    dataField: "Fecha",
+                    alignment: "right",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    allowEditing: false 
+                },{
+                    dataField: "Referencia",
+                    allowEditing: false
+                },{
+                    dataField: "TipoMovimiento",
+                    alignment: "right",
+                    allowEditing: false
+                },{
+                    dataField: "Debito",
+                    alignment: "right",
+                    allowEditing: false,
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(numeral(options.value).format('$0,0.0000'))
+                            .appendTo(container);
+                    },
+                },{
+                    dataField: "Credito",
+                    alignment: "right",
+                    allowEditing: false,
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(numeral(options.value).format('$0,0.0000'))
+                            .appendTo(container);
+                    },
+                },{
+                    dataField: "Estado",
+                    alignment: "right",
+                    allowEditing: false
+                },{
+                    caption: "",
+                    dataField: "ck",
+                    dataType: "boolean",
+                    allowEditing: true ,
+                    width : 80
+                },
+                {
+                    caption: "",
+                    dataField: "UUID",
+                    dataType: "string",
+                    visible: false ,
+                }
+            ],
+            summary: {
+                totalItems: [{
+                    column: "Credito",
+                    summaryType: "sum",
+                    customizeText: function(data) {
+                        return  ($moneda||'') + ' ' + numeral(data.value).format('$0,0.0000');
+                    }
+                },{
+                    column: "Debito",
+                    summaryType: "sum",
+                    customizeText: function(data) {
+                        return  ($moneda||'') + ' ' + numeral(data.value).format('$0,0.0000');
+                    }
+                },{
+                    column: "Referencia",
+                    summaryType: "count",
+                    customizeText: function(data) {
+                        return  data.value +' registros';
+                    }
+                }]
+            },
+            onCellClick: function(e) {
+                if (e.rowType == 'data' && e.column.dataField == "ck") {
+                    if(e.value){
+                        $BancoData.push(e.data);
+                    }else{
+                        $BancoData = $BancoData.filter(x => x.Referencia != e.data.Referencia);
+                    }
+                }
+            },
+            onRowPrepared: function (info) {
+                if(info.rowType != 'header' && info.rowType != 'totalFooter' && info.rowType != 'filter'){
+                    if (info.data.EstadoId == estados.found)
+                        info.rowElement.addClass('found');
+                    if (info.data.EstadoId == estados.foundOutDate)
+                        info.rowElement.addClass('foundOutDate');
+                    if (info.data.EstadoId == estados.foundMixto)
+                        info.rowElement.addClass('foundMixto');
+                    if (info.data.EstadoId == estados.foundOutDateMixto)
+                        info.rowElement.addClass('foundOutDateMixto');
+                    if (info.data.EstadoId == estados.duplicated)
+                        info.rowElement.addClass('duplicated');
+                    if (info.data.EstadoId == estados.duplicatedOutDate)
+                        info.rowElement.addClass('duplicatedOutDate');
+                    if (info.data.EstadoId == estados.manual)
+                        info.rowElement.addClass('foundManual');
+                }
+            }
+        }).dxDataGrid("instance");
+
+        var sourceIecb = new DevExpress.data.DataSource({
+            store: {
+                type: 'array',
+                data: [],
+                key : 'Referencia'
+            }
+        });
+
+        $($gridIecb).dxDataGrid({
+            dataSource: sourceIecb,
+            pager: {
+                showInfo: true,
+            },
+            columnsAutoWidth: true,
+            headerFilter: {
+                visible: true
+            },
+            editing: {
+                allowUpdating: true,
+                mode: 'cell',
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+             onContextMenuPreparing: function (e) {
+                if (e.row.rowType === "data") {
+                    e.items = [{
+                        text: "Conciliar manual",
+                        onItemClick: function () {
+                            _conciliarManual();
+                        }
+                    }];
+                }
+            },            
+            columns: [
+                {
+                    caption: "",
+                    dataField: "ck",
+                    dataType: "boolean",
+                    allowEditing: true,
+                    width : 80
+                },{
+                        dataField: "Estado",
+                        allowEditing: false
+                },
+                {
+                    dataField: "Fecha",
+                    alignment: "right",
+                    dataType: "date",
+                    format: "dd/MM/yyyy",
+                    allowEditing: false                    
+                },
+                {
+                    dataField: "Referencia",
+                    alignment: "right",
+                    allowEditing: false
+                },
+                {
+                    dataField: "TipoMovimiento",
+                    alignment: "right",
+                    allowEditing: false
+                },
+                {
+                    dataField: "Debito",
+                    allowEditing: false,
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(numeral(options.value).format('$0,0.0000'))
+                            .appendTo(container);
+                    },
+                },
+                 {
+                    dataField: "Credito",
+                    allowEditing: false,
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(numeral(options.value).format('$0,0.0000'))
+                            .appendTo(container);
+                    },
+                },
+                 {
+                    dataField: "TipoMovimiento",
+                    visible: false
+                },
+                {
+                    dataField: "CajaId",
+                    allowEditing: false,
+                    width : 50
+                },
+                {
+                    caption: "Recibo",
+                    dataField: "IdOrigen",
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(`<a class="href-button text-custom-16" onclick="printReportById(${options.value});"> ${options.data.NumRecibo}</a>`)
+                            .appendTo(container);
+                    },
+                    allowEditing: false
+                },
+                {
+                    caption: "",
+                    dataField: "UUID",
+                    dataType: "string",
+                    visible: false ,
+                }
+            ],
+            summary: {
+                totalItems: [{
+                    column: "Credito",
+                    summaryType: "sum",
+                    customizeText: function(data) {
+
+                        return  ($moneda||'') + ' ' + numeral(data.value).format('$0,0.0000');
+                    }
+                },{
+                    column: "Debito",
+                    summaryType: "sum",
+                    customizeText: function(data) {
+
+                        return  ($moneda||'') + ' ' + numeral(data.value).format('$0,0.0000');
+                    }
+                },{
+                    column: "Estado",
+                    summaryType: "count",
+                    customizeText: function(data) {
+                        return  data.value +' registros';
+                    }
+                }]
+            },
+            onCellClick: function(e) {
+                if (e.rowType == 'data' && e.column.dataField == "ck") {
+                    if(e.value){
+                        $IecbData.push(e.data);
+                    }else{
+                        $IecbData = $IecbData.filter(x => x.Referencia == e.data.Referencia && x.NumRecibo !== e.data.NumRecibo);
+                    }
+                }
+            },
+            onRowPrepared: function (info) {
+                if(info.rowType != 'header' && info.rowType != 'totalFooter' && info.rowType != 'filter'){
+                    if (info.data.EstadoId == estados.found)
+                        info.rowElement.addClass('found');
+                    if (info.data.EstadoId == estados.foundOutDate)
+                        info.rowElement.addClass('foundOutDate');
+                    if (info.data.EstadoId == estados.foundMixto)
+                        info.rowElement.addClass('foundMixto');
+                    if (info.data.EstadoId == estados.foundOutDateMixto)
+                        info.rowElement.addClass('foundOutDateMixto');
+                    if (info.data.EstadoId == estados.duplicated)
+                        info.rowElement.addClass('duplicated');
+                    if (info.data.EstadoId == estados.duplicatedOutDate)
+                        info.rowElement.addClass('duplicatedOutDate');
+                    if (info.data.EstadoId == estados.manual)
+                        info.rowElement.addClass('foundManual');
+
+                }
+            }
+        }).dxDataGrid("instance");
+
+        $(document).ready(function () {
+            // $('#item-found').checkbox({
+            //     label : 'Encontrado',
+            //     class: 'lbl-matched',
+            //     onchange : "filtrarTable(this)",
+            //     value : 'found',
+            // })
+
+
+            formats = JSON.parse(localStorage.getItem('formats'));
+
+            if(!formats)
+            {
+                   formats = [
+                   {value : "DD/MM/YYYY",text : "DD/MM/YYYY"},
+                   {value : "DD/MM/YY",text : "DD/MM/YY"},
+                   {value : "MM/DD/YYYY",text : "MM/DD/YYYY"},
+                   {value : "MM/DD/YY",text : "MM/DD/YY"},
+                   {value : "MM/YYYY",text : "MM/YYYY"},
+                   {value : "MM/YY",text : "MM/YY"},
+                ]
+            }
+
+            $('.select').selectize();
+
+            $('#customFormat').selectize({
+                options: formats,
+                create: true,
+                create:function (input){
+                    formats.push({ value:input, text:input})
+                    localStorage.setItem('formats',JSON.stringify(formats))
+                    return { value:input, text:input};
+                }
+            });
+        
+            $('#btnUpload').on('click', function () {
+
+                if (!customFormat.value.length) {
+                    $('#customFormat-selectized').parent().notification('Seleccione un formato de fecha');
+                    return false;
+                }                    
+
+                var fileExtension = ['xls', 'xlsx'];
+                var filename = $('#input-b2').val();
+                if (filename.length == 0) {
+                    alert("Por favor seleccione un archivo.");
+                    return false;
+                }
+                else {
+                    var extension = filename.replace(/^.*\./, '');
+                    if ($.inArray(extension, fileExtension) == -1) {
+                        alert("Seleccione un archivo excel valido.");
+                        return false;
+                    }
+                }
+
+                //$('.DataCB').show();
+                var fdata = new FormData();
+                var fileUpload = $("#input-b2").get(0);
+                var files = fileUpload.files;
+                fdata.append(files[0].name, files[0]);
+                $($gridBanco).parent().loading();
+                $.ajax({
+                    type: "POST",
+                    url: pathBase + 'procesosBanco/upLoadFile',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    data: fdata,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+
+                        var data = response.map(x => { 
+                            x['Fecha'] = moment(x._Fecha, customFormat.value).utc().format();
+                            return x;
+                        })
+
+                        $($gridBanco).dxDataGrid("instance").option('dataSource', data);
+                        showButtonConciliar();
+                        $($gridBanco).parent().loading('stop');
+
+                    },
+                    error: function (e) {
+                        $($gridBanco).parent().loading('stop');                   
+                        $.notification(e.responseText);
+                    }
+                });
+            });
+
+            $('#btnDownloadInfo').on('click', function () {
+                var Parameter = findEntity('Parameter');
+
+                $($gridIecb).parent().loading();
+                $('#dvDataInfo').html('');
+              
+                $.get(pathBase + `procesosBanco/GetRecibosAndTransferencies`, Parameter, result => {
+                
+                    $moneda = result.info.MonedaId==context.tipoMoneda.cordoba?'C$':'$';
+
+                    $('#dvDataInfo').append(
+                        `<table style="height: 55px;width:100%">
+                            <tbody>
+                                <tr>
+                                    <td>&nbsp;Banco:</td>
+                                    <td>&nbsp;${result.info.Banco}</td>
+                                    <td>&nbsp;Moneda</td>
+                                    <td>&nbsp;${result.info.Moneda}</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;Descripcion</td>
+                                    <td colspan="3">&nbsp;${result.info.Descripcion}</td>
+                                </tr>
+                            </tbody>
+                        </table>`
+                    );
+
+                    $($gridIecb).dxDataGrid("instance").option('dataSource',result.data);
+                }).always(function(){
+                    showButtonConciliar();
+                    $($gridIecb).parent().loading('stop');                    
+                }).fail(function (c, x) { 
+                    $.notification(c.responseText);                    
+                });
+            });
+        });
+
+        var showButtonConciliar = () =>{
+            var rowsIecb = allRows($gridIecb);
+            var rowsCcc =  allRows($gridBanco);
+
+            if(rowsIecb.length && rowsCcc.length)
+                $('.conciliar').removeAttr('disabled');
+            else
+                $('.conciliar').attr('disabled','disabled');
+        }
+
+        var allRows = mytable => $(`${mytable}`).dxDataGrid("instance").option('dataSource')
+
+        var dialogLoading = document.querySelector('#dialog-loading');
+
+        var closeDialog = () => {
+            dialogLoading.close();
+        }
+
+        var updateEstado = x =>{
+            x.Estado = 'Pendiente';
+            x.EstadoId = estados.pendiente;
+            return x;
+        }
+
+        var isConsiliado = x => !compareOr(x.EstadoId).with(-1,5,6)
+
+        var isFirtTime = true;
+
+        var _conciliarAutomatico =  function(){
+            if (isFirtTime) {                
+                
+                isFirtTime = false;
+                $('#btnCloseDialog').hide();
+                $('#ready').hide();
+
+                var iteration = 1;
+                var _itemFounds = 0
+                itemFounds.innerText = _itemFounds;
+                if (!dialogLoading.showModal) {
+                    dialogPolyfill.registerDialog(dialogLoading);
+                }
+
+                dialogLoading.showModal();
+                var elem_pgrs = document.querySelector('#p1');
+                var pgrs = 0
+                $('#loaderConciliando').show();
+                $('#percentConciliando').show();
+
+                var dataIecb =  allRows($gridIecb).map(updateEstado);
+                var dataBanco = allRows($gridBanco).map(updateEstado);
+
+                var format = customFormat.value;
+                var total = dataBanco.length;
+                iterationTotal.innerText = total;
+
+                var indexBanco = 0;
+                function buscarBanco(){
+                    setTimeout(function () {
+
+                        const elementBanco = dataBanco[indexBanco];
+                        counting.innerText = iteration;
+                        pgrs =parseInt(iteration/total*100);
+                        percentConciliando.innerText = pgrs + '%'
+                        elem_pgrs.MaterialProgress.setProgress(pgrs);
+                        iteration++;
+
+                        for (let indexIecb = 0; indexIecb < dataIecb.length; indexIecb++) {
+                            const elementIecb = dataIecb[indexIecb];
+
+                            var bancoReferencia = parseFloat(elementBanco.Referencia);
+                            var IecbReferencia = parseFloat(elementIecb.Referencia);
+
+                            if(bancoReferencia == IecbReferencia)
+                            {
+                                var montoAux   = compareOr(elementIecb.TipoDocumento)
+                                                .with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?elementIecb.Debito:elementIecb.Credito;
+                                var montoBanco = compareOr(elementIecb.TipoDocumento)
+                                                .with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?elementBanco.Credito:elementBanco.Debito;
+
+                                var _fechaAux = moment(elementIecb.Fecha).format('DD-MM-YYYY');
+                                var _fechaBanco = moment(elementBanco.Fecha).format('DD-MM-YYYY');                                
+
+                                if(parseFloat(montoAux) == parseFloat(montoBanco))
+                                {
+                                    if(_fechaBanco == _fechaAux)
+                                    {
+                                        var _count = dataIecb.filter(x => parseFloat(x.Referencia) == bancoReferencia).length;
+                                        if(_count==1)
+                                        {
+                                            var uuid = generateUUID();
+                                            dataIecb[indexIecb].Estado = _estados[estados.found];
+                                            dataIecb[indexIecb].EstadoId = estados.found;                                                
+                                            dataIecb[indexIecb].UUID =uuid;
+
+                                            dataBanco[indexBanco].Estado = _estados[estados.found];
+                                            dataBanco[indexBanco].EstadoId = estados.found;                                                
+                                            dataBanco[indexBanco].UUID = uuid;
+
+                                            _itemFounds ++;
+                                            itemFounds.innerText = _itemFounds;
+                                        }else{
+                                            dataBanco[indexBanco].Estado = _estados[estados.duplicated];
+                                            dataBanco[indexBanco].EstadoId = estados.duplicated;
+
+                                            dataIecb = dataIecb.map(x => {
+
+                                                if(parseFloat(x.Referencia) == bancoReferencia)
+                                                {
+                                                    x.Estado = _estados[estados.duplicated];
+                                                    x.EstadoId = estados.duplicated;
+                                                }
+
+                                                return x;
+                                            });
+                                        }
+                                        break;
+                                    }else{
+                                        var _count = dataIecb.filter(x => parseFloat(x.Referencia) == bancoReferencia).length;
+                                        if(_count==1){
+                                            var uuid = generateUUID();
+                                            dataBanco[indexBanco].Estado = _estados[estados.foundOutDate];
+                                            dataBanco[indexBanco].EstadoId = estados.foundOutDate;
+                                            dataBanco[indexBanco].UUID = uuid;
+
+                                            dataIecb = dataIecb.map(x => {
+
+                                                if (parseFloat(x.Referencia) == bancoReferencia)
+                                                {
+                                                    x.Estado = _estados[estados.foundOutDate];
+                                                    x.EstadoId = estados.foundOutDate;
+                                                    x.UUID = uuid
+                                                }
+
+                                                return x;
+
+                                            });
+
+                                            _itemFounds ++;
+                                            itemFounds.innerText = _itemFounds
+                                        }else{
+                                            dataBanco[indexBanco].Estado = _estados[estados.duplicatedOutDate];
+                                            dataBanco[indexBanco].EstadoId = estados.duplicatedOutDate;
+
+                                            dataIecb = dataIecb.map(x => {
+
+                                                if(parseFloat(x.Referencia) == bancoReferencia)
+                                                {
+                                                    x.Estado = _estados[estados.duplicatedOutDate];
+                                                    x.EstadoId = estados.duplicatedOutDate;
+                                                }
+
+                                                return x;
+                                            });
+                                        }
+
+                                        break;
+                                    }
+                                }else{
+
+                                    var searchDuplicate = dataIecb.filter(c => parseFloat(c.Referencia) == IecbReferencia
+                                                                            && moment(c.Fecha).format('DD-MM-YYYY') == _fechaBanco);
+
+                                    if(searchDuplicate.length > 1){
+                                        var _totalBanc   = compareOr(elementIecb.TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?elementBanco.Credito:elementBanco.Debito;
+                                        var sumAux = compareOr(elementIecb.TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?searchDuplicate.sum('Debito'):searchDuplicate.sum('Credito');
+                                        if(parseFloat(sumAux) == parseFloat(_totalBanc))
+                                        {
+                                            var uuid = generateUUID();
+                                            dataBanco[indexBanco].Estado = _estados[estados.foundMixto];
+                                            dataBanco[indexBanco].EstadoId = estados.foundMixto;
+                                            dataBanco[indexBanco].UUID = uuid;
+
+                                            dataIecb = dataIecb.map(x => {
+
+                                                if (parseFloat(x.Referencia) == bancoReferencia)
+                                                {
+                                                    x.Estado = _estados[estados.foundMixto];
+                                                    x.EstadoId = estados.foundMixto;
+                                                    x.UUID = uuid
+                                                }
+
+                                                return x;
+
+                                            });
+
+                                            _itemFounds ++;
+                                            itemFounds.innerText = _itemFounds
+                                            break;
+                                        }
+                                    }else{
+                                        searchDuplicate = dataIecb.filter(c => parseFloat(c.Referencia) == IecbReferencia);
+                                        var _totalBanc   = compareOr(elementIecb.TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?elementBanco.Credito:elementBanco.Debito;
+                                        var sumAux = compareOr(elementIecb.TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?searchDuplicate.sum('Debito'):searchDuplicate.sum('Credito');
+
+                                        if(parseFloat(sumAux) == parseFloat(_totalBanc))
+                                        {
+                                            var uuid = generateUUID();
+                                            dataBanco[indexBanco].Estado =  _estados[estados.foundOutDateMixto];
+                                            dataBanco[indexBanco].EstadoId = estados.foundOutDateMixto;
+                                            dataBanco[indexBanco].UUID = uuid;
+
+                                            dataIecb = dataIecb.map(x => {
+
+                                                if (parseFloat(x.Referencia) == bancoReferencia)
+                                                {
+                                                    x.Estado =  _estados[estados.foundOutDateMixto];
+                                                    x.EstadoId = estados.foundOutDateMixto;
+                                                    x.UUID = uuid
+                                                }
+
+                                                return x;
+
+                                            });
+
+                                            _itemFounds ++;
+                                            itemFounds.innerText = _itemFounds
+                                            break;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        indexBanco++;
+                        if (indexBanco < total) {
+                            buscarBanco();
+                        }else{
+                            $($gridIecb).dxDataGrid("instance").option('dataSource',dataIecb);
+                            $($gridBanco).dxDataGrid("instance").option('dataSource',dataBanco);
+                            $('#btnCloseDialog').show();
+                            $('#loaderConciliando').hide();
+                            $('#percentConciliando').hide();
+                            $('#ready').show();
+
+                        }
+                    },3);
+                }
+                buscarBanco();                
+            } else {
+                conciliarQuestion();
+            }
+        }
+
+        var _conciliarManual = function(){
+            var isValid = true;
+            if($IecbData.some(isConsiliado)){
+                $.notification(`Las referencias del auxiliar ${$IecbData.filter(isConsiliado).map(x=> x.Referencia).join(',')} ya tienen estado conciliado`);
+                isValid = false;
+            }
+
+            if($BancoData.some(isConsiliado)){
+                $.notification(`Las referencias del estado de cuenta ${$BancoData.filter(isConsiliado).map(x=> x.Referencia).join(',')} ya tienen estado conciliado`);
+                isValid = false;
+            }
+            if (isValid) {
+                
+                var conciliar = () => {
+                    var dataIecb =  allRows($gridIecb);
+                    var dataBanco = allRows($gridBanco);
+
+                    var uuid = generateUUID();
+                    dataBanco = dataBanco.map(x => {
+                        if (parseFloat(x.Referencia) == parseFloat($BancoData[0].Referencia))
+                        {
+                            x.Estado = _estados[estados.manual];
+                            x.EstadoId = estados.manual;
+                            x.UUID = uuid;
+                        }
+                        return x;
+                    });
+
+
+                    dataIecb = dataIecb.map(x => {
+                        if (parseFloat(x.Referencia) == parseFloat($IecbData[0].Referencia) && x.NumRecibo == $IecbData[0].NumRecibo)
+                        {
+                            x.Estado = _estados[estados.manual];
+                            x.EstadoId = estados.manual;
+                            x.UUID = uuid;
+                        }
+                        return x;
+                    });
+
+                    $($gridIecb).dxDataGrid("instance").option('dataSource',dataIecb);
+                    $($gridBanco).dxDataGrid("instance").option('dataSource',dataBanco);
+                }
+
+
+                if ($IecbData.length && $BancoData.length) {
+                    var allReferenciaAreUniqueBanco = $BancoData.map(x => x.Referencia).unique();
+                    var allReferenciaAreUniqueIecb = $IecbData.map(x => x.Referencia).unique();
+                    if (allReferenciaAreUniqueIecb > 1) {
+                        if (allReferenciaAreUniqueBanco > 1) {
+                            var _totalAux   = compareOr($IecbData[0].TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?$IecbData.sum('Debito'):$IecbData.sum('Credito');
+                            var _totalBanco = compareOr($IecbData[0].TipoDocumento).with(tipoMovimientos.deposito,tipoMovimientos.notaDebito)?$BancoData.sum('Credito'):$BancoData.sum('Debito');
+                            if(_totalAux == _totalBanco)
+                            {
+                                if (parseFloat($BancoData[0].Referencia) == parseFloat($IecbData[0].Referencia)){
+                                    conciliar();
+                                }else{
+                                    $.notification(`Las referencias no coinciden entre los registros seleccionados banco(${parseFloat($BancoData[0].Referencia)} auxiliar (${parseFloat($IecbData[0].Referencia)}))`);
+                                }
+                            }else{
+                                $.notification(`Las sumas no cuadran con los items seleccionados banco(${_totalBanco} y auxiliar(${_totalAux}))`);
+                            }
+                        }else{
+                            $.notification(`Las referencias seleccionadas del auxiliar no son unicas ${$IecbData.map(x => x.Referencia).join(',')}, seleccione registros con la misma referencia`);
+                        }
+                    }else{
+                        $.notification(`Las referencias seleccionadas del banco no son unicas ${$BancoData.map(x => x.Referencia).join(',')}, seleccione registros con la misma referencia`);
+                    }
+                }else{
+                    $.notification('Seleccione registros de ambas tablas');
+                }
+                
+            }
+        }
+
+        var botonclick = false;
+        var conciliarQuestion = () => {
+            if (!botonclick) {
+                notif_confirm({
+                    'message': 'Volver a conciliar?',
+                    'textaccept': 'Si',
+                    'textcancel': 'No',
+                    'fullscreen': true,
+                    'callback': function (choice) {
+                        if (choice == true) {
+                            isFirtTime = true;
+                            _conciliarAutomatico();
+                        }
+                    }
+                })
+            }
+            return botonclick;
+        }
+    
+        var saveConciliacion = () =>{
+            var conciliacionBancariaAux = $($gridIecb).dxDataGrid("instance").option('dataSource');
+            var conciliacionBancariaEC = $($gridBanco).dxDataGrid("instance").option('dataSource');
+
+            if (conciliacionBancariaAux.length && conciliacionBancariaEC) {
+                if(conciliacionBancariaAux.some(isConsiliado) && conciliacionBancariaEC.some(isConsiliado))
+                {
+                    var Parameter = findEntity('Parameter');
+                    $('body').loading({
+                        message: 'Guardando...'
+                    });
+                    $.get(pathBase + `api/catalogs/procesoBanco/bank/${Parameter.BancosCuenta}`, function(data){
+                        if (!data) {
+                            var text = $('#BancosCuenta').text();
+                            $.notification('Por favor ingrese el saldo inicial para la cuenta ' + text);
+                            $('body').loading('stop');
+                        }else{
+                            continuar();
+                        }
+                    });
+                }else{
+                     $.notification('Debe conciliar los datos antes de guardar');
+                }
+            } else {
+                $.notification('Debe de cargar los datos previamente');
+            }
+        }
+
+        function continuar(){
+            
+
+            var Parameter = findEntity('Parameter');
+            var data = {
+                BancoCuenta : Parameter.BancosCuenta,
+                Year : Parameter.Year,
+                Month : Parameter.Month,
+                conciliacionBancariaAux : $($gridIecb).dxDataGrid("instance").option('dataSource'),
+                conciliacionBancaria : $($gridBanco).dxDataGrid("instance").option('dataSource')
+            }           
+            
+            $.post(pathBase + 'procesosBanco/SaveAuxiliarAndIngresosEgresos', data, function () {
+                $.notification("Datos guardados correctamente", "success");
+            }).always(function () {
+                showButtonConciliar();
+                $('body').loading('stop');
+            }).fail(function () {
+                $.notification("Error al guardar la información");
+
+            });
+        }
+    </script>
+}

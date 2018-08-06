@@ -171,24 +171,11 @@
                 var head = ' <thead><tr><th></th><th>Cuenta padre</th><th>Nombre de la cuenta</th><th>Cuenta contable</th></tr></thead>';
                 var tr = '';
                 data.forEach(cuenta => {
-                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.padre + '</td>' + '<td>' + cuenta.nombre + '</td>' + '<td>' + cuenta.ctaContable + '</td>' + '</tr>';
+                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.Padre + '</td>' + '<td>' + cuenta.Nombre + '</td>' + '<td>' + cuenta.CtaContable + '</td>' + '</tr>';
                 });
                 $('#cuentasToAdd').html(head + '<tbody>' + tr + '</tbody>');
 
                 $('.waiting').hide();
-
-                //table = document.getElementById("cuentas");
-                //tr = table.getElementsByTagName("tr");
-                //for (i = 0; i < tr.length; i++) {
-                //    td = tr[i].getElementsByTagName("td")[2];
-                //    if (td) {
-                //        td.setAttribute("htmlText", td.innerHTML);
-                //    }
-                //    td = tr[i].getElementsByTagName("td")[3];
-                //    if (td) {
-                //        td.setAttribute("htmlText", td.innerHTML);
-                //    }
-                //}
 
                 componentHandler.upgradeDom();
 
@@ -273,7 +260,7 @@
                 var head = ' <thead><tr><th></th><th>Cuenta padre</th><th>Nombre de la cuenta</th><th>Cuenta contable</th></tr></thead>';
                 var tr = '';
                 data.forEach(cuenta => {
-                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.padre + '</td>' + '<td>' + cuenta.nombre + '</td>' + '<td>' + cuenta.ctaContable + '</td>' + '</tr>';
+                    tr += '<tr><td><label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"><input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value="0" /><span class="mdl-checkbox__label"></span></label></td>' + '<td>' + cuenta.Padre + '</td>' + '<td>' + cuenta.Nombre + '</td>' + '<td>' + cuenta.CtaContable + '</td>' + '</tr>';
                 });
                 $('#cuentasToRemove').html(head + '<tbody>' + tr + '</tbody>');
 

@@ -7,15 +7,19 @@ using mvcIpsa.DbModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using mvcIpsa.Models;
+using mvcIpsa.DbModelIPSA;
+
 namespace mvcIpsa.Controllers
 {   
     [Authorize(Policy = "Admin")]
     public class ProfileController : Controller
     {
         private readonly IPSAContext db;
-        public ProfileController(IPSAContext _db)
+        private readonly DBIPSAContext DbIpsa;
+        public ProfileController(IPSAContext _db, DBIPSAContext _DbIpsa)
         {
             db = _db;
+            DbIpsa = _DbIpsa;
         }
         public IActionResult Index()
         {
@@ -45,11 +49,12 @@ namespace mvcIpsa.Controllers
             //crear username
             //var username = profile.Nombre[0] + profile.Apellido;
             //verificar si existe
+            profile.Nestado = 1;
+            profile.Ncentrocosto = 1;
+            profile.Password = HelperExtensions.getPasswordHashed("ipsa2017*");
             if (ModelState.IsValid)
             {                
-                profile.Nestado = 1;
-                profile.Ncentrocosto = 1;
-                profile.Password = UrlHelperExtensions.getPasswordHashed("ipsa2017*");
+               
                 db.Profile.Add(profile);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -65,26 +70,21 @@ namespace mvcIpsa.Controllers
             return View(profile);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(string id,Profile profileClient)
+        public async Task<IActionResult> Edit(string id,Profile profile)
         {
-            if (ModelState.IsValid)
+            var oldProfile = db.Profile.Find(profile.Username);          
+
+            oldProfile.CopyFrom(profile, x => new{
+                x.Nombre,x.Apellido,x.Correo,x.CajaId
+            });
+
+            if (TryValidateModel(oldProfile))
             {
-                var profile = db.Profile.Find(profileClient.Username);
-                profile.Nombre = profileClient.Nombre;
-                profile.Apellido = profileClient.Apellido;
-                profile.Correo = profileClient.Correo;
-                profile.CajaId = profileClient.CajaId;
-                //profile.CopyFromExcept(profile, x => new
-                //{
-                //    x.Username,
-                //    x.Nestado,
-                //    x.Ncentrocosto
-                //});
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+               await db.SaveChangesAsync();
+               return RedirectToAction("Index");
             }
             ViewBag.Cajas = db.Caja.ToList();
-            return View(profileClient);
+            return View(profile);
         }
 
         public async Task<IActionResult> Delete(string id)
@@ -169,6 +169,47 @@ namespace mvcIpsa.Controllers
                 }
                 await db.SaveChangesAsync();
                 return RedirectToAction("EditRols",new { id = model.username});
+            }
+            return View("Error", new string[] { "Role Not Found" });
+        }
+
+        public async Task<ActionResult> EditAccountBank(string id)
+        {
+            Profile profile = await db.Profile.FindAsync(id);
+            int[] memberIDs = db.CuentasBancoUsername.Where(x => x.Username == id).Select(x => x.BancoCuenta).ToArray();
+            IEnumerable<BancosCuentas> members = DbIpsa.BancosCuentas.Include(x => x.Banco).Where(x => memberIDs.Any(y => y == x.BancoCuenta));
+            IEnumerable<BancosCuentas> nonMembers = DbIpsa.BancosCuentas.Include(x => x.Banco).Where(x => !memberIDs.Contains(x.BancoCuenta)); ;//.Except(members);
+
+            return View(new CuentasBancoEditModel
+            {
+                profile = profile,
+                Members = members,
+                NonMembers = nonMembers
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> EditAccountBank(CuentasBancoUsernameViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                foreach (int bancoCuenta in model.IdsToAdd ?? new int[] { })
+                {
+                    var cuentasBancoUsername = new CuentasBancoUsername { BancoCuenta = bancoCuenta, Username = model.username };
+                    db.Add(cuentasBancoUsername);
+                }
+
+                foreach (int bancoCuenta in model.IdsToDelete ?? new int[] { })
+                {
+                    var cuentasBancoUsername = db.CuentasBancoUsername.Where(p => p.Username == model.username && p.BancoCuenta == bancoCuenta).FirstOrDefault();
+                    if (cuentasBancoUsername != null)
+                    {
+                        db.CuentasBancoUsername.Remove(cuentasBancoUsername);
+                    }
+                }
+                await db.SaveChangesAsync();
+                return RedirectToAction("EditAccountBank", new { id = model.username });
             }
             return View("Error", new string[] { "Role Not Found" });
         }

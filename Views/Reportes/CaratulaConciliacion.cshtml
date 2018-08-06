@@ -1,0 +1,114 @@
+﻿@model mvcIpsa.Models.CaratulaViewModel;
+@{
+    ViewData["Title"] = "Caratula";
+    Layout = "~/Views/Shared/_LayoutPrint.cshtml";
+    var specifier = "#,#.00#;(#,#.00#)";
+}
+
+<div class="page-container">        
+    <div class="page">
+        @await Html.PartialAsync("~/Views/shared/reporte/encabezado.cshtml")
+
+        <h1 class="text-center" style="font-size:14px;font-weight: bold;text-transform: uppercase">CONCILIACION BANCARIA</h1>
+
+        <div class="text-center">@Model.Titulo</div>
+        <div class="text-center">@Model.Cuenta</div>
+        <br>
+        <table>
+            <tr class="encabezado">
+                <td>Saldo Segun Banco</td>
+                @{ var SaldoSegunBanco = Model.MonedaSimbol + " " + Math.Abs(Model.SaldoSegunBanco).ToString(specifier);}
+                <td style="float: right">@SaldoSegunBanco</td>
+            </tr>
+            <tr class="rows">
+                <td>(-) Cheques Flotantes</td>
+                @{ var ChequeFlotantes = Model.MonedaSimbol + " " + Math.Abs(Model.ChequeFlotantes).ToString(specifier);}
+                <td style="float: right">@ChequeFlotantes</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Diferencias en Cheques de menos en el Banco</td>
+                @{ var DifChequesDeMenosBanco = Model.MonedaSimbol + " " + Math.Abs(Model.DifChequesDeMenosBanco).ToString(specifier);}
+                <td style="float: right">@DifChequesDeMenosBanco</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Diferencias en Cheques de mas en el Banco</td>
+                @{ var DifChequesDeMasBanco = Model.MonedaSimbol + " " + Math.Abs(Model.DifChequesDeMasBanco).ToString(specifier);}
+                <td style="float: right">@DifChequesDeMasBanco</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Notas de Debito no registradas en nuestro libros</td>
+                @{ var NDNoRegistradasEnLibro = Model.MonedaSimbol + " " + Math.Abs(Model.NDNoRegistradasEnLibro).ToString(specifier);}
+                <td style="float: right">@NDNoRegistradasEnLibro</td>
+            </tr>
+            <tr class="rows">
+                <td>(-) Notas de Credito no registradas en nuestro libros</td>
+                @{ var NCNoRegistradasEnLibro = Model.MonedaSimbol + " " + Math.Abs(Model.NCNoRegistradasEnLibro).ToString(specifier);}
+                <td style="float: right">@NCNoRegistradasEnLibro</td>
+            </tr>
+            <tr class="rows">
+                <td>(-) Depositos no registradas en nuestro libros</td>
+                @{ var DPNoRegistradasEnLibro = Model.MonedaSimbol + " " + Math.Abs(Model.DPNoRegistradasEnLibro).ToString(specifier);}
+                <td style="float: right">@DPNoRegistradasEnLibro</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Depositos no registrados en el banco</td>
+                @{ var DPNoRegistradasEnBanco = Model.MonedaSimbol + " " + Math.Abs(Model.DPNoRegistradasEnBanco).ToString(specifier);}
+                <td style="float: right">@DPNoRegistradasEnBanco</td>
+            </tr>
+            <tr class="rows">
+                <td>(-) Debitos por correciones internas</td>
+                @{ var DeditosPorCorreccionesIntMenos = Model.MonedaSimbol + " " + Math.Abs(Model.DeditosPorCorreccionesIntMenos).ToString(specifier);}
+                <td style="float: right">@DeditosPorCorreccionesIntMenos</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Creditos por correciones internas</td>
+                @{ var CreditosPorCorreccionesIntMas = Model.MonedaSimbol + " " + Math.Abs(Model.CreditosPorCorreccionesIntMas).ToString(specifier);}
+                <td style="float: right">@CreditosPorCorreccionesIntMas</td>
+            </tr>
+            <tr class="rows">
+                <td>(-) Notas de Debito no registradas en el banco</td>
+                @{ var NDNoRegistradasEnBanco = Model.MonedaSimbol + " " + Math.Abs(Model.NDNoRegistradasEnBanco).ToString(specifier);}
+                <td style="float: right">@NDNoRegistradasEnBanco</td>
+            </tr>
+            <tr class="rows">
+                <td>(+) Notas de Credito no registradas en el banco</td>
+                @{ var NCNoRegistradasEnBanco = Model.MonedaSimbol + " " + Math.Abs(Model.NCNoRegistradasEnBanco).ToString(specifier);}
+                <td style="float: right">@NCNoRegistradasEnBanco</td>
+            </tr>
+            <tr class="encabezado">
+                <td>Saldo Segun Libro</td>
+                @{ var SaldoSegunLibro = Model.MonedaSimbol + " " + Math.Abs(Model.SaldoSegunLibro).ToString(specifier);}
+                <td style="float: right">@SaldoSegunLibro</td>
+            </tr>
+        </table>
+        <br><br><br><br><br><br><br><br><br>
+            
+
+        <div class="row">
+            @{
+                var visible = Model.ReporteFirmas.MostrarElaborado == false ? "no-visible" : "";
+            }
+            <div class="col-md-6 firma @visible">
+                <p class="usuario">Elaborado por</p> <p>@Model.ReporteFirmas.UsernameElaborado</p>
+            </div>
+            @{
+                visible = Model.ReporteFirmas.MostrarRevisado == false ? "no-visible" : "";
+            }
+            <div class="col-md-6 firma @visible">
+                <p class="usuario">Revisado por</p> <p>@Model.ReporteFirmas.UsernameRevisado</p>
+            </div>
+            @{
+                visible = Model.ReporteFirmas.MostrarAprobado == false ? "no-visible" : "";
+            }
+            <div class="col-md-6 firma @visible">
+                <p class="usuario">Aprobado por</p> <p>@Model.ReporteFirmas.UsernameAprobado</p>
+            </div>
+            @{
+                visible = Model.ReporteFirmas.MostrarAutorizado == false ? "no-visible" : "";
+            }
+            <div class="col-md-6 firma @visible">
+                <p class="usuario">Autorizado por</p> <p>@Model.ReporteFirmas.UsernameAutorizado</p>
+            </div>
+        </div>
+    </div>
+</div>

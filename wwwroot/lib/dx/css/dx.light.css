@@ -61,7 +61,7 @@
   }
   .dx-datagrid .dx-header-filter {
     position: relative;
-    color: #959595;
+    color: #2196F3;
     font: 14px/1 DXIcons;
   }
   .dx-datagrid .dx-header-filter:before {
@@ -5961,7 +5961,7 @@
   }
   .dx-datebox-wrapper-calendar .dx-calendar {
     border: none;
-    margin: 30px;
+    margin: 15px;
   }
   .dx-datebox-wrapper-calendar .dx-datebox-container-cell {
     margin-right: 30px;
@@ -8307,8 +8307,8 @@
     border-radius: 0;
   }
   .dx-editor-cell.dx-editor-inline-block .dx-highlight-outline::before {
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
   .dx-datagrid-checkbox-size {
     line-height: normal;
@@ -9288,8 +9288,8 @@
     border-radius: 0;
   }
   .dx-editor-cell.dx-editor-inline-block .dx-highlight-outline::before {
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
   .dx-treelist-checkbox-size {
     line-height: normal;

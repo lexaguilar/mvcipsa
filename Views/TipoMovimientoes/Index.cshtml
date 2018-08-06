@@ -1,0 +1,186 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles
+    {
+
+    <environment include="Development">
+        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+        <link href="~/css/loading.css" rel="stylesheet" />
+        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/css/notifIt.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
+        <link href="~/css/selectize.css" rel="stylesheet">
+        <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+        <link href="~/css/loading.css" rel="stylesheet" />
+        <link href="~/css/site.css" asp-append-version="true" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+        <link href="~/css/notifIt.css" rel="stylesheet" />
+    </environment>
+}
+<style>
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+</style>
+
+<div class="wrapper">        
+    <div class="panel">
+        <div class="panel-footer">
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridTipoMovimientos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+<environment include="Development">   
+    <script src="~/js/site.js" asp-append-version="true"></script> 
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+
+    <script src="~/js/aspnet.js"></script>
+</environment>
+<environment exclude="Development">   
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+
+    <script src="~/js/aspnet.js"></script>
+</environment>
+    <script>
+
+        var source = new DevExpress.data.DataSource({
+            store: {
+                type: 'array',
+                data: [],
+                key: 'Referencia'
+            }
+        });
+
+        $("#dxGridTipoMovimientos").dxDataGrid({
+            dataSource: source,
+            keyExpr: "Id",
+            editing: {
+                mode: "popup",
+                allowUpdating: true,
+                popup: {
+                    title: "Editar",
+                    showTitle: true,
+                    width: 700,
+                    height: 345,
+                    position: {
+                        my: "top",
+                        at: "top",
+                        of: window
+                    }
+                }
+            },
+            onRowUpdated: function (e) {
+
+                var p = e.data;
+                p['Id'] = e.key;
+
+                $.post(pathBase + `tipomovimientoes/update`, p, function () {
+                    loadGrid();
+                });
+            },
+            columns: [{
+                dataField: "TipoDoc",
+                caption: "Documento",
+                validationRules: [{
+                    type: "required",
+                    message: "Este campo es requerido",
+                }],
+                lookup: {
+                    dataSource: DevExpress.data.AspNet.createStore({
+                        key: "Id",
+                        loadUrl: pathBase + "tipomovimientoes/TipoDocumentoLookup"
+                    }),
+                    valueExpr: "Id",
+                    displayExpr: "Descripcion"
+                }
+            }, {
+                dataField: "Descripcion",
+                caption: "Movimiento",
+                validationRules: [{
+                    type: "required",
+                    message: "Este campo es requerido"
+                }]
+            }, {
+                dataField: "DocName",
+                validationRules: [{
+                    type: "required",
+                    message: "Este campo es requerido"
+                }]
+            }
+            ],
+            filterRow: {
+                visible: true
+            },
+            rowAlternationEnabled: true,
+            showRowLines: true,
+            headerFilter: {
+                visible: true
+            },
+            scrolling: {
+                mode: "virtual"
+            },
+            height: 600,
+            showBorders: true,
+        });
+
+        $(document).ready(function () { 
+            loadGrid();
+        })
+        
+        function loadGrid() {
+
+            $.get(pathBase + `tipomovimientoes/getList`, null, data => {  
+
+                $("#dxGridTipoMovimientos").dxDataGrid("instance").option('dataSource', data);
+
+            }).always(function () {
+                //$($gridMov).parent().loading('stop');
+            });
+        }
+       
+    </script>
+}

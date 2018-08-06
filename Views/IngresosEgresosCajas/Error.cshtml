@@ -1,14 +1,18 @@
-@model string
+@model ErrorViewModel
 @{
     ViewData["Title"] = "Editar recibo ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="wrapper">
-    <section class="error-wrapper">      
+    <section class="error-wrapper">
         <h1>Error!</h1>
         <h2>Error en la petición</h2>
-        <p class="text-danger">@Model</p>
-        <br/>
+        <p class="text-danger">@Model.RequestId</p>
+        <br />
+        <p class="text-primary">Desea cambiar a la caja @Model.Descripcion? </p>
+        <a class="btn btn-default" asp-controller="IngresosEgresosCajas" asp-action="CambiarCaja"  asp-route-CajaId="@Model.CajaId"  asp-route-id="@Model.ReciboId" >Cambiar de caja</a>
+
+        <br />
         <a asp-action="Index">Ir al iniciio</a>
     </section>
 </div>

@@ -4,22 +4,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <environment include="Development">
-    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
     <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />  
 </environment>
 <environment exclude="Development">
-    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
     <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
-
+<style>
+    .dx-datagrid .dx-row > td {
+        padding: 3px !important;
+        font-size: 13px;
+    }
+    .dx-header-filter-indicator {
+        font-size: 15px !important;      
+    }
+</style>
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
-            Lista de cuentas 
+            Lista de servicios 
         </header>
         <div class="panel-body">           
             <div class="col-lg-12">
@@ -78,7 +84,7 @@
                     showRowLines: true,
                     showBorders: true,
                     rowAlternationEnabled: true,
-                    keyExpr: "Id",
+                   
                     sorting: {
                         mode: "multiple"
                     },
@@ -100,33 +106,32 @@
                         visible: true,
                         allowedPageSizes: [20, 50, 100]
                     },      
-                    keyExpr: "id",
+                   
                     "export": {
                         enabled: true,
-                        fileName: "TasaCambio",
+                        fileName: "Servicios",
                         allowExportSelectedData: true
                     },                                    
                     columns: [
                     {
-                        caption: "Cuenta Padre",
-                        dataField: "nombrePadre"                       
+                            caption: "Nombre Cuenta Padre",
+                        dataField: "NombrePadre"                       
                     },
                     {
-                        caption: "Nombre Cuenta Padre",
+                        caption: "Cuenta Padre",
                         dataField: "ctaPadre",
                     }, {
                         caption: "Cuenta",
-                        dataField: "cuenta",
+                        dataField: "Cuenta",
                     }, {
                         caption: "Nombre Cuenta",
-                        dataField: "nombre",
+                        dataField: "Nombre",
                     }, {
                         caption: "Cta Contable",
-                        dataField: "ctaContable",
+                        dataField: "CtaContable",
                     },
                     ]
-                });   
-                $('.waiting').hide();
+                });
             });
         });       
     </script>

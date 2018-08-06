@@ -1,22 +1,28 @@
 ﻿@model IEnumerable<mvcIpsa.Models.CajaViewModel>
 @using mvcIpsa.Extensions
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Recibos de caja";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var usr = this.User.GetServiceUser();
 }
 @section Styles
     {
 
-    <environment include="Development">
-        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
-        <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
-        <link href="~/css/notifIt.css" rel="stylesheet" />
-    </environment>
+<environment include="Development">
+    <link href="~/css/selectize.css" rel="stylesheet">
+    <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="~/lib/material-design-lite/material.css" rel="stylesheet" />
+    <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+    <link href="~/css/notifIt.css" rel="stylesheet" />
+    <link href="~/css/site.css"  rel="stylesheet"  asp-append-version="true"/>
+</environment>
     <environment exclude="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
         <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">
         <link href="~/lib/material-design-lite/material.min.css" rel="stylesheet" />
-        <link href="~/css/notifIt.css" rel="stylesheet" />        
+        <link href="~/lib/dialog-polyfill/dialog-polyfill.css" rel="stylesheet" />
+        <link href="~/css/notifIt.css" rel="stylesheet" />    
+        <link href="~/css/site.css" rel="stylesheet"  asp-append-version="true"/>
     </environment>
 }
 <style>
@@ -59,20 +65,13 @@
                                 <input type="text" class="form-control datepicker CajaParameter" id="Hasta" placeholder="Fecha final">
                             </div>                                
                         </div>
-                        <div class="form-group col-lg-2 col-md-4">
-                            <div class="col-lg-4 col-md-4">
-                                <label for="Estado" class="control-label">Estado :</label>
-                            </div>
-                            <div class="col-lg-8 col-md-8">
-                                <select class="form-control CajaParameter" id="Estado" asp-items="ViewBag.EstadoId"><option value="">Todos</option></select>
-                            </div>
-                        </div>
+                       
                         <div class="form-group col-lg-4 col-md-4">
                             <div class="col-lg-2 col-md-4">
                                 <label for="Caja" class="control-label">Caja :</label>
                             </div>
                             <div class="col-lg-10 col-md-8">
-                                <select class="form-control CajaParameter" id="Caja" asp-items="ViewBag.Caja">
+                                <select class="CajaParameter" id="Caja" asp-items="ViewBag.Caja">
                                     @if (usr.roles.Contains(1))
 	                                {
                                     <option value="">Todas</option>
@@ -117,7 +116,8 @@
 @section Scripts
     {
     <environment include="Development">
-        <script src="~/js/site.js"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
         <script src="~/lib/numeral/src/numeral.js"></script>
         <script src="~/lib/moment/moment.js"></script>
@@ -128,7 +128,8 @@
         <script src="~/lib/dialog-polyfill/dialog-polyfill.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="~/js/site.js"></script>
+        <script src="~/js/selectize.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
         <script src="~/lib/numeral/src/numeral.js"></script>
         <script src="~/lib/moment/moment.js"></script>
@@ -152,6 +153,7 @@
             init(1, false);
         });
         $(document).ready(function () {
+            $('select').selectize();
             var now = moment();
             $('.datepicker')
                 .val(now.format("DD-MM-YYYY"))
@@ -175,15 +177,15 @@
             var f = function (response) {
                 $('#recibo').datatable({
                     columnsHead: ['', 'Recibo', 'Movimiento', 'Fecha de Proceso', 'Beneficiario', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario', 'Registrado el', 'Estado'],
-                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular'] }, 'numRecibo', 'tipoMovimiento', 'fechaProceso', 'beneficiario', 'total', 'tipoMoneda', 'tipoIngreso', 'username', 'fechacreacion', 'estado'],
-                    data: response.result,
+                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular','print'] }, 'NumRecibo', 'TipoMovimiento', 'FechaProceso', 'Beneficiario', 'Total', 'TipoMoneda', 'TipoIngreso', 'Username', 'FechaCreacion', 'Estado'],
+                    data: response.Result,
                     pag: pag,
                     rows: data.Rows,
-                    totalRows: response.count,
+                    totalRows: response.Count,
                     controller: 'ingresosegresoscajas',
-                    id: 'id',
-                    columnsWithFormatDate: ['fechaProceso', 'fechacreacion'],
-                    columnsWithFormatMoney: ['monto']
+                    id: 'Id',
+                    columnsWithFormatDate: ['FechaProceso', 'FechaCreacion'],
+                    columnsWithFormatMoney: ['Total']
                 });
                 $('#btnSearch').reset();
             }

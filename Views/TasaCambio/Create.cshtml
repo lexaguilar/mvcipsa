@@ -150,6 +150,9 @@
                     $('#btnSave').removeAttr('disabled');
                 } else
                     $('#btnSave').attr('disabled', 'disabled');
+            }).fail(function(){
+                $.notification('Error al cargar la informacion');
+                $('#btnSearch').html('<span class="fa fa-search"></span> Buscar');
             });
         });
 

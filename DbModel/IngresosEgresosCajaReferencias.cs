@@ -16,8 +16,8 @@ namespace mvcIpsa.DbModel
         public decimal TipoCambio { get; set; }
         public string Referencia { get; set; }
         public short? IdBanco { get; set; }
-        public short TipoPagoId { get; set; }
-
+        public int TipoPagoId { get; set; }
+        public bool Procesado { get; set; }
         public IngresosEgresosCaja Recibo { get; set; }
         public TipoPago TipoPago { get; set; }
     }

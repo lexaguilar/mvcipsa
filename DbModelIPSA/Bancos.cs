@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace mvcIpsa.DbModel
+namespace mvcIpsa.DbModelIPSA
 {
     public partial class Bancos
     {

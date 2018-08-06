@@ -3,19 +3,13 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<environment include="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
-</environment>
-<environment exclude="Development">
-    <link href="~/css/animate.css" rel="stylesheet">
-</environment>
+
 <div class="wrapper">
-    <section class="panel animated slideInRight">
+    <section class="panel">
         <header class="panel-heading">
             Lista de Permisos
         </header>
-        <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-wrench"></span> Crear un permiso</a>
+        <div class="panel-body">            
             <table id="role" class="table table-hover"></table>
         </div>
     </section>
@@ -36,7 +30,7 @@
         $(document).ready(function () {
             $('#role').datatable({
                 columnsHead: ['','Código','Nombre', 'Descripción'],
-                columnsDisplay: [{ type: 'button', buttons: ['edit', 'remove'] }, 'Id', 'Name', 'Description'],
+                columnsDisplay: [{ type: 'button', buttons: ['edit'] }, 'Id', 'Name', 'Description'],
                 data: roles,
                 pag: 1,
                 rows: 10,

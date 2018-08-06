@@ -12,6 +12,7 @@ namespace mvcIpsa.DbModel
 
         public int Id { get; set; }
         public string Descripcion { get; set; }
+        public short? TipoDoc { get; set; }
 
         public ICollection<IngresosEgresosCaja> IngresosEgresosCaja { get; set; }
     }

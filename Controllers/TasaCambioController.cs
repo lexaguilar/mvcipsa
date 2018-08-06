@@ -26,7 +26,7 @@ namespace mvcIpsa.Controllers
         }
         [HttpGet("TasaCambio/obtenerLista")]
         public IActionResult ObtenerLista()
-        {
+        {           
             var tasaCambio = db.CambioOficial
                 .OrderByDescending(x => x.FechaCambioOficial)
                 .ToList();
@@ -76,7 +76,8 @@ namespace mvcIpsa.Controllers
 
         [HttpPost("TasaCambio/Guardar")]
         public async Task<IActionResult> Guardar(IEnumerable<tasaCambio> tasaCambio)
-        {                      
+        {
+
             foreach (var item in tasaCambio)
             {
                 var fecha = Convert.ToDateTime(item.id);
@@ -87,7 +88,7 @@ namespace mvcIpsa.Controllers
                     {
                         FechaCambioOficial = Convert.ToDateTime(item.id),
                         Dolares = Convert.ToDecimal(item.valor)
-                    };                   
+                    };
 
                     db.CambioOficial.Add(newCambioOficial);
                 }

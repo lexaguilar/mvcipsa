@@ -1,0 +1,14 @@
+@model string
+@{
+    ViewData["Title"] = "Reportes ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <section class="error-wrapper">      
+        <h1>Error!</h1>
+        <h2>Error en la petición</h2>
+        <p class="text-danger">@Model</p>
+        <br/>
+        <a asp-controller="home" asp-action="Index">Ir al iniciio</a>
+    </section>
+</div>

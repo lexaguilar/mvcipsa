@@ -4189,6 +4189,7 @@
   display: inline-block;
   vertical-align: top;
   white-space: nowrap;
+  padding: 4px;
 }
 .dx-datagrid .dx-column-indicators.dx-visibility-hidden {
   visibility: hidden;
@@ -4454,8 +4455,8 @@ input.dx-hidden {
   display: inline-block;
   content: '\200B';
   vertical-align: middle;
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 .dx-row .dx-numberbox.dx-show-clear-button .dx-texteditor-input {
   padding-right: 32px;
@@ -4717,6 +4718,7 @@ input.dx-hidden {
 }
 .dx-datagrid-summary-item {
   font-weight: bold;
+  /* font-size: 12px; */
 }
 .dx-datagrid-export-menu .dx-menu-item .dx-checkbox {
   margin-left: 0;
@@ -5428,14 +5430,14 @@ input.dx-hidden {
   margin: 0;
 }
 .dx-editor-cell .dx-highlight-outline {
-  padding: 0;
+  padding: 0px;
 }
 .dx-editor-cell.dx-editor-inline-block .dx-highlight-outline::before {
   display: inline-block;
   content: '\200B';
   vertical-align: middle;
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 .dx-row .dx-numberbox.dx-show-clear-button .dx-texteditor-input {
   padding-right: 32px;

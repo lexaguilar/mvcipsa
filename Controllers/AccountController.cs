@@ -60,7 +60,7 @@ namespace mvcIpsa.Controllers
             if (ModelState.IsValid)
             {
                 AppUser svcUser = null;
-                var unEncrytp = UrlHelperExtensions.getPasswordHashed(model.Password);
+                var unEncrytp = HelperExtensions.getPasswordHashed(model.Password);
                 var result = db.Profile
                     .Where(p => p.Username == model.username && p.Password == unEncrytp)
                     .FirstOrDefault();
@@ -192,7 +192,7 @@ namespace mvcIpsa.Controllers
                 var profile = db.Profile.Find(model.username);
 
                 var OldPasswordHashedOriginal = profile.Password;
-                var OldPasswordHashedDigit = UrlHelperExtensions.getPasswordHashed(model.OldPassword);
+                var OldPasswordHashedDigit = HelperExtensions.getPasswordHashed(model.OldPassword);
 
                 if (OldPasswordHashedDigit != OldPasswordHashedOriginal)
                 {
@@ -200,7 +200,7 @@ namespace mvcIpsa.Controllers
                     return View(model);
                 }
 
-                profile.Password = UrlHelperExtensions.getPasswordHashed(model.NewPassword);               
+                profile.Password = HelperExtensions.getPasswordHashed(model.NewPassword);               
                 await db.SaveChangesAsync();      
                 
                 return RedirectToAction("Index", "Home");

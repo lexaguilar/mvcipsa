@@ -23,15 +23,17 @@ namespace mvcIpsa.Controllers
 
         // GET: Clientes
         public async Task<IActionResult> Index()
-        {    
-            var clients = db.Cliente.Include(c => c.TipoCliente).Select(c=> new ClienteViewModel {
+        {
+
+            var clients = db.Cliente.Include(c => c.TipoCliente).Select(c => new ClienteViewModel
+            {
                 Identificacion = c.Identificacion,
-                Nombre =c.Nombre,
-                Apellido=c.Apellido,
-                Telefono =c.Telefono,
-                Correo =c.Correo,
-                Direccion=c.Direccion,
-                tipocliente= c.TipoCliente.Tipocliente               
+                Nombre = c.Nombre,
+                Apellido = c.Apellido,
+                Telefono = c.Telefono,
+                Correo = c.Correo,
+                Direccion = c.Direccion,
+                TipoCliente = c.TipoCliente.Tipocliente
             });
             return View(await clients.ToListAsync());
         }

@@ -330,7 +330,7 @@ ul.sidebar-menu li a.active i {
 }
 
 .header, .footer {
-    min-height: 60px;
+    min-height: 57px;
     padding: 0 15px;
 }
 
@@ -349,7 +349,7 @@ ul.sidebar-menu li a.active i {
 .wrapper {
     display: inline-block;
     margin-top: 60px;
-    padding: 15px;
+    padding: 10px;
     width: 100%;
 }
 
@@ -2951,10 +2951,10 @@ ul.amounts li {
 }
 
 .tab-bg-dark-navy-blue {
-    background: #d9534f;
+    background: #48535f;
     border-radius: 5px 5px 0 0;
     -webkit-border-radius: 5px 5px 0 0;
-    border-bottom: none;
+    /* border-bottom: none; */
 }
 
 .panel-heading .nav > li > a,
@@ -2968,8 +2968,8 @@ ul.amounts li {
 }
 
 .panel-heading .nav > li.active > a, .panel-heading .nav > li > a:hover {
-    color: #47596f;
-    background: #fff;
+    color: #ffffff;
+    background: #5078ca;
 }
 
 .panel-heading .nav > li:first-child.active > a, .panel-heading .nav > li:first-child > a:hover {
@@ -4459,7 +4459,7 @@ tr.odd.gradeX td.sorting_1, tr.even.gradeX td.sorting_1, table.display tr.even.g
 }
 
 .ui-sortable > li {
-    padding: 15px 0 15px 35px !important ;
+    padding: 10px 0 2px 35px !important;
     position: relative;
     background: #f5f6f8;
     margin-bottom: 2px;
@@ -5509,4 +5509,5 @@ a.guest-on i {
 
 .text-bold {
     font-weight: bold;
+}d;
 }

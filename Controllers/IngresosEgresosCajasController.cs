@@ -10,12 +10,12 @@ namespace mvcIpsa.Controllers
     using mvcIpsa.Extensions;
     using mvcIpsa.Models;
     using System;
-    using System.Threading.Tasks;
-    using Extensions;
+    using System.Threading.Tasks;  
     using mvcIpsa.DbModelIPSA;
     using Newtonsoft.Json;
     using Microsoft.Extensions.Options;
     using System.IO;
+    using mvcIpsa.Services;
 
     [Authorize(Policy = "Admin,User")]
     public class IngresosEgresosCajasController : Controller
@@ -25,7 +25,7 @@ namespace mvcIpsa.Controllers
 
         private readonly AppSettings settings;
 
-        public IngresosEgresosCajasController(IPSAContext _db, DBIPSAContext _DbIpsa,IOptions<AppSettings> _settings)
+        public IngresosEgresosCajasController(IPSAContext _db, DBIPSAContext _DbIpsa, IOptions<AppSettings> _settings)
         {
             db = _db;
             DbIpsa = _DbIpsa;
@@ -34,7 +34,7 @@ namespace mvcIpsa.Controllers
 
         public IActionResult Index()
         {
-            var usr = this.GetServiceUser();
+            var usr = this.GetServiceUser();            
             ViewData["EstadoId"] = new SelectList(db.CajaEstado, "Id", "Descripcion", 1);
 
             var cajas = db.Caja.Select(p => new Caja { Id = p.Id, Description =p.Description });
@@ -117,8 +117,8 @@ namespace mvcIpsa.Controllers
 
             ViewData["TipoIngresoId"] = new SelectList(db.TipoIngreso, "Id", "Descripcion");
             ViewData["TipoMonedaId"] = new SelectList(db.TipoMoneda, "Id", "Descripcion");          
-            ViewData["EstadoId"] = new SelectList(db.CajaEstado, "Id", "Descripcion", 1);
-            ViewData["Banco"] = new SelectList(db.Bancos, "Bancoid", "Descripcion");
+            ViewData["EstadoId"] = new SelectList(db.CajaEstado, "Id", "Descripcion", 1);            
+            ViewData["Banco"] = new SelectList(DbIpsa.Bancos, "Bancoid", "Descripcion");
             ViewData["TipoCliente"] = new SelectList(db.TipoCliente, "Id", "Tipocliente", 1);
 
             var lote = db.LoteRecibos.Where(lt => lt.CajaId == user.cajaid).FirstOrDefault();
@@ -139,11 +139,8 @@ namespace mvcIpsa.Controllers
 
             ViewBag.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
 
+            var cuentas = new MaestroContableServices(DbIpsa).ObtenerServicios();
 
-            var cuentas = DbIpsa.MaestroContable
-                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
-                .ToArray();
-         
             var servicios = from mc in cuentas
                             join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
                             join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
@@ -162,17 +159,8 @@ namespace mvcIpsa.Controllers
             }
 
             ViewBag.servicios = servicios;
-                      
-            ViewBag.fondos = db.Fondos.Select(mc => new
-            {
-                fondoid = mc.Fondoid,
-                nombre = mc.Nombre
-            }).ToList();
 
-            ViewBag.clientes = db.Cliente
-                .Include(c => c.TipoCliente)
-                .Select(c => new { c.Id, nombre = c.Nombre + " " + c.Apellido, identificacion = c.Identificacion,idTipo = c.TipoCliente.Id, tipoCliente = c.TipoCliente.Tipocliente })
-                .ToList();
+            ViewBag.roles = user.roles;
 
             return View();
         }
@@ -181,8 +169,11 @@ namespace mvcIpsa.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
         {
-            createLogs(iECajaViewModel,"Create");
-
+            if (settings.readLog)
+            {
+                createLogs(iECajaViewModel, "Create");
+            }
+            
             var user = this.GetServiceUser();
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
             {
@@ -199,22 +190,16 @@ namespace mvcIpsa.Controllers
             ingresosEgresosCaja.EstadoId = 1;
             ingresosEgresosCaja.FechaRegistro = DateTime.Now;
             ingresosEgresosCaja.CajaId = user.cajaid;          
-            ingresosEgresosCaja.Username = user.username;
-
+            ingresosEgresosCaja.Username = user.username;           
 
             var totalServicioDolar = iECajaViewModel.details.Sum(s => s.montodolar);
             var totalPagoDolar = iECajaViewModel.referencias.Sum(p => p.totalD);
 
-            if (Math.Round(totalServicioDolar,2) != Math.Round(totalPagoDolar, 2))
+            if (Math.Round(totalServicioDolar,4) != Math.Round(totalPagoDolar, 4))
             {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
+                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 4)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 4)}"));
             }
-
-            if (Math.Round(totalServicioDolar,2) != Math.Round(totalPagoDolar, 2))
-            {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
-            }
-
+    
             var totalPagoCordoba = iECajaViewModel.referencias.Sum(p => p.totalC);
 
             if (iECajaViewModel.master.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba)
@@ -242,6 +227,10 @@ namespace mvcIpsa.Controllers
 
             foreach (var referencia in iECajaViewModel.referencias)
             {
+                if (settings.onlyNumber)                
+                    if (referencia.Referencia.Any(r=> !char.IsNumber(r)))                    
+                        return BadRequest(string.Format($"La referencia {referencia.Referencia} debe ser númerica"));
+
                 if (referencia.TipoPagoId == (short)TipoPagoParamFilter.None)                                
                         return BadRequest(string.Format("Debe seleccionar un tipo de pago válido"));  
 
@@ -253,12 +242,16 @@ namespace mvcIpsa.Controllers
                     if (referencia.IdBanco==null || referencia.IdBanco == 0)
                         return BadRequest(string.Format("Debe de ingresar el banco para la forma de pago cheque, minuta o transferencia"));
                 }
-                    
 
 
                 var _CambioOficial = db.CambioOficial.Find(referencia.Fecha);
                 if (_CambioOficial == null)
                     return NotFound(string.Format("No se encontró la tasa de cambio para la fecha {0} de la referencia {1}", referencia.Fecha, referencia.Referencia));
+
+                if(_CambioOficial.Dolares != referencia.TipoCambioManual && !user.roles.Contains((int)Roles.CambiarTasa))                
+                    return NotFound(string.Format("No tiene permisos para modificar la tasa de cambio, solicite el permiso de cambiar tasa de cambio", referencia.Fecha, referencia.Referencia));
+
+                var tasaOficial = referencia.TipoCambioManual;
 
                 ingresosEgresosCaja.IngresosEgresosCajaReferencias.Add(new IngresosEgresosCajaReferencias
                 {
@@ -267,12 +260,13 @@ namespace mvcIpsa.Controllers
                     MontoMinu = referencia.MontoMinu,
                     MontoCheq = referencia.MontoCheq,
                     MontoTrans = referencia.MontoTrans,
-                    Total = (referencia.MontoEfectivo + referencia.MontoMinu + referencia.MontoCheq + referencia.MontoTrans),                    
+                    Total = (referencia.MontoEfectivo + referencia.MontoMinu + referencia.MontoCheq + referencia.MontoTrans),
                     Fecha = referencia.Fecha,
-                    TipoCambio = _CambioOficial.Dolares,
+                    TipoCambio = tasaOficial,
                     Referencia = referencia.Referencia,
                     IdBanco = referencia.IdBanco,
-                    TipoPagoId = referencia.TipoPagoId
+                    TipoPagoId = referencia.TipoPagoId,
+                    Procesado = false
                 });
             }
            
@@ -282,16 +276,15 @@ namespace mvcIpsa.Controllers
 
             try
             {
-                await db.SaveChangesAsync();
+               await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 return BadRequest();
             }
-            return Ok(new {
-                ingresosEgresosCaja.NumRecibo,
-                ingresosEgresosCaja.Id
-            });
+            return Json(ingresosEgresosCaja,
+                new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }
+            );
         }
 
         [ActionName("FindTipoCambio")]
@@ -305,10 +298,18 @@ namespace mvcIpsa.Controllers
             return Json(cambioOficial);
         }
 
+        [Authorize(Policy = "Admin")]
+        [ActionName("CambiarCaja")]
+        public async Task<IActionResult> CambiarCaja(int CajaId, int id)
+        {          
+            return RedirectToAction("Edit", new { id, tempCajaId = CajaId });
+        }
+
         [HttpPost]
         [ActionName("CancelRecibo")]
         public async Task<IActionResult> CancelRecibo(int idrecibo,string motivo)
         {
+            var user = this.GetServiceUser();
             var recibo = db.IngresosEgresosCaja.Find(idrecibo);
             if (recibo.EstadoId == (int)IngresosEgresosCajaEstado.Anulado)
             {
@@ -316,13 +317,18 @@ namespace mvcIpsa.Controllers
             }
             recibo.EstadoId = (int)IngresosEgresosCajaEstado.Anulado;
             recibo.MotivoAnulado = motivo;
-            await db.SaveChangesAsync();
+            recibo.UsernameAnulado = user.username;
+            recibo.FechaAnulado = DateTime.Now;
+            db.SaveChanges();
             return Ok();
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id,int? tempCajaId)
         {
             var user = this.GetServiceUser();
+
+            if (tempCajaId != null)            
+                user.cajaid = tempCajaId.Value;            
 
             var serviciosDetalle = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == id).ToArray();
             var cuentasContables = db.CajaCuentaContable.Where(c => c.CajaId == user.cajaid).Select(ccc => ccc.CtaCuenta).ToArray();
@@ -330,8 +336,15 @@ namespace mvcIpsa.Controllers
 
             if(!hasAllAccounting)
             {
+                var CajaId = db.IngresosEgresosCaja.Find(id).CajaId;
                 var cccs = serviciosDetalle.Where(s => !cuentasContables.Contains(s.CtaContable)).Select( p => p.CtaContable);
-                return View("Error",$"El usuario {user.username} asignado a la caja {user.description} no contiene la(s) cuenta(s) {string.Join(",",cccs)} para poder editar recibo {db.IngresosEgresosCaja.Find(id).NumRecibo}");
+                var Descripcion = db.Caja.Find(CajaId).Description;
+                return View("Error", new ErrorViewModel {
+                    RequestId = $"El usuario {user.username} asignado a la caja {user.description} no contiene la(s) cuenta(s) {string.Join(",", cccs)} para poder editar recibo {db.IngresosEgresosCaja.Find(id).NumRecibo}",
+                    CajaId = CajaId,
+                    ReciboId = id,
+                    Descripcion= Descripcion
+                });
             }
 
             var recibo = db.IngresosEgresosCaja
@@ -342,15 +355,8 @@ namespace mvcIpsa.Controllers
             ViewData["TipoMonedaId"] = new SelectList(db.TipoMoneda, "Id", "Descripcion", recibo.TipoMonedaId);
             ViewData["TipoCliente"] = new SelectList(db.TipoCliente, "Id", "Tipocliente");
 
-            ViewBag.clientes = db.Cliente
-                .Include(c => c.TipoCliente)
-                .Select(c => new { c.Id, nombre = c.Nombre + " " + c.Apellido, identificacion = c.Identificacion, idTipo = c.TipoCliente.Id, tipoCliente = c.TipoCliente.Tipocliente })
-                .ToList();
+            var cuentas = new MaestroContableServices(DbIpsa).ObtenerServicios();
 
-            var cuentas = DbIpsa.MaestroContable
-                .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
-                .ToArray();
-    
             ViewBag.servicios = from mc in cuentas
                                 join mcp in cuentas on mc.CtaPadre equals mcp.CtaContable
                                 join ccc in db.CajaCuentaContable on mc.CtaContable equals ccc.CtaCuenta
@@ -366,7 +372,7 @@ namespace mvcIpsa.Controllers
 
             ViewBag.referencias = db.IngresosEgresosCajaReferencias.Where(r => r.ReciboId == id).ToArray();
             ViewBag.detalle = serviciosDetalle;
-
+            ViewBag.roles = user.roles;
             return View(recibo);
         }
              
@@ -384,8 +390,11 @@ namespace mvcIpsa.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> Edit(IngresoEgresosCajaViewModel iECajaViewModel)
         {
-           
-            createLogs(iECajaViewModel,"Edit");
+            if (settings.readLog)
+            {
+                createLogs(iECajaViewModel, "Edit");
+            }
+
             var user = this.GetServiceUser();
 
             if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            
@@ -398,10 +407,10 @@ namespace mvcIpsa.Controllers
                 return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está anulado");
             }
 
-            if (recibos.EstadoId == (short)IngresosEgresosCajaEstado.Cerrado)
-            {
-                return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está cerrado");
-            }
+            // if (recibos.EstadoId == (short)IngresosEgresosCajaEstado.Cerrado)
+            // {
+            //     return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está cerrado");
+            // }
 
             var ingresosEgresosCaja = iECajaViewModel.master;
             recibos.FechaProceso = ingresosEgresosCaja.FechaProceso;
@@ -413,15 +422,16 @@ namespace mvcIpsa.Controllers
             recibos.Beneficiario = ingresosEgresosCaja.Beneficiario;
             recibos.Muestra = ingresosEgresosCaja.Muestra;
             recibos.Concepto = ingresosEgresosCaja.Concepto;
-
+            recibos.UsernameEditado = user.username;
+            recibos.FechaEditado = DateTime.Now;
+            
             var totalServicioDolar = iECajaViewModel.details.Sum(s => s.montodolar);
             var totalPagoDolar = iECajaViewModel.referencias.Sum(p => p.totalD);
-            if (Math.Round(totalServicioDolar, 2) != Math.Round(totalPagoDolar, 2))
-            {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
-            }
+            if (Math.Round(totalServicioDolar, 4) != Math.Round(totalPagoDolar, 4))            
+                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 4)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 4)}"));
+            
 
-            var oldDetalles = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == recibos.Id);
+            var oldDetalles = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == recibos.Id);           
             db.IngresosEgresosCajaDetalle.RemoveRange(oldDetalles);
 
             foreach (var item in iECajaViewModel.details)
@@ -441,9 +451,10 @@ namespace mvcIpsa.Controllers
                 });
             }
 
-
-
             var oldReferencias = db.IngresosEgresosCajaReferencias.Where(d => d.ReciboId == recibos.Id);
+            if (oldReferencias.Any(x => x.Procesado))            
+                return BadRequest(string.Format($"El movimiento ya tiene proceso de conciliacion, por lo tanto no se puede editar"));
+            
             db.IngresosEgresosCajaReferencias.RemoveRange(oldReferencias);
 
             var totalPagoCordoba = iECajaViewModel.referencias.Sum(p => p.totalC);
@@ -455,11 +466,15 @@ namespace mvcIpsa.Controllers
 
             foreach (var referencia in iECajaViewModel.referencias)
             {
+                if (settings.onlyNumber)
+                    if (referencia.Referencia.Any(r => !char.IsNumber(r)))
+                        return BadRequest(string.Format($"La referencia {referencia.Referencia} debe ser númerica"));
+
                 if (referencia.TipoPagoId == (short)TipoPagoParamFilter.None)
                     return BadRequest(string.Format("Debe seleccionar un tipo de pago válido"));
                 
                 if (referencia.TipoPagoId == (short)TipoPagoParamFilter.Minuta || referencia.TipoPagoId == (short)TipoPagoParamFilter.Transferencia || referencia.TipoPagoId == (short)TipoPagoParamFilter.Cheque)
-                {
+                {         
                     if (referencia.Referencia.Trim().Length == 0)
                         return BadRequest(string.Format("Debe de ingresar la referencia para la forma de pago cheque, minuta o transferencia"));
 
@@ -467,10 +482,14 @@ namespace mvcIpsa.Controllers
                         return BadRequest(string.Format("Debe de ingresar el banco para la forma de pago cheque, minuta o transferencia"));
                 }
 
-
                 var _CambioOficial = db.CambioOficial.Find(referencia.Fecha);
                 if (_CambioOficial == null)
                     return NotFound(string.Format("No se encontró la tasa de cambio para la fecha {0} de la referencia {1}", referencia.Fecha, referencia.Referencia));
+
+                if (_CambioOficial.Dolares != referencia.TipoCambioManual && !user.roles.Contains((int)Roles.CambiarTasa))
+                    return NotFound(string.Format("No tiene permisos para modificar la tasa de cambio, solicite el permiso de cambiar tasa de cambio", referencia.Fecha, referencia.Referencia));
+
+                var tasaOficial = referencia.TipoCambioManual;
 
                 recibos.IngresosEgresosCajaReferencias.Add(new IngresosEgresosCajaReferencias
                 {
@@ -481,10 +500,11 @@ namespace mvcIpsa.Controllers
                     MontoTrans = referencia.MontoTrans,
                     Total = (referencia.MontoEfectivo + referencia.MontoMinu + referencia.MontoCheq + referencia.MontoTrans),
                     Fecha = referencia.Fecha,
-                    TipoCambio = _CambioOficial.Dolares,
+                    TipoCambio = tasaOficial,
                     Referencia = referencia.Referencia,
                     IdBanco = referencia.IdBanco,
-                    TipoPagoId = referencia.TipoPagoId
+                    TipoPagoId = referencia.TipoPagoId,
+                    Procesado = false
                 });
             }
 
@@ -492,21 +512,21 @@ namespace mvcIpsa.Controllers
 
             try
             {
-                await db.SaveChangesAsync();
+               await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 return BadRequest();
             }
-            return Ok(ingresosEgresosCaja.NumRecibo);
+            return Json(recibos,
+                new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }
+            );
         }
 
         public async Task<IActionResult> Print(int Id)
         {
-            var servicios = DbIpsa.MaestroContable
-               .Where(mc => mc.TipoCta == 4 || mc.Cuenta.StartsWith("1101") || mc.Cuenta.StartsWith("1108") || mc.Cuenta.StartsWith("1105"))
-               .ToArray();
-
+            var servicios = new MaestroContableServices(DbIpsa).ObtenerServicios();
+              
             var recibo = db.IngresosEgresosCaja
                 .Include(c => c.Estado)
                 .Include(c => c.IngresosEgresosCajaDetalle)

@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles
+{
+    <environment include="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+}
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading">
+            Lista de conciliaciones <a style="float : right" class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-bell"></span> Crear una nueva conciliación</a>
+        </header>
+        <div class="panel-body">
+           
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridProcesosBanco"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+@section Scripts
+    {
+<environment include="Development">
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/lib/numeral/numeral.js"></script>
+</environment>
+    <environment exclude="Development">
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/moment/moment.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+        <script src="~/lib/numeral/numeral.js"></script>
+    </environment>
+
+
+    <script>
+
+        $(function () {
+            var orders = new DevExpress.data.CustomStore({
+                load: function (loadOptions) {
+                    var deferred = $.Deferred();
+
+                    $.ajax({
+                        url: pathBase + 'procesosBanco/getlist',
+                        dataType: "json",
+                        success: function (result) {
+                            deferred.resolve(result, { totalCount: result.lenght });
+                        },
+                        error: function () {
+                            deferred.reject("Data Loading Error");
+                        },
+                        timeout: 5000
+                    });
+
+                    return deferred.promise();
+                }
+            });
+
+            $("#dxGridProcesosBanco").dxDataGrid({
+                dataSource: {
+                    store: orders
+                },
+                rowAlternationEnabled: true,
+                paging: {
+                    pageSize: 15
+                },
+                columnsAutoWidth: true,
+                allowColumnResizing: true,
+                headerFilter: {
+                    visible: true
+                },
+                pager: {
+                    showInfo: true,
+                    showPageSizeSelector: true,
+                    allowedPageSizes: [10, 20, 50]
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },
+                columns: [
+                    "Banco",
+                    {
+                        caption: "",
+                        width : 350,
+                        dataField: "Cuenta"
+                    },{
+                        width : 100,
+                        dataField: "Moneda",
+                        cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(`${options.value==1?"Cordoba":"Dolares"}`)                               
+                            .appendTo(container);
+                        }
+                    },{
+                         caption: "Saldo Inicial",
+                         dataField: "SaldoInicial",
+                         width: 120,
+                         cellTemplate: function (container, options) {
+                             $("<div>")
+                                 .append(`${numeral(options.value).format('0,0.00')}`)
+                                 .appendTo(container);
+                         }
+                     }, {
+                         caption: "Saldo Final",
+                         dataField: "SaldoFinal",
+                         width: 120,
+                         cellTemplate: function (container, options) {
+                             $("<div>")
+                                 .append(`${numeral(options.value).format('0,0.00')}`)
+                                 .appendTo(container);
+                         }
+                     },
+                    {
+                        dataType: "date",
+                        format: "MM/yyyy",
+                        dataField: "Fecha"
+                    },
+                    "Username"                    
+                ],
+                masterDetail: {
+                    enabled: true,
+                    template: function(container, options) { 
+                        var data = options.data;
+                       
+                        $("<div>")
+                            .addClass("master-detail-caption")
+                            .text("Documentos")
+                            .appendTo(container);
+
+                        $("<div>")
+                        .dxDataGrid({
+                            columnAutoWidth: true,
+                            showBorders: true,
+                            rowAlternationEnabled: true,
+                            columns: [
+                                "Nombre",
+                                {                                  
+                                    cellTemplate: function (container, options) {
+                                    $("<div>")
+                                        .append(`<a target="_blank" href="${pathBase}reportes/${options.data.Reporte}?bancoCuenta=${options.data.BancoCuenta}&anio=${moment(options.data.Fecha).format('YYYY')}&mes=${moment(options.data.Fecha).format('MM')}"><span class="fa fa-print"></span> Imprimir</a>`)                               
+                                        .appendTo(container);
+                                    },
+                                }
+                            ],
+                            dataSource: data.Documentos
+                        }).appendTo(container);
+                    }
+                }
+            }).dxDataGrid("instance");
+        });
+
+    </script>
+}

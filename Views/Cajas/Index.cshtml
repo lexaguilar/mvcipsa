@@ -4,54 +4,30 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<environment include="Development">
-    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+@section Styles
+{
+<environment include="Development">   
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
 <environment exclude="Development">
-    <link href="~/lib/DataTables/media/css/jquery.dataTables.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_page.css" rel="stylesheet">
-    <link href="~/lib/DataTables/media/css/demo_table.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+    <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
 </environment>
+}
 <div class="wrapper">
     <section class="panel animated slideInUp">
         <header class="panel-heading">
             Lista de cajas
+            <a style="float: right" class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-book"></span> Crear un caja</a>
         </header>
         <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-book"></span> Crear un caja</a>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.NoCaja)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Description)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.NoCaja)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Description)
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id"><span class="glyphicon glyphicon-pencil"></span> Editar</a> |
-                                <a asp-action="EditAccountsById" asp-route-id="@item.Id"><span class="glyphicon glyphicon-book"></span> Cuentas asociadas</a> |
-                                <a asp-action="Delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-remove text-danger"></span> Eliminar</a> |
-                                <a asp-action="EditLotes" asp-route-id="@item.Id"><span class="glyphicon glyphicon-menu-hamburger text-primary"></span> Lotes</a>
-                            </td>
-                        </tr>}
-                </tbody>
-            </table>
+            
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridCaja"></div>
+                </div>
+            </div>
         </div>
     </section>
 </div>
@@ -59,12 +35,101 @@
 @section Scripts
 {
     <environment include="Development">
-        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>  
     </environment>
     <environment exclude="Development">
-        <script src="~/lib/DataTables/media/js/jquery.dataTables.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>  
     </environment>
     <script>
-        $('table').dataTable();
+        
+            var cajas = new DevExpress.data.CustomStore({
+                load: function (loadOptions) {
+                    var deferred = $.Deferred(),
+                        args = {};            
+                    
+                    $.ajax({
+                        url: pathBase + `cajas/getlist`,
+                        dataType: "json",                       
+                        success: function(result) {
+                            deferred.resolve(result, { totalCount: result.length });
+                        },
+                        error: function() {
+                            deferred.reject("Data Loading Error");
+                        },
+                        timeout: 15000
+                    });
+            
+                    return deferred.promise();
+                }
+            });
+
+            $('#dxGridCaja').dxDataGrid({
+                dataSource: {
+                    store: cajas
+                },    
+                showRowLines: true,
+                rowAlternationEnabled: true,
+                columnsAutoWidth: true,     
+                allowColumnResizing: true,
+                headerFilter: {
+                    visible: true
+                },
+                filterRow: {
+                    visible: true,
+                    applyFilter: "auto"
+                },               
+                columns: [
+                    {
+                        dataField: "NoCaja",
+                        width : 100                     
+                    },{
+                        dataField: "Description",
+                    },{               
+                        width : 400,       
+                        caption: "",
+                        dataField: "Id",                               
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .append(` <a href="${pathBase}/cajas/Edit/${options.value}"><span class="glyphicon glyphicon-pencil"></span> Editar</a> |
+                                <a href="${pathBase}cajas/EditAccountsById/${options.value}"><span class="glyphicon glyphicon-book"></span> Servicios asociados</a> |
+                                <a href="${pathBase}cajas/Delete/${options.value}"><span class="glyphicon glyphicon-remove text-danger"></span> Eliminar</a> |
+                                <a href="${pathBase}cajas/EditLotes/${options.value}"><span class="glyphicon glyphicon-menu-hamburger text-primary"></span> Lotes</a>`)                               
+                                .appendTo(container);
+                        }
+                    }                    
+                ],
+                summary: {
+                    totalItems: [{
+                        column: "Id",
+                        summaryType: "count",
+                        customizeText: function(data) {
+                            return  data.value +' cajas';
+                        }
+                    }]
+                },    
+            }).dxDataGrid("instance");
+               
     </script>
 }

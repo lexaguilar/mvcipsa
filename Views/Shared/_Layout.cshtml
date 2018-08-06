@@ -5,17 +5,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Ipsa</title>
+    <title>@ViewData["Title"] - IPSA</title>
     @if (IsSectionDefined("Styles"))
             {@RenderSection("Styles", required: false)}
     <environment include="Development">     
-        <link href="~/css/bootstrap.css" rel="stylesheet">    
+        <link href="~/css/bootstrap.css"  asp-append-version="true"  rel="stylesheet">    
         <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
         <link href="~/css/style.css" asp-append-version="true" rel="stylesheet">
         <link href="~/css/style-responsive.css" rel="stylesheet" />   
     </environment>
     <environment exclude="Development">
-        <link href="~/css/bootstrap.css" rel="stylesheet">
+        <link href="~/css/bootstrap.css"  asp-append-version="true"  rel="stylesheet">
         <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
         <link href="~/css/style.css" asp-append-version="true" rel="stylesheet">
         <link href="~/css/style-responsive.css" rel="stylesheet" />   
@@ -32,10 +32,10 @@
                   <ul class="nav top-menu">
               <!-- settings start -->
               <li class="dropdown">
-                    <a asp-controller="IngresosEgresosCajas" asp-action="create"><span class="fa fa-laptop"></span>Nuevo recibo</a>       
+                    <a asp-controller="IngresosEgresosCajas" asp-action="create"><span class="fa fa-laptop"></span> Nuevo recibo</a>       
               </li>
               <li id="header_inbox_bar" class="dropdown">
-                   <a href="#"><span class="fa fa-exchange"></span> Transferencia</a>             
+                   <a asp-controller="IngresosEgresosBanco" asp-action="create"><span class="fa fa-exchange"></span> Nuevo Movimiento</a>             
               </li>            
           </ul>             
             </div>
@@ -59,11 +59,22 @@
                         </a>
                         <ul class="sub">
                             <li><a asp-controller="IngresosEgresosCajas" asp-action="Index"><span class="fa fa-laptop"></span> Recibo de caja</a></li>
-                            <li><a asp-controller="IngresosEgresosBanco" asp-action="NotasDebito"><span class="fa fa-exchange"></span> Notas de debitos</a></li>
-                            <li><a asp-controller="IngresosEgresosBanco" asp-action="NotasCredito"><span class="fa fa-download"></span> Notas de cretido</a></li>
-                            <li><a asp-controller="IngresosEgresosBanco" asp-action="Transferencia"><span class="fa fa-download"></span> Tranferencia</a></li> 
+                            <li><a asp-controller="IngresosEgresosBanco" asp-action="Index"><span class="fa fa-exchange"></span> Movimientos</a></li>                          
+                            <!-- <li><a asp-controller="IngresosEgresosBanco" asp-action="NotasCredito"><span class="fa fa-download"></span> Notas de cretido</a></li>
+                            <li><a asp-controller="IngresosEgresosBanco" asp-action="Transferencia"><span class="fa fa-download"></span> Tranferencia</a></li>  -->
                         </ul>
                     </li>
+
+                     <li class="sub-menu">
+                        <a href="javascript:;">
+                            <i class="fa fa-file-o"></i>
+                            <span>Conciliacion</span>
+                        </a>
+                        <ul class="sub">
+                            <li><a asp-controller="ProcesosBanco" asp-action="index"><span class="fa fa-file-o"></span> Conciliaciones</a></li>                                                    
+                        </ul>
+                    </li>
+
 
                     <li class="sub-menu">
                         <a href="javascript:;">
@@ -72,8 +83,10 @@
                         </a>
                         <ul class="sub">
                             <li><a asp-controller="profile" asp-action="index"><span class="fa fa-users"></span> Usuarios</a></li>
-                            <li><a asp-controller="role" asp-action="index"><span class="fa fa-wrench"></span> Roles</a></li>                 
-                            <li><a href="grids.html"><span class="fa fa-user-circle-o"></span> Asignar permisos</a></li>                         
+                            <li><a asp-controller="role" asp-action="index"><span class="fa fa-wrench"></span> Permisos</a></li>                 
+                            <li><a asp-controller="TipoMovimientoes" asp-action="index"><span class="fa fa-exchange"></span> Tipo Movimientos</a></li>                         
+                            <li><a asp-controller="ProcesosIniciales" asp-action="index"><span class="fa fa-list"></span> Procesos iniciales</a></li>                         
+                            <li><a asp-controller="ReporteFirmas" asp-action="index"><span class="fa fa-pencil"></span> Firmas autorizadas</a></li>                         
                         </ul>
                     </li>
 
@@ -131,7 +144,8 @@
     </section>
     
     <environment include="Development">
-        <script src="~/js/jquery.js"></script>      
+        <script src="~/js/jquery.js"></script>
+        
         <!--     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
         <script src="~/js/bootstrap.min.js"></script>
         <script class="include" type="text/javascript" src="~/js/jquery.dcjqaccordion.2.7.js"></script>
@@ -152,19 +166,20 @@
         <script type="text/javascript" src="~/js/jquery.pulsate.min.js"></script>
         <script src="~/js/common-scripts.js"></script>
     </environment>
-   
-   
-    @RenderSection("Scripts", required: false)
-      
     <script>
-        var pathBase = '@Url.Content("~/")';
+        var pathBase = '@Url.Content("~/")';</script>
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+       // var pathBase = '@Url.Content("~/")';
 
         var url = window.location.pathname.toLowerCase();
         var path = '';
 
-       
 
-        if (url.indexOf('ipsacore') >= 0) 
+
+        if (url.indexOf('ipsacore') >= 0)
         {
             path = url.split('/')[2];
             if(url.indexOf('reportes') >= 0)
@@ -176,14 +191,14 @@
             if(url.indexOf('reportes') >= 0)
                 path = url.split('/')[2];
         }
-      
+
 
         if (path.length > 0) {
             $('#nav-accordion li').each(function () {
                 $(this).find('ul').each(function () {
                     $(this).find('li').each(function () {
-                        var n = $(this).find('a').attr('href').toLowerCase();                                           
-                        if (n.indexOf(path) >= 0) {                          
+                        var n = $(this).find('a').attr('href').toLowerCase();
+                        if (n.indexOf(path) >= 0) {
                             $(this).addClass('active');
                             $(this).parent().parent().find('a').addClass('active');
                         }
@@ -193,8 +208,8 @@
         }
         else {
             $('#nav-accordion li').first().find('a').addClass('active');
-        }  
-        
+        }
+
     </script>
 </body>
 

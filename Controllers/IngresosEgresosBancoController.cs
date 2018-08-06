@@ -9,44 +9,37 @@ namespace mvcIpsa.Controllers
     using mvcIpsa.DbModel;
     using mvcIpsa.Extensions;
     using mvcIpsa.Models;
+    using mvcIpsa.Services;
     using System;
-    using System.Threading.Tasks;
-    using Extensions;
+    using System.Threading.Tasks; 
     using mvcIpsa.DbModelIPSA;
+
     using Newtonsoft.Json;
     using Microsoft.Extensions.Options;
     using System.IO;
-
-    [Authorize(Policy = "Admin,User")]
+    /// <summary>
+    /// Controlador de movimientos
+    /// </summary>
+    [Authorize(Policy = "Admin,User")]    
     public class IngresosEgresosBancoController : Controller
     {
-        private readonly IPSAContext db;     
-
-        public IngresosEgresosBancoController(IPSAContext _db)
+        private readonly IPSAContext db;
+        private readonly DBIPSAContext DbIpsa;
+        private readonly AppSettings settings;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_db"></param>
+        /// <param name="_DbIpsa"></param>
+        public IngresosEgresosBancoController(IPSAContext _db, DBIPSAContext _DbIpsa, IOptions<AppSettings> _settings)
         {
-            db = _db;         
-        }
+            db = _db;
+            DbIpsa = _DbIpsa;
+            settings = _settings.Value;
+        }       
 
-        public IActionResult NotasDebito()
-        {
-            Movimiento(TipoDocumentos.NotaDebito);
-            return View("Index");
-        }
-
-        public IActionResult NotasCredito()
-        {
-            Movimiento(TipoDocumentos.NotaCredito);
-            return View("Index");
-        }
-
-        public IActionResult Transferencia()
-        {
-            Movimiento(TipoDocumentos.Despositos);
-            return View("Index");
-        }
-
-        ///        
-        public void Movimiento(TipoDocumentos TipoDoc)
+        ///       
+        public IActionResult Index()
         {
             var usr = this.GetServiceUser();
             
@@ -55,54 +48,68 @@ namespace mvcIpsa.Controllers
             if (!usr.roles.Contains((int)Roles.Administrador))
                 cajas = cajas.Where(p => p.Id ==  usr.cajaid);
 
-            ViewData["EstadoId"] = new SelectList(db.IngresosEgresosBancoEstado, "Id", "Descripcion", 1);
-            ViewData["Caja"] = new SelectList(cajas, "Id", "Description");           
-            ViewData["TipoDoc"] = TipoDoc;
+            ViewBag.EstadoId = new SelectList(db.IngresosEgresosBancoEstado, "Id", "Descripcion", 1);
+            ViewBag.Caja = new SelectList(cajas, "Id", "Description");           
+            ViewBag.TipoDoc = new SelectList(db.TipoDocumento, "Id", "Descripcion");   
+            ViewBag.Title = "Movimientos";
+            return View("Index");   
         }
 
         public IActionResult GetList(CajaParameterModel p)
         {
             var user = this.GetServiceUser();
+
+            var CtaContable = DbIpsa.BancosCuentas.Select(bc => new
+            {
+                bc.BancoCuenta,
+                bc.Descripcion
+            }).ToArray();
+
             PaginationResult<IEnumerable<BancoViewModel>> result = new PaginationResult<IEnumerable<BancoViewModel>>();
             var query = db.IngresosEgresosBanco
                 .Include(c => c.Estado)
-                .Include(c => c.TipoMovimiento)                
+                .Include(c => c.TipoMovimiento)
                 .Include(c => c.TipoMoneda)
-                .Include(c => c.Caja)                
+                .Include(c => c.Caja)
                 .Select(c => new BancoViewModel
                 {
-                   Id=c.Id,
-                   FechaRegistro = c.FechaRegistro,
-                   Monto = c.Monto,
-                   TipoMonedaId = c.TipoMonedaId,
-                   TipoMoneda = c.TipoMoneda.Descripcion,
-                   CuentaContableBanco = c.CuentaContableBanco,
-                   TipoMovimientoId = c.TipoMovimientoId,
-                   TipoMovimiento = c.TipoMovimiento.Descripcion,
-                   Concepto = c.Concepto,
-                   FechaProceso = c.FechaProceso,
-                   Username = c.Username,
-                   CajaId = c.CajaId,
-                   Caja = c.Caja.Description,
-                   EstadoId = c.EstadoId,
-                   Estado = c.Estado.Descripcion,
-                   TipoCambio = c.TipoCambio,
-                   MotivoAnulado =c.MotivoAnulado
+                    Id = c.Id,
+                    FechaRegistro = c.FechaRegistro,
+                    Monto = c.Monto,
+                    TipoMonedaId = c.TipoMonedaId,
+                    TipoMoneda = c.TipoMoneda.Descripcion,
+                    CuentaContableBanco = CtaContable.Where(cc => cc.BancoCuenta == c.BancoCuenta).FirstOrDefault().Descripcion,
+                    TipoMovimientoId = c.TipoMovimientoId,
+                    TipoMovimiento = c.TipoMovimiento.Descripcion,
+                    Concepto = c.Concepto,
+                    FechaProceso = c.FechaProceso,
+                    Username = c.Username,
+                    CajaId = c.CajaId,
+                    Caja = c.Caja.Description,
+                    EstadoId = c.EstadoId,
+                    Estado = c.Estado.Descripcion,
+                    TipoCambio = c.TipoCambio,
+                    MotivoAnulado = c.MotivoAnulado,
+                    TipoDocumentoId = c.TipoDocumentoId,
+                    TipoDocumento = c.TipoDocumento.Descripcion,
+                    Referencia = c.Referencia
+                    
                 });
+
+            var strim = query.ToString();
 
             if (p.searchByNum)
             {
-                query = query.Where(x => x.Referencia == p.Referecnia);
+                query = query.Where(x => x.Referencia == p.Referencia);
                 if (!user.roles.Contains((int)Roles.Administrador))
                     query = query.Where(x => x.CajaId == user.cajaid);
 
-                result.Count = query.Count();
-                var strim  = query.ToString();
+                result.Count = query.Count();               
                 result.Result = query.ToArray();
             }
             else
             {
-                query = query.Where(x => x.FechaProceso >= p.Desde && x.FechaProceso <= p.Hasta );
+                query = query.Where(x => x.FechaProceso >= p.Desde && x.FechaProceso <= p.Hasta);
 
                 if (!user.roles.Contains((int)Roles.Administrador))
                     query = query.Where(x => x.CajaId == user.cajaid);
@@ -111,355 +118,192 @@ namespace mvcIpsa.Controllers
                     if (p.caja.HasValue)
                     {
                         query = query.Where(x => x.CajaId == p.caja.Value);
-                    } 
+                    }
                 }
 
                 if (p.estado.HasValue)
                     query = query.Where(x => x.EstadoId == p.estado);
 
-                result.Count = query.Count();
-                result.Result = query.OrderByDescending(q => q.FechaProceso)
-                    .Skip((p.Page - 1) * p.Rows)
-                    .Take(p.Rows).ToArray();
-            }          
+                if (p.tipoDoc.HasValue)
+                    query = query.Where(x => x.TipoDocumentoId == p.tipoDoc);
+
+                //result.Count = query.Count();
+                result.Result = query.OrderByDescending(q => q.FechaProceso).ToArray(); //query??[]//.OrderByDescending(q => q.FechaProceso)
+                    //.Skip((p.Page - 1) * p.Rows)
+                    //.Take(p.Rows)
+                    
+            }
 
             return Json(result);
         }
-
+        /// <summary>
+        /// Vista para crear un nuevo movimiento
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
-            var user = this.GetServiceUser();
-
-            ViewData["TipoIngresoId"] = new SelectList(db.TipoIngreso, "Id", "Descripcion");
-            ViewData["TipoMonedaId"] = new SelectList(db.TipoMoneda, "Id", "Descripcion");          
-            ViewData["EstadoId"] = new SelectList(db.CajaEstado, "Id", "Descripcion", 1);
-            ViewData["Banco"] = new SelectList(db.Bancos, "Bancoid", "Descripcion");
-            ViewData["TipoCliente"] = new SelectList(db.TipoCliente, "Id", "Tipocliente", 1);
-
-            var lote = db.LoteRecibos.Where(lt => lt.CajaId == user.cajaid).FirstOrDefault();
-            if (lote == null)
-            {
-                return NotFound(new string[] { "No se encontró un lote de recibos para la caja de " + user.description });
-            }
-
-            if (lote.Actual < lote.Inicio)
-            {
-                return NotFound($"El lote actual {lote.Actual} esta fuera del rango de lotes asignados ({lote.Inicio} a {lote.Final})");
-            }
-
-            if (lote.Actual >= lote.Final)
-            {
-                return NotFound($"Ya llego al limite de lotes asignados Max({lote.Final}) para la caja de {user.description}");
-            }
-
-            ViewBag.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
-          
-            ViewBag.fondos = db.Fondos.Select(mc => new
-            {
-                fondoid = mc.Fondoid,
-                nombre = mc.Nombre
-            }).ToList();
-
-            ViewBag.clientes = db.Cliente
-                .Include(c => c.TipoCliente)
-                .Select(c => new { c.Id, nombre = c.Nombre + " " + c.Apellido, identificacion = c.Identificacion,idTipo = c.TipoCliente.Id, tipoCliente = c.TipoCliente.Tipocliente })
-                .ToList();
-
             return View();
         }
-
-        [HttpPost]
-        [Produces("application/json")]
-        public async Task<IActionResult> Create(IngresoEgresosCajaViewModel iECajaViewModel)
+        /// <summary>
+        /// Insertar un nuevo movimiento
+        /// </summary>
+        /// <param name="ingresosEgresosBanco"></param>
+        /// <returns></returns>
+        [HttpPost("api/banco/guardar")]
+        public async Task<IActionResult> Post(IngresosEgresosBanco ingresosEgresosBanco)
         {
-           
-
             var user = this.GetServiceUser();
-            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
-            {
-                return BadRequest("El usuario solo puede registrar información para el año 2017");
-            }
-            var ingresosEgresosCaja = iECajaViewModel.master;
+          
+            if (settings.onlyNumber)
+                if (ingresosEgresosBanco.Referencia.Any(r => !char.IsNumber(r)))
+                    return BadRequest(string.Format($"La referencia {ingresosEgresosBanco.Referencia} debe ser númerica"));
 
-            //Numero de recibo actual
-            var lote = db.LoteRecibos.Where(lt => lt.CajaId == user.cajaid).FirstOrDefault();
-            ingresosEgresosCaja.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
-            lote.Actual = lote.Actual + 1;
+            ingresosEgresosBanco.CajaId = user.cajaid;
+            ingresosEgresosBanco.EstadoId = (int)IngresosEgresosBancoEstados.Registrado;
 
-            ingresosEgresosCaja.TipoMovimientoId = 32;
-            ingresosEgresosCaja.EstadoId = 1;
-            ingresosEgresosCaja.FechaRegistro = DateTime.Now;
-            ingresosEgresosCaja.CajaId = user.cajaid;          
-            ingresosEgresosCaja.Username = user.username;
-
-
-            var totalServicioDolar = iECajaViewModel.details.Sum(s => s.montodolar);
-            var totalPagoDolar = iECajaViewModel.referencias.Sum(p => p.totalD);
-
-            if (Math.Round(totalServicioDolar,2) != Math.Round(totalPagoDolar, 2))
-            {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
-            }
-
-            if (Math.Round(totalServicioDolar,2) != Math.Round(totalPagoDolar, 2))
-            {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
-            }
-
-            var totalPagoCordoba = iECajaViewModel.referencias.Sum(p => p.totalC);
-
-            if (iECajaViewModel.master.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba)
-                ingresosEgresosCaja.Total = totalPagoCordoba;
-            if (iECajaViewModel.master.TipoMonedaId == (short)TipoMonedaParamFilter.Dolar)
-                ingresosEgresosCaja.Total = totalPagoDolar;
-
-            foreach (var item in iECajaViewModel.details)
-            {
-                if (item.precio <= 0 || item.cantidad <= 0)
-                {
-                    return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
-                }
-                var _montoDolar = item.precio * item.cantidad;
-                ingresosEgresosCaja.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
-                {
-                    Cantidad = item.cantidad,
-                    CtaContable = $"1000{item.cta_cuenta}",
-                    Precio = item.precio,
-                    Montodolar = _montoDolar,                  
-                    ReciboId = ingresosEgresosCaja.Id
-                });
-            }
-
-
-            foreach (var referencia in iECajaViewModel.referencias)
-            {
-                if (referencia.TipoPagoId == (short)TipoPagoParamFilter.None)                                
-                        return BadRequest(string.Format("Debe seleccionar un tipo de pago válido"));  
-
-                if (referencia.TipoPagoId == (short)TipoPagoParamFilter.Minuta || referencia.TipoPagoId == (short)TipoPagoParamFilter.Transferencia || referencia.TipoPagoId == (short)TipoPagoParamFilter.Cheque)
-                {
-                    if (referencia.Referencia == null || referencia.Referencia.Trim().Length == 0)
-                        return BadRequest(string.Format("Debe de ingresar la referencia para la forma de pago cheque, minuta o transferencia"));
-
-                    if (referencia.IdBanco==null || referencia.IdBanco == 0)
-                        return BadRequest(string.Format("Debe de ingresar el banco para la forma de pago cheque, minuta o transferencia"));
-                }
-                    
-
-
-                var _CambioOficial = db.CambioOficial.Find(referencia.Fecha);
-                if (_CambioOficial == null)
-                    return NotFound(string.Format("No se encontró la tasa de cambio para la fecha {0} de la referencia {1}", referencia.Fecha, referencia.Referencia));
-
-                ingresosEgresosCaja.IngresosEgresosCajaReferencias.Add(new IngresosEgresosCajaReferencias
-                {
-                    ReciboId = ingresosEgresosCaja.Id,
-                    MontoEfectivo = referencia.MontoEfectivo,
-                    MontoMinu = referencia.MontoMinu,
-                    MontoCheq = referencia.MontoCheq,
-                    MontoTrans = referencia.MontoTrans,
-                    Total = (referencia.MontoEfectivo + referencia.MontoMinu + referencia.MontoCheq + referencia.MontoTrans),                    
-                    Fecha = referencia.Fecha,
-                    TipoCambio = _CambioOficial.Dolares,
-                    Referencia = referencia.Referencia,
-                    IdBanco = referencia.IdBanco,
-                    TipoPagoId = referencia.TipoPagoId
-                });
-            }
-           
-            ingresosEgresosCaja.Referencias = (short)ingresosEgresosCaja.IngresosEgresosCajaReferencias.Count();
-        
-            db.Add(ingresosEgresosCaja);
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
-            }
-            return Ok(new {
-                ingresosEgresosCaja.NumRecibo,
-                ingresosEgresosCaja.Id
-            });
-        }
-
-        [ActionName("FindTipoCambio")]
-        public async Task<IActionResult> FindTipoCambio(DateTime fecha)
-        {
-            var cambioOficial = await db.CambioOficial.FindAsync(fecha);
+            var cambioOficial = await db.CambioOficial.FindAsync(ingresosEgresosBanco.FechaProceso);
             if (cambioOficial == null)
             {
-                return NotFound();
+                return BadRequest("No se encontró la tasa de cambios para la fecha " + ingresosEgresosBanco.FechaProceso.ToShortDateString());
             }
-            return Json(cambioOficial);
+          
+            ingresosEgresosBanco.TipoCambio = cambioOficial.Dolares;
+            
+            var bancoCuenta = DbIpsa.BancosCuentas.Find(ingresosEgresosBanco.BancoCuenta, "1000");
+            if (bancoCuenta == null)
+            {
+                return BadRequest("No se encontró información del banco " + bancoCuenta.Descripcion);
+            }
+
+            ingresosEgresosBanco.TipoMonedaId = bancoCuenta.Moneda.Value;
+            ingresosEgresosBanco.Username = user.username;
+            ingresosEgresosBanco.FechaRegistro = DateTime.Now;
+            ingresosEgresosBanco.Procesado = false;
+
+            if (ModelState.IsValid)
+            {
+                db.Add(ingresosEgresosBanco);
+                await db.SaveChangesAsync();                
+            }
+       
+            return Json(ingresosEgresosBanco);
+        }
+        /// <summary>
+        /// Editar un movimiento
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        // GET: IngresosEgresosBancoes/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {     
+            return View(id);
         }
 
-        [HttpPost]
-        [ActionName("CancelRecibo")]
-        public async Task<IActionResult> CancelRecibo(int idrecibo,string motivo)
+        [HttpGet("api/banco/cargar/{id}")]
+        public async Task<IActionResult> GetData(int id)
+        {     
+            var movimiento = db.IngresosEgresosBanco.Find(id);
+            return Json(movimiento, new Newtonsoft.Json.JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
+        }
+
+        // POST: IngresosEgresosBancoes/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPut("api/banco/guardar")]     
+        public async Task<IActionResult> Put(IngresosEgresosBanco ingresosEgresosBanco)
         {
-            var recibo = db.IngresosEgresosCaja.Find(idrecibo);
-            if (recibo.EstadoId == (int)IngresosEgresosCajaEstado.Anulado)
+            var user = this.GetServiceUser();
+            var oldMovimiento = db.IngresosEgresosBanco.Find(ingresosEgresosBanco.Id);
+
+            if (oldMovimiento.EstadoId == (int)IngresosEgresosBancoEstados.Anulado)
             {
-                return BadRequest($"No se puede anular el recibo {recibo.NumRecibo} por que ya estaba anulado" );
+                return BadRequest($"No se puede editar el movimiento {ingresosEgresosBanco.Id} por que esta anulado");
             }
-            recibo.EstadoId = (int)IngresosEgresosCajaEstado.Anulado;
-            recibo.MotivoAnulado = motivo;
+            var cambioOficial = await db.CambioOficial.FindAsync(ingresosEgresosBanco.FechaProceso);
+            if (cambioOficial == null)
+            {
+                return BadRequest("No se encontró la tasa de cambios para la fecha " + ingresosEgresosBanco.FechaProceso.ToShortDateString());
+            }
+            oldMovimiento.TipoCambio = cambioOficial.Dolares;
+            
+            var bancoCuenta = DbIpsa.BancosCuentas.Find(ingresosEgresosBanco.BancoCuenta, "1000");
+            if (bancoCuenta == null)
+            {
+                return BadRequest("No se encontró información del banco " + bancoCuenta.Descripcion);
+            }
+
+            if (oldMovimiento.Procesado==true)
+            {
+                return BadRequest($"No se puede editar el movimiento {ingresosEgresosBanco.Id} por que esta conciliado");
+            }
+
+            oldMovimiento.TipoMonedaId = bancoCuenta.Moneda.Value;
+            oldMovimiento.TipoDocumentoId = ingresosEgresosBanco.TipoDocumentoId;
+            oldMovimiento.TipoMovimientoId = ingresosEgresosBanco.TipoMovimientoId;
+            oldMovimiento.BancoCuenta = ingresosEgresosBanco.BancoCuenta;
+            oldMovimiento.Referencia = ingresosEgresosBanco.Referencia;
+            oldMovimiento.Monto = ingresosEgresosBanco.Monto;
+            oldMovimiento.Concepto = ingresosEgresosBanco.Concepto;
+            oldMovimiento.FechaProceso = ingresosEgresosBanco.FechaProceso;
+
+            oldMovimiento.UsernameEditado = user.username;
+            oldMovimiento.FechaEditado = DateTime.Now;
+
+            db.SaveChanges();
+
+            return Json(ingresosEgresosBanco);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">Codigo del movimiento</param>
+        /// <param name="motivo">Motivo para anular</param>
+        /// <returns></returns>        
+        [HttpPost("api/banco/anular/{id}")]
+
+        public async Task<IActionResult> CancelarMovimiento(int id, string motivo)
+        {
+            var user = this.GetServiceUser();
+            var movimiento = db.IngresosEgresosBanco.Find(id);
+            if (movimiento.EstadoId == (int)IngresosEgresosBancoEstados.Anulado)
+            {
+                return BadRequest($"No se puede anular el movimiento {movimiento.Id} por que ya estaba anulado");
+            }
+            movimiento.EstadoId = (int)IngresosEgresosCajaEstado.Anulado;
+            movimiento.MotivoAnulado = motivo;
+            movimiento.UsernameAnulado = user.username;
+            movimiento.FechaAnulado = DateTime.Now;
             await db.SaveChangesAsync();
             return Ok();
         }
 
-        public IActionResult Edit(int id)
+        private bool IngresosEgresosBancoExists(int id)
         {
-            var user = this.GetServiceUser();
-
-            var serviciosDetalle = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == id).ToArray();
-            var cuentasContables = db.CajaCuentaContable.Where(c => c.CajaId == user.cajaid).Select(ccc => ccc.CtaCuenta).ToArray();
-            var hasAllAccounting = serviciosDetalle.Select(r => r.CtaContable).All(cta => cuentasContables.Contains(cta));
-
-            if(!hasAllAccounting)
-            {
-                var cccs = serviciosDetalle.Where(s => !cuentasContables.Contains(s.CtaContable)).Select( p => p.CtaContable);
-                return View("Error",$"El usuario {user.username} asignado a la caja {user.description} no contiene la(s) cuenta(s) {string.Join(",",cccs)} para poder editar recibo {db.IngresosEgresosCaja.Find(id).NumRecibo}");
-            }
-
-            var recibo = db.IngresosEgresosCaja
-                .Include(iec => iec.Estado).FirstOrDefault(iec => iec.Id == id);
-                
-
-            ViewData["TipoIngresoId"] = new SelectList(db.TipoIngreso, "Id", "Descripcion", recibo.TipoIngresoId);
-            ViewData["TipoMonedaId"] = new SelectList(db.TipoMoneda, "Id", "Descripcion", recibo.TipoMonedaId);
-            ViewData["TipoCliente"] = new SelectList(db.TipoCliente, "Id", "Tipocliente");
-
-          
-            ViewBag.referencias = db.IngresosEgresosCajaReferencias.Where(r => r.ReciboId == id).ToArray();
-            ViewBag.detalle = serviciosDetalle;
-
-            return View(recibo);
-        }
-       
-        [HttpPost]
-        [Produces("application/json")]
-        public async Task<IActionResult> Edit(IngresoEgresosCajaViewModel iECajaViewModel)
-        {
-           
-          
-            var user = this.GetServiceUser();
-
-            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            
-                return BadRequest("El usuario solo puede registrar información para el año 2017");            
-
-            var recibos = db.IngresosEgresosCaja.Find(iECajaViewModel.master.Id);
-
-            if (recibos.EstadoId == (short)IngresosEgresosCajaEstado.Anulado)
-            {
-                return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está anulado");
-            }
-
-            if (recibos.EstadoId == (short)IngresosEgresosCajaEstado.Cerrado)
-            {
-                return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está cerrado");
-            }
-
-            var ingresosEgresosCaja = iECajaViewModel.master;
-            recibos.FechaProceso = ingresosEgresosCaja.FechaProceso;
-            recibos.NoOrdenPago = ingresosEgresosCaja.NoOrdenPago;
-            recibos.TipoMonedaId = ingresosEgresosCaja.TipoMonedaId;
-            recibos.TipoIngresoId = ingresosEgresosCaja.TipoIngresoId;
-            recibos.ClienteId = ingresosEgresosCaja.ClienteId;
-            recibos.TipoCleinteId = ingresosEgresosCaja.TipoCleinteId;
-            recibos.Beneficiario = ingresosEgresosCaja.Beneficiario;
-            recibos.Muestra = ingresosEgresosCaja.Muestra;
-            recibos.Concepto = ingresosEgresosCaja.Concepto;
-
-            var totalServicioDolar = iECajaViewModel.details.Sum(s => s.montodolar);
-            var totalPagoDolar = iECajaViewModel.referencias.Sum(p => p.totalD);
-            if (Math.Round(totalServicioDolar, 2) != Math.Round(totalPagoDolar, 2))
-            {
-                return BadRequest(string.Format($"El total cobrado por los servicios ({Math.Round(totalServicioDolar, 2)}) no conicide con el total pagado {Math.Round(totalPagoDolar, 2)}"));
-            }
-
-            var oldDetalles = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == recibos.Id);
-            db.IngresosEgresosCajaDetalle.RemoveRange(oldDetalles);
-
-            foreach (var item in iECajaViewModel.details)
-            {
-                if (item.precio <= 0 || item.cantidad <= 0)
-                {
-                    return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
-                }
-                var _montoDolar = item.precio * item.cantidad;
-                recibos.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
-                {
-                    Cantidad = item.cantidad,
-                    CtaContable = $"1000{item.cta_cuenta}",
-                    Precio = item.precio,
-                    Montodolar = _montoDolar,
-                    ReciboId = recibos.Id
-                });
-            }
-
-
-
-            var oldReferencias = db.IngresosEgresosCajaReferencias.Where(d => d.ReciboId == recibos.Id);
-            db.IngresosEgresosCajaReferencias.RemoveRange(oldReferencias);
-
-            var totalPagoCordoba = iECajaViewModel.referencias.Sum(p => p.totalC);
-
-            if (recibos.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba)
-                recibos.Total = totalPagoCordoba;
-            if (recibos.TipoMonedaId == (short)TipoMonedaParamFilter.Dolar)
-                recibos.Total = totalPagoDolar;
-
-            foreach (var referencia in iECajaViewModel.referencias)
-            {
-                if (referencia.TipoPagoId == (short)TipoPagoParamFilter.None)
-                    return BadRequest(string.Format("Debe seleccionar un tipo de pago válido"));
-                
-                if (referencia.TipoPagoId == (short)TipoPagoParamFilter.Minuta || referencia.TipoPagoId == (short)TipoPagoParamFilter.Transferencia || referencia.TipoPagoId == (short)TipoPagoParamFilter.Cheque)
-                {
-                    if (referencia.Referencia.Trim().Length == 0)
-                        return BadRequest(string.Format("Debe de ingresar la referencia para la forma de pago cheque, minuta o transferencia"));
-
-                    if (referencia.IdBanco == null || referencia.IdBanco == 0)
-                        return BadRequest(string.Format("Debe de ingresar el banco para la forma de pago cheque, minuta o transferencia"));
-                }
-
-
-                var _CambioOficial = db.CambioOficial.Find(referencia.Fecha);
-                if (_CambioOficial == null)
-                    return NotFound(string.Format("No se encontró la tasa de cambio para la fecha {0} de la referencia {1}", referencia.Fecha, referencia.Referencia));
-
-                recibos.IngresosEgresosCajaReferencias.Add(new IngresosEgresosCajaReferencias
-                {
-                    ReciboId = recibos.Id,
-                    MontoEfectivo = referencia.MontoEfectivo,
-                    MontoMinu = referencia.MontoMinu,
-                    MontoCheq = referencia.MontoCheq,
-                    MontoTrans = referencia.MontoTrans,
-                    Total = (referencia.MontoEfectivo + referencia.MontoMinu + referencia.MontoCheq + referencia.MontoTrans),
-                    Fecha = referencia.Fecha,
-                    TipoCambio = _CambioOficial.Dolares,
-                    Referencia = referencia.Referencia,
-                    IdBanco = referencia.IdBanco,
-                    TipoPagoId = referencia.TipoPagoId
-                });
-            }
-
-            recibos.Referencias = (short)iECajaViewModel.referencias.Count();//  recibos.IngresosEgresosCajaReferencias.Count();            
-
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest();
-            }
-            return Ok(ingresosEgresosCaja.NumRecibo);
+            return db.IngresosEgresosBanco.Any(e => e.Id == id);
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ingresosEgresosBanco = await db.IngresosEgresosBanco
+                .Include(i => i.Caja)
+                .Include(i => i.Estado)
+                .Include(i => i.TipoDocumento)
+                .Include(i => i.TipoMoneda)
+                .Include(i => i.TipoMovimiento)
+                .Include(i => i.UsernameNavigation)
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (ingresosEgresosBanco == null)
+            {
+                return NotFound();
+            }
+
+            return View(ingresosEgresosBanco);
+        }
     }
 }

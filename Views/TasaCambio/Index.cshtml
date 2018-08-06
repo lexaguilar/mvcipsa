@@ -4,27 +4,33 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+    .dx-datagrid .dx-row > td {
+        padding: 5px !important;
+        font-size: 14px;
+    }
+    .dx-header-filter-indicator {
+        font-size: 15px !important;      
+    }
+</style>
 <environment include="Development">
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
     <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
-    <link href="~/css/animate.css" rel="stylesheet">
 </environment>
 <environment exclude="Development">
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.spa.css" />
     <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
     <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
-    <link href="~/css/animate.css" rel="stylesheet">
 </environment>
 
 <div class="wrapper">
-    <section class="panel animated slideInUp">
+    <section class="panel">
         <header class="panel-heading">
             Cambio oficial
+            <a class="btn btn-primary btn-sm" style="float: right" asp-action="Create"><span class="fa fa-money"></span> Agregar nuevo registro</a>
         </header>
         <div class="panel-body">
-            <a class="btn btn-primary btn-sm" asp-action="Create"><span class="fa fa-money"></span> Agregar nuevo registro</a>
             <div class="row">
                 <div class="col-md-5">
                     <div class="dx-viewport">
@@ -104,15 +110,15 @@
                     },
                     columns: [{
                         caption: "Fecha",
-                        dataField: "fechaCambioOficial",
+                        dataField: "FechaCambioOficial",
                         dataType: "date",
                         width: 120,
                         format: 'dd/MM/yyyy'
                     },
                     {
                         caption: "Dolares",
-                        dataField: "dolares",
-                        precision: 2
+                        dataField: "Dolares",
+                        precision: 4
                     }
 
                     ]

@@ -4,12 +4,15 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<environment include="Development">
-    <link href="~/css/selectize.css" rel="stylesheet">
-</environment>
-<environment exclude="Development">
-    <link href="~/css/selectize.css" rel="stylesheet">
-</environment>
+@section Styles
+{
+    <environment include="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
+    </environment>
+    <environment exclude="Development">
+        <link href="~/css/selectize.css" rel="stylesheet">
+    </environment>
+}
 <div class="wrapper">
     <section class="panel animated slideInLeft">
         <header class="panel-heading">
@@ -55,6 +58,7 @@
                             <label asp-for="Caja.Description"></label>
                             <div class="iconic-input">
                                 <select asp-for="CajaId" class="">
+                                    <option value="">Seleccione una caja</option>
                                     @foreach (var caja in ViewBag.Cajas)
                                      {
                                         <option value="@caja.Id">@caja.Description</option>
@@ -67,8 +71,11 @@
                     </div>
                 </div>
             </div>
-            <button asp-action="index" class="btn btn-default"><span class="fa fa-arrow-left"></span> Regresar a la lista </button>
         </form>
+        <div class="panel-footer">
+            <a asp-action="Index"><span class="fa fa-angle-left"></span> Regresar</a>
+            <a asp-action="create" class="pull-right"><span class="fa fa-plus"></span> Nuevo</a>
+        </div> 
     </section>
 </div>
 @section Scripts

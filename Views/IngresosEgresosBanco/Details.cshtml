@@ -1,0 +1,135 @@
+﻿@model mvcIpsa.DbModel.IngresosEgresosBanco
+@{
+    ViewData["Title"] = "Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="wrapper">
+    <section class="panel">
+        <header class="panel-heading">
+            Detalle del movimiento
+        </header>       
+        <div>
+            <h4>Movimiento numero <b>@Model.Id.ToString().PadLeft(6, '0')</b></h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    Creado el
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FechaRegistro)
+                </dd>
+                <dt>
+                    Creado por
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UsernameNavigation.Username)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Caja)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Caja.Description)
+                </dd>
+                <dt>
+                    Tipo de documento
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TipoDocumento.Descripcion)
+                </dd>
+
+                <dt>
+                    Tipo de movimiento
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TipoMovimiento.Descripcion)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.BancoCuenta)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BancoCuenta)
+                </dd>
+                <dt>
+                    Moneda
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TipoMoneda.Descripcion)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Referencia)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Referencia)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Monto)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Monto)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Concepto)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Concepto)
+                </dd>
+                <dt>
+                    Fecha de registro
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FechaProceso)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.TipoCambio)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.TipoCambio)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Estado.Descripcion)
+                </dd>
+
+                <dt>
+                    Editado por
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UsernameEditado)
+                </dd>               
+                <dt>
+                    Fecha editado
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FechaEditado)
+                </dd>
+
+                <dt>
+                    Anulado por
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UsernameAnulado)
+                </dd>
+                <dt>
+                    Motivo anulado
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.MotivoAnulado)
+                </dd>
+                <dt>
+                    Fecha anulado
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FechaAnulado)
+                </dd>
+            </dl>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+            <a asp-action="Index">Regresar</a>
+        </div>
+    </section>
+</div>
+

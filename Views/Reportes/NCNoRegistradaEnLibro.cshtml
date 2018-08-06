@@ -1,0 +1,7 @@
+@model mvcIpsa.Models.ConciliacionAnexoViewModel
+@{
+    ViewData["Title"] = "NCNoRegistradaEnLibro";
+    Layout = "~/Views/Shared/_LayoutPrint.cshtml";
+}
+
+@await Html.PartialAsync("~/Views/shared/reporte/Anexo.cshtml", Model);
