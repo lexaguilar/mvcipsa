@@ -223,6 +223,7 @@ namespace mvcIpsa.Controllers
                              CajaId = iec.CajaId,
                              NumRecibo = iec.NumRecibo,
                              IdOrigen = iecr.Id,
+                             IdRef = iec.Id,
                              UUID = "",
                              TipoDocumento = (int)TipoDocumentos.Desposito,
                              TipoMovimientoId = (int)TipoMovimientos.DepositosDeCajaUnica,
@@ -246,12 +247,13 @@ namespace mvcIpsa.Controllers
                                   Credito = ieb.TipoDocumentoId == (int)TipoDocumentos.NotaDeCredito ? ieb.Monto : 0,
                                   CajaId = ieb.CajaId,
                                   NumRecibo = ieb.Id.ToString(),
-                                  IdOrigen = ieb.Id,
+                                  IdOrigen = ieb.Id,                                  
                                   UUID = "",
                                   TipoDocumento = ieb.TipoDocumentoId,
                                   TipoMovimientoId = ieb.TipoMovimientoId,
                                   TipoMovimiento = tm.DocName,
-                                  TableInfo = 2
+                                  TableInfo = 2,
+                                  IdRef = ieb.Id,
                               };
 
             return Json(new
@@ -323,7 +325,8 @@ namespace mvcIpsa.Controllers
                     ProcesoBancoId = id,
                     Conciliado = string.IsNullOrEmpty(aux.Uuid) ? false : true,
                     TableInfo = aux.TableInfo,
-                    IdOrigen = aux.IdOrigen
+                    IdOrigen = aux.IdOrigen,
+                    IdRef = aux.IdRef
                 });
 
 
@@ -417,6 +420,7 @@ namespace mvcIpsa.Controllers
         public int CajaId { get; set; }
         public string NumRecibo { get; set; }
         public int IdOrigen { get; set; }
+        public int IdRef { get; set; }
         public int EstadoId { get; set; }
         public string Estado { get; set; }
         public bool ck { get; set; }

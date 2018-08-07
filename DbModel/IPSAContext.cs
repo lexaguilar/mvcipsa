@@ -249,7 +249,10 @@ namespace mvcIpsa.DbModel
                 entity.Property(e => e.IdOrigen)                    
                   .HasColumnName("id_origen");
 
-                entity.HasIndex(e => e.IdOrigen).HasName("Ix_id_origen");              
+                entity.Property(e => e.IdRef)
+                  .HasColumnName("id_ref");
+
+                entity.HasIndex(e => e.IdOrigen).HasName("Ix_id_ref");              
 
                 entity.Property(e => e.Credito)
                     .HasColumnName("credito")

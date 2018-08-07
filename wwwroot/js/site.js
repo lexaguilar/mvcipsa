@@ -893,11 +893,21 @@ var printReport = e =>{
       );
 }
 
-var printReportById = id =>{
-    window.open(
-        `${pathBase}ingresosEgresosCajas/print/${id}`,
-        '_blank'
-      );
+var printReportById = (id, table) => {
+    //si me espeficican la tabla llamo al controlador correspondiente (caja = 1 o banco = 2) sino, el de caja por defecto
+    if (table) {
+        var controller = table == 1 ? 'ingresosegresoscajas/print/' : 'ingresosEgresosbanco/edit/';
+        window.open(
+            `${pathBase}${controller}${id}`,
+            '_blank'
+        );
+    } else {
+        window.open(
+            `${pathBase}ingresosEgresosCajas/print/${id}`,
+            '_blank'
+        );
+    }
+    
 }
 
 
