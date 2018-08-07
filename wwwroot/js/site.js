@@ -1067,7 +1067,6 @@ var getValueByTag = item => {
         TypeError (`El tagName ${tagName} no pertenece al objeto ValueByTag`);
 }
 
-
 var Formatear = valorNumerico => numeral(valorNumerico.toString().replace(',', '.')).format('0,0.00');
 
 var showMessageError = item => {
