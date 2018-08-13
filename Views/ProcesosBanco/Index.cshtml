@@ -114,7 +114,7 @@
                 columns: [
                     "Banco",
                     {
-                        caption: "",
+                        caption: "Cuenta",
                         width : 350,
                         dataField: "Cuenta"
                     },{
@@ -149,7 +149,16 @@
                         format: "MM/yyyy",
                         dataField: "Fecha"
                     },
-                    "Username"                    
+                    "Username",
+                    {
+                        dataField: 'Id',
+                        caption: '',
+                        cellTemplate: function (container, options) {
+                            $("<div>")
+                                .append(`<a class="dx-icon-remove text-danger"  title="Edit" href="/procesoBanco/delete/${options.value}"> Eliminar</a>`)
+                                .appendTo(container);
+                        }
+                    }
                 ],
                 masterDetail: {
                     enabled: true,

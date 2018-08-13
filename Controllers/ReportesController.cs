@@ -229,7 +229,8 @@ namespace mvcIpsa.Controllers
 
         public IActionResult CaratulaConciliacion(string bancoCuenta, int mes, int anio)
         {
-           var reporteFirma = db.ReporteFirma.Find("CaratulaConciliacion");
+            var usr = this.GetServiceUser();
+            var reporteFirma = db.ReporteFirma.Find("CaratulaConciliacion");
             var bancosCuentas = DbIpsa.BancosCuentas.Include(bc => bc.Banco).ToArray();
 
             var bancosCuentasOnlyCode = bancosCuentas.Select(b => b.BancoCuenta).ToArray();
@@ -260,6 +261,9 @@ namespace mvcIpsa.Controllers
                                                     (cb, cbaux) => new { cb, cbaux })
                                                     .Select(x => new { total = x.cb.Debito - x.cbaux.Credito });
 
+            var profile = db.Profile.Find(infoProcesoBanco.Username);
+            reporteFirma.UsernameElaborado = profile.Nombre + " " + profile.Apellido;
+
             var caratula = new CaratulaViewModel();
 
             caratula.ReporteFirmas = reporteFirma;
@@ -287,7 +291,7 @@ namespace mvcIpsa.Controllers
             caratula.SaldoSegunLibro += caratula.DifChequesDeMasBanco;
             caratula.SaldoSegunLibro -= caratula.NCNoRegistradasEnLibro;
             caratula.SaldoSegunLibro += caratula.NDNoRegistradasEnLibro;
-            caratula.SaldoSegunLibro -= caratula.DPNoRegistradasEnLibro;
+            caratula.SaldoSegunLibro += caratula.DPNoRegistradasEnLibro;
             caratula.SaldoSegunLibro -= caratula.DPNoRegistradasEnBanco;
             caratula.SaldoSegunLibro += caratula.NCNoRegistradasEnBanco;
             caratula.SaldoSegunLibro += caratula.NDNoRegistradasEnBanco;

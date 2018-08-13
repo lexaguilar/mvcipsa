@@ -46,7 +46,7 @@
                 <td style="float: right">@NCNoRegistradasEnLibro</td>
             </tr>
             <tr class="rows">
-                <td>(-) Depositos no registradas en nuestro libros</td>
+                <td>(+) Depositos no registradas en nuestro libros</td>
                 @{ var DPNoRegistradasEnLibro = Model.MonedaSimbol + " " + Math.Abs(Model.DPNoRegistradasEnLibro).ToString(specifier);}
                 <td style="float: right">@DPNoRegistradasEnLibro</td>
             </tr>
@@ -81,8 +81,8 @@
                 <td style="float: right">@SaldoSegunLibro</td>
             </tr>
         </table>
-        <br><br><br><br><br><br><br><br><br>
-            
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
 
         <div class="row">
             @{

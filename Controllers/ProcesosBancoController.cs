@@ -57,6 +57,7 @@ namespace mvcIpsa.Controllers
                 x.Fecha,
                 x.Username,
                 x.BancoCuenta,
+                x.Id,
                 Documentos = documentos.Select(d => new
                 {
                     x.Fecha,
@@ -204,7 +205,7 @@ namespace mvcIpsa.Controllers
             if (procesoBancoMayor.HasData())
                 return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
 
-            var result = from iec in db.IngresosEgresosCaja
+            var resultCaja = from iec in db.IngresosEgresosCaja
                          join c in db.Caja on iec.CajaId equals c.Id
                          join tm in db.TipoMovimiento on iec.TipoMovimientoId equals tm.Id
                          join iecr in db.IngresosEgresosCajaReferencias on iec.Id equals iecr.ReciboId
@@ -237,7 +238,7 @@ namespace mvcIpsa.Controllers
                               join c in db.Caja on ieb.CajaId equals c.Id
                               join tm in db.TipoMovimiento on ieb.TipoMovimientoId equals tm.Id
                               where ieb.TipoMonedaId == _BancosCuentas.MonedaId 
-                              && ieb.BancoCuenta == _BancosCuentas.BancoId 
+                              && ieb.BancoCuenta == BancosCuenta
                               && ieb.EstadoId == (short)IngresosEgresosBancoEstados.Registrado 
                               && ieb.FechaProceso.Year <= Year 
                               && ieb.FechaProceso.Month <= Month
@@ -260,10 +261,14 @@ namespace mvcIpsa.Controllers
                                   Caja = c.Description
                               };
 
+            var rc = resultCaja.ToArray();
+            var rb = resultBanco.ToArray();
+
+           
             return Json(new
             {
                 info = _BancosCuentas,
-                data = result.Concat(resultBanco)
+                data = rc.Concat(rb)
             });
         }
 
