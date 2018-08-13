@@ -39,7 +39,7 @@ namespace mvcIpsa.Controllers
 
         public IActionResult GetList()
         {
-            var procesos = db.ProcesoBanco.ToList();
+            var procesos = db.ProcesoBanco.Where(x => x.SaldoFinal > 0).ToList();
             var bancosCuenta = DbIpsa.BancosCuentas.Include(x => x.Banco);
 
             //var procesoBancoServices = new ProcesoBancoServices(db);
