@@ -64,7 +64,7 @@ namespace mvcIpsa.Controllers
             var data = reporte.ToArray();
             var servicios = new MaestroContableServices(DbIpsa).ObtenerServicios();
 
-            var ingresosEgresosCajaReferencias = db.IngresosEgresosCajaReferencias.Where(r => data.Select(x=>x.Id).Contains(r.ReciboId)).ToArray();
+            var ingresosEgresosCajaReferencias = db.IngresosEgresosCajaReferencias.Include(x => x.TipoPago).Where(r => data.Select(x=>x.Id).Contains(r.ReciboId)).ToArray();
             var ingresosEgresosCajaDetalle = db.IngresosEgresosCajaDetalle.Where(r => data.Select(x => x.Id).Contains(r.ReciboId)).ToArray();
 
             var result = data.Select(rep => new
@@ -80,7 +80,7 @@ namespace mvcIpsa.Controllers
                 Dolar = rep.EstadoId == (int)IngresosEgresosCajaEstado.Anulado ? 0 : Math.Round((rep.TipoMonedaId == (short)TipoMonedaParamFilter.Dolar ? rep.Total : 0), 2),
                 Cordoba = rep.EstadoId == (int)IngresosEgresosCajaEstado.Anulado ? 0 : Math.Round((rep.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba ? rep.Total : 0), 2),
                 rep.Referencias,
-                IngresosEgresosCajaReferencias = ingresosEgresosCajaReferencias.Select(c => new
+                IngresosEgresosCajaReferencias = ingresosEgresosCajaReferencias.Where(x => x.ReciboId == rep.Id).Select(c => new
                 {
                     c.Fecha,
                     TipoPago = c.TipoPago.Descripcion,
@@ -89,7 +89,7 @@ namespace mvcIpsa.Controllers
                     Cordoba = Math.Round((rep.TipoMonedaId == (short)TipoMonedaParamFilter.Cordoba ? c.Total : c.Total * c.TipoCambio), 2),
                     c.Referencia
                 }),
-                IngresosEgresosCajaDetalle = ingresosEgresosCajaDetalle.Select(c => new
+                IngresosEgresosCajaDetalle = ingresosEgresosCajaDetalle.Where(x => x.ReciboId == rep.Id).Select(c => new
                 {
                     c.Cantidad,
                     c.CtaContable,
@@ -180,19 +180,22 @@ namespace mvcIpsa.Controllers
 
             var MinutasYServicios =allReporteMinutas.Concat(allReporteServicios);
 
-            var reporteAgrupado = from t in MinutasYServicios
-                        group t by t.NumRecibo into g
-                        select new ReporteMinutaVsServicio
-                        {
-                                NumRecibo = g.Key,
-                                MontoCordoba = g.Sum(x => x.MontoCordoba),
-                                MontoDolar = g.Sum(x => x.MontoDolar),
-                                ServicioTotal = g.Sum(x => x.ServicioTotal)
-                        };
+            //var reporteAgrupado = from t in MinutasYServicios
+            //            group t by t.NumRecibo into g
+            //            select new ReporteMinutaVsServicio
+            //            {
+            //                    NumRecibo = g.Key,
+            //                    MontoCordoba = g.Sum(x => x.MontoCordoba),
+            //                    MontoDolar = g.Sum(x => x.MontoDolar),
+            //                    ServicioTotal = g.Sum(x => x.ServicioTotal)
+            //            };
 
-            var all = reporteAgrupado.ToArray().Concat(MinutasYServicios);
+            //var all = reporteAgrupado.ToArray().Concat(MinutasYServicios);
 
-            return Json(all);
+            //return Json(all);
+
+            //Quitar la primera columna el resumen
+            return Json(MinutasYServicios);
         }
 
         public IActionResult RecibosCaja_Detelle3()
@@ -255,43 +258,55 @@ namespace mvcIpsa.Controllers
                                                     (cb, cbaux) => new { cb, cbaux })
                                                     .Select(x => new { total = x.cb.Debito - x.cbaux.Credito });
 
-            var caratula = new CaratulaViewModel
-            {
-                ReporteFirmas = reporteFirma,
-                MonedaSimbol = bancoCuentaInfo.Moneda.Value==1?"C$":"$",
-                Titulo = $"Movimientos Bancarios ({bancoCuentaInfo.Banco.Descripcion}) Del Mes De {HelperExtensions.NombreDelMes(mes-1)} De {anio}",
-                Cuenta = $"{bancoCuentaInfo.Descripcion.ToUpper()}", 
-                SaldoSegunBanco = infoProcesoBanco.SaldoInicial + (conciliacionBancaria.Sum(x=>x.Credito) - conciliacionBancaria.Sum(x => x.Debito)),
-                ChequeFlotantes = conciliacionBancariaAux.Where(cba => cba.TipoMovimientoId == (int)TipoMovimientos.Cheques && cba.Conciliado).Sum(x => x.Credito),
-                DifChequesDeMenosBanco = AuxCheques.Where(ac => ac.total > 0).Sum(s => s.total),
-                DifChequesDeMasBanco =   AuxCheques.Where(ac => ac.total < 0).Sum(s => s.total),
+            var caratula = new CaratulaViewModel();
 
-                NCNoRegistradasEnLibro = conciliacionBancaria.ObtenerNCNoRegistradasEnLibro().Sum(x => x.Debito),
-                NDNoRegistradasEnLibro = conciliacionBancaria.ObtenerNDNoRegistradasEnLibro().Sum(x => x.Credito),
-                DPNoRegistradasEnLibro = conciliacionBancaria.ObtenerDPNoRegistradasEnLibro().Sum(x => x.Credito),
+            caratula.ReporteFirmas = reporteFirma;
+            caratula.MonedaSimbol = bancoCuentaInfo.Moneda.Value==1?"C$":"$";
+            caratula.Titulo = $"Movimientos Bancarios ({bancoCuentaInfo.Banco.Descripcion}) Del Mes De {HelperExtensions.NombreDelMes(mes-1)} De {anio}";
+            caratula.Cuenta = $"{bancoCuentaInfo.Descripcion.ToUpper()}";
+            caratula.SaldoSegunBanco = infoProcesoBanco.SaldoInicial; // + (conciliacionBancaria.Sum(x=>x.Credito) - conciliacionBancaria.Sum(x => x.Debito));
+            caratula.ChequeFlotantes = conciliacionBancariaAux.Where(cba => cba.TipoMovimientoId == (int)TipoMovimientos.Cheques && cba.Conciliado).Sum(x => x.Credito);
+            caratula.DifChequesDeMenosBanco = AuxCheques.Where(ac => ac.total > 0).Sum(s => s.total);
+            caratula.DifChequesDeMasBanco =   AuxCheques.Where(ac => ac.total < 0).Sum(s => s.total);
 
-                DPNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerDPNoRegistradasEnBanco().Sum(x => x.Debito),
-                NCNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerNCNoRegistradaEnBanco().Sum(x => x.Credito),
-                NDNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerNDNoRegistradaEnBanco().Sum(x => x.Debito),
+            caratula.NCNoRegistradasEnLibro = conciliacionBancaria.ObtenerNCNoRegistradasEnLibro().Sum(x => x.Debito);
+            caratula.NDNoRegistradasEnLibro = conciliacionBancaria.ObtenerNDNoRegistradasEnLibro().Sum(x => x.Credito);
+            caratula.DPNoRegistradasEnLibro = conciliacionBancaria.ObtenerDPNoRegistradasEnLibro().Sum(x => x.Credito);
 
-                CreditosPorCorreccionesIntMas = conciliacionBancariaAux.ObtenerCreditosPorCorreccionesIntMas().Sum(x => x.Credito),
-                DeditosPorCorreccionesIntMenos = conciliacionBancariaAux.ObtenerCreditosPorCorreccionesIntMenos().Sum(x => x.Debito),                
-            };
+            caratula.DPNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerDPNoRegistradasEnBanco().Sum(x => x.Debito);
+            caratula.NCNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerNCNoRegistradaEnBanco().Sum(x => x.Credito);
+            caratula.NDNoRegistradasEnBanco = conciliacionBancariaAux.ObtenerNDNoRegistradaEnBanco().Sum(x => x.Debito);
 
-            caratula.SaldoSegunLibro = new decimal[] 
-            {
-                -caratula.ChequeFlotantes,
-                caratula.DifChequesDeMenosBanco,
-                caratula.DifChequesDeMasBanco,
-                -caratula.NCNoRegistradasEnLibro,
-                caratula.NDNoRegistradasEnLibro,
-                -caratula.DPNoRegistradasEnLibro,
-                -caratula.DPNoRegistradasEnBanco,
-                caratula.NCNoRegistradasEnBanco,
-                caratula.NDNoRegistradasEnBanco,
-                caratula.CreditosPorCorreccionesIntMas,
-                -caratula.DeditosPorCorreccionesIntMenos,
-            }.Sum();
+            caratula.CreditosPorCorreccionesIntMas = conciliacionBancariaAux.ObtenerCreditosPorCorreccionesIntMas().Sum(x => x.Credito);
+            caratula.DeditosPorCorreccionesIntMenos = conciliacionBancariaAux.ObtenerCreditosPorCorreccionesIntMenos().Sum(x => x.Debito);
+
+            caratula.SaldoSegunLibro -= caratula.ChequeFlotantes;
+            caratula.SaldoSegunLibro += caratula.DifChequesDeMenosBanco;
+            caratula.SaldoSegunLibro += caratula.DifChequesDeMasBanco;
+            caratula.SaldoSegunLibro -= caratula.NCNoRegistradasEnLibro;
+            caratula.SaldoSegunLibro += caratula.NDNoRegistradasEnLibro;
+            caratula.SaldoSegunLibro -= caratula.DPNoRegistradasEnLibro;
+            caratula.SaldoSegunLibro -= caratula.DPNoRegistradasEnBanco;
+            caratula.SaldoSegunLibro += caratula.NCNoRegistradasEnBanco;
+            caratula.SaldoSegunLibro += caratula.NDNoRegistradasEnBanco;
+            caratula.SaldoSegunLibro += caratula.CreditosPorCorreccionesIntMas;
+            caratula.SaldoSegunLibro -= caratula.DeditosPorCorreccionesIntMenos;
+
+
+            //caratula.SaldoSegunLibro = new decimal[] 
+            //{
+            //    -caratula.ChequeFlotantes==0?0:-caratula.ChequeFlotantes,
+            //    caratula.DifChequesDeMenosBanco,
+            //    caratula.DifChequesDeMasBanco,
+            //    -caratula.NCNoRegistradasEnLibro==0?0:-caratula.NCNoRegistradasEnLibro,
+            //    caratula.NDNoRegistradasEnLibro,
+            //    -caratula.DPNoRegistradasEnLibro==0?0:-caratula.DPNoRegistradasEnLibro,
+            //    -caratula.DPNoRegistradasEnBanco==0?0:-caratula.DPNoRegistradasEnBanco,
+            //    caratula.NCNoRegistradasEnBanco,
+            //    caratula.NDNoRegistradasEnBanco,
+            //    caratula.CreditosPorCorreccionesIntMas,
+            //    -caratula.DeditosPorCorreccionesIntMenos==0?0:-caratula.DeditosPorCorreccionesIntMenos,
+            //}.Sum();
 
             return View(caratula);
         }

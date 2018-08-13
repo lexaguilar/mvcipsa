@@ -186,6 +186,7 @@ $($gridIecb).dxDataGrid({
         showInfo: true,
     },
     columnsAutoWidth: true,
+    allowColumnResizing: true,
     headerFilter: {
         visible: true
     },
@@ -213,7 +214,7 @@ $($gridIecb).dxDataGrid({
             dataField: "ck",
             dataType: "boolean",
             allowEditing: true,
-            width: 80
+            width: 70
         }, {
             dataField: "Estado",
             allowEditing: false
@@ -228,12 +229,14 @@ $($gridIecb).dxDataGrid({
         {
             dataField: "Referencia",
             alignment: "right",
-            allowEditing: false
+            allowEditing: false,
+            
         },
         {
             dataField: "TipoMovimiento",
             alignment: "right",
-            allowEditing: false
+            allowEditing: false,
+            width: 60
         },
         {
             dataField: "Debito",
@@ -581,6 +584,11 @@ var _conciliarManual = function () {
             var dataIecb = allRows($gridIecb);
             var dataBanco = allRows($gridBanco);
 
+            var clearCk = x => {
+                x.ck = false; 
+                return x;
+            } 
+
             var uuid = generateUUID();
             dataBanco = dataBanco.map(x => {
                 if (parseFloat(x.Referencia) == parseFloat($BancoData[0].Referencia) && x.Fecha == $BancoData[0].Fecha) {
@@ -600,6 +608,11 @@ var _conciliarManual = function () {
                 }
                 return x;
             });
+
+            dataIecb = dataIecb.map(clearCk);
+            dataBanco = dataBanco.map(clearCk);
+            $IecbData = [];
+            $BancoData = [];
 
             $($gridIecb).dxDataGrid("instance").option('dataSource', dataIecb);
             $($gridBanco).dxDataGrid("instance").option('dataSource', dataBanco);
