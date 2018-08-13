@@ -259,18 +259,13 @@ $($gridIecb).dxDataGrid({
         {
             dataField: "TipoMovimiento",
             visible: false
-        },
-        {
-            dataField: "CajaId",
-            allowEditing: false,
-            width: 50
-        },
+        },       
         {
             caption: "Recibo",
             dataField: "IdRef",
             cellTemplate: function (container, options) {
                 $("<div>")
-                    .append(`<a class="href-button text-custom-16" onclick="printReportById(${options.value},${options.data.TableInfo});"> ${options.data.NumRecibo}</a>`)
+                    .append(`<a class="href-button text-custom-16" title="${options.data.Caja}" onclick="printReportById(${options.value},${options.data.TableInfo});"> ${options.data.NumRecibo}</a>`)
                     .appendTo(container);
             },
             allowEditing: false

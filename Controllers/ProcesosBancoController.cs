@@ -205,6 +205,7 @@ namespace mvcIpsa.Controllers
                 return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
 
             var result = from iec in db.IngresosEgresosCaja
+                         join c in db.Caja on iec.CajaId equals c.Id
                          join tm in db.TipoMovimiento on iec.TipoMovimientoId equals tm.Id
                          join iecr in db.IngresosEgresosCajaReferencias on iec.Id equals iecr.ReciboId
                          where iec.TipoMonedaId == _BancosCuentas.MonedaId 
@@ -228,10 +229,12 @@ namespace mvcIpsa.Controllers
                              TipoDocumento = (int)TipoDocumentos.Desposito,
                              TipoMovimientoId = (int)TipoMovimientos.DepositosDeCajaUnica,
                              TipoMovimiento = tm.DocName,
-                             TableInfo = 1
+                             TableInfo = 1,
+                             Caja = c.Description
                          };
 
             var resultBanco = from ieb in db.IngresosEgresosBanco
+                              join c in db.Caja on ieb.CajaId equals c.Id
                               join tm in db.TipoMovimiento on ieb.TipoMovimientoId equals tm.Id
                               where ieb.TipoMonedaId == _BancosCuentas.MonedaId 
                               && ieb.BancoCuenta == _BancosCuentas.BancoId 
@@ -254,6 +257,7 @@ namespace mvcIpsa.Controllers
                                   TipoMovimiento = tm.DocName,
                                   TableInfo = 2,
                                   IdRef = ieb.Id,
+                                  Caja = c.Description
                               };
 
             return Json(new
@@ -432,5 +436,6 @@ namespace mvcIpsa.Controllers
         /// 1 si es de caja y 2 si es de banco para saber donde actualizaremos el regostro cuando se guarde la conciliacion
         /// </summary>
         public int TableInfo { get; set; }
+        public string Caja { get; set; }
     }
 }
