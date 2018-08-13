@@ -70,6 +70,7 @@ namespace mvcIpsa.Controllers
             var result = data.Select(rep => new
             {
                 rep.Id,
+                Estado = rep.Estado.Descripcion,
                 Caja = rep.Caja.Description,
                 rep.Beneficiario,
                 rep.FechaProceso,
@@ -160,7 +161,8 @@ namespace mvcIpsa.Controllers
                             ServicioNombre =    servicios.Where(s=>s.CtaContable == iecd.CtaContable).FirstOrDefault().Nombre,
                             ServicioPrecio = iecd.Precio,
                             ServicioCantidad = iecd.Cantidad,
-                            ServicioTotal = iecd.Montodolar
+                            ServicioTotal = iecd.Montodolar,
+                            MinutaFecha = iec.FechaProceso
                         };
 
             if(p.caja.Value > 0)

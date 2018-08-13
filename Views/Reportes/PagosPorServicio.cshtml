@@ -203,6 +203,9 @@
                     dataSource: result,
                     allowColumnReordering: true,
                     allowColumnResizing: true,
+                    selection: {
+                        mode: "multiple"
+                    },
                     columnChooser: {
                         enabled: true
                     },
@@ -249,7 +252,7 @@
                         {
                             dataField: "NumRecibo",                          
                         },  
-                        "caja",                      
+                        "Caja",                      
                         {
                             dataField: "Beneficiario",                            
                            // width: 280                  
@@ -267,7 +270,19 @@
                         "ServicioPrecio",      
                         "ServicioCantidad",      
                         "ServicioTotal"       
-                    ]                           
+                    ],
+                    summary: {
+                        totalItems: [
+                            {
+                                column: "MontoDolar",
+                                summaryType: "sum"
+                            },
+                            {
+                                column: "ServicioTotal",
+                                summaryType: "sum"
+                            }
+                        ]
+                    }
                 });      
                 $('#btnSearch').reset();   
             });
