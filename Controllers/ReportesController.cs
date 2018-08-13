@@ -214,9 +214,9 @@ namespace mvcIpsa.Controllers
                     join pf in db.Profile on iec.Username equals pf.Username
                     where iec.EstadoId == (int)IngresosEgresosBancoEstados.Registrado
                     select new {
-                        usuario = pf.Nombre + " " + pf.Apellido,
-                        caja = c.Description,
-                        fecha = iec.FechaProceso,
+                        Usuario = pf.Nombre + " " + pf.Apellido,
+                        Caja = c.Description,
+                        Fecha = iec.FechaProceso,
                         iec.Id
                     };
 
@@ -224,7 +224,7 @@ namespace mvcIpsa.Controllers
             if(p.all)
                 return Json(reporte.ToArray());
             else
-                return Json(reporte.Where(r => r.fecha >= p.Desde && r.fecha <= p.Hasta).ToArray());
+                return Json(reporte.Where(r => r.Fecha >= p.Desde && r.Fecha <= p.Hasta).ToArray());
         }
 
         public IActionResult CaratulaConciliacion(string bancoCuenta, int mes, int anio)

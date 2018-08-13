@@ -208,7 +208,7 @@
             data["all"] = all.checked;
             $('#btnSearch').searching();
             $.get(pathBase + 'Reportes/RecibosCaja_Detelle3_GetList',data,result => {
-                //console.log(result);
+                console.log(result);
 
                 var pivotGrid = $("#pivotgrid").dxPivotGrid({
                     allowSortingBySummary: true,
@@ -236,21 +236,21 @@
                         fields: [{
                             caption: "Caja",
                             width: 120,
-                            dataField: "caja",
+                            dataField: "Caja",
                             area: "row",
                             sortBySummaryField: "Total"
                         }, {
                             caption: "Usuario",
-                            dataField: "usuario",
+                            dataField: "Usuario",
                             width: 150,
                             area: "row"
                         }, {
-                            dataField: "fecha",
+                            dataField: "Fecha",
                             dataType: "date",
                             area: "column"
                         }, {
                             caption: "Total",
-                            dataField: "id",
+                            dataField: "Id",
                             dataType: "number",
                             summaryType: "count",                          
                             area: "data"
