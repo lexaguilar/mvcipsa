@@ -212,7 +212,8 @@ namespace mvcIpsa.Controllers
 
             foreach (var item in iECajaViewModel.details)
             {
-                if (item.precio <= 0 || item.cantidad <= 0)
+                //Permitir valores en negativo
+                if (item.cantidad <= 0)
                 {
                     return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
                 }
@@ -439,7 +440,7 @@ namespace mvcIpsa.Controllers
 
             foreach (var item in iECajaViewModel.details)
             {
-                if (item.precio <= 0 || item.cantidad <= 0)
+                if (item.cantidad <= 0)
                 {
                     return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
                 }
