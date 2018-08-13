@@ -175,11 +175,14 @@ namespace mvcIpsa.Controllers
             }
             
             var user = this.GetServiceUser();
-            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)
-            {
+            if (user.description.Contains("2017") && iECajaViewModel.master.FechaProceso.Year != 2017)            
                 return BadRequest("El usuario solo puede registrar información para el año 2017");
-            }
+            
             var ingresosEgresosCaja = iECajaViewModel.master;
+
+            if (iECajaViewModel.master.FechaProceso.Year < 2016)            
+                return BadRequest("No se pueden registrar recibos menor a la fecha 01/01/2017");
+            
 
             //Numero de recibo actual
             var lote = db.LoteRecibos.Where(lt => lt.CajaId == user.cajaid).FirstOrDefault();
