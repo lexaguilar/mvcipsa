@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Mvc
         public static string NombreDelMes(int mes)
         {
             string[] meses = { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre","Noviembre", "Diciembre" };
-            return meses[mes];
+            return meses[mes-1];
         }
 
         public static string getPasswordHashed(string password) {

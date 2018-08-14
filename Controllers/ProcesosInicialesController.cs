@@ -61,7 +61,7 @@ namespace mvcIpsa.Controllers
 
                 if (procesoBanco.Fecha > DateTime.MinValue)
                 {
-                    oldProcesoBanco.Fecha = procesoBanco.Fecha;
+                    oldProcesoBanco.Fecha = new DateTime(procesoBanco.Fecha.Year, procesoBanco.Fecha.Month,1);
                 }
 
                 db.SaveChanges();

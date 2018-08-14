@@ -270,6 +270,11 @@ namespace mvcIpsa.Controllers
             {
                 return BadRequest($"No se puede anular el movimiento {movimiento.Id} por que ya estaba anulado");
             }
+
+            if (movimiento.Procesado)
+            {
+                return BadRequest($"No se puede anular el movimiento {movimiento.Id} por que esta conciliado");
+            }
             movimiento.EstadoId = (int)IngresosEgresosCajaEstado.Anulado;
             movimiento.MotivoAnulado = motivo;
             movimiento.UsernameAnulado = user.username;

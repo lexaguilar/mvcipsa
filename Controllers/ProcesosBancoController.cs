@@ -39,12 +39,13 @@ namespace mvcIpsa.Controllers
 
         public IActionResult GetList()
         {
-            var procesos = db.ProcesoBanco.Where(x => x.SaldoFinal > 0).ToList();
+            var procesos = db.ProcesoBanco.Where(x => x.SaldoFinal != 0).ToList();
             var bancosCuenta = DbIpsa.BancosCuentas.Include(x => x.Banco);
 
-            //var procesoBancoServices = new ProcesoBancoServices(db);
-            //var listaCuentas = procesoBancoServices.GetCuentas();
+            var procesoBancoServices = new ProcesoBancoServices(db);
+            var listaCuentas = procesoBancoServices.GetLastCuentas();
 
+             
 
             var documentos = db.ReporteFirma; //new List<String> { "Caratula", "Cheques flotantes", "Notas de credito no registradas en libro", "Notas de debito no registradas en el Banco", "Notas de debito no registradas en Libro" };
 
@@ -58,6 +59,7 @@ namespace mvcIpsa.Controllers
                 x.Username,
                 x.BancoCuenta,
                 x.Id,
+                xIsLastAccount = listaCuentas.Contains(x.Id)?true:false,
                 Documentos = documentos.Select(d => new
                 {
                     x.Fecha,
@@ -205,6 +207,10 @@ namespace mvcIpsa.Controllers
             if (procesoBancoMayor.HasData())
                 return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
 
+            var procesoBancoActual = db.ProcesoBanco.Where(pb => pb.BancoCuenta == BancosCuenta && pb.Fecha.Year == Year && pb.Fecha.Month == Month).ToArray();
+            if (procesoBancoActual.HasData())
+                return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
+
             var resultCaja = from iec in db.IngresosEgresosCaja
                          join c in db.Caja on iec.CajaId equals c.Id
                          join tm in db.TipoMovimiento on iec.TipoMovimientoId equals tm.Id
@@ -300,7 +306,7 @@ namespace mvcIpsa.Controllers
                 var procesoBancoAnterior = procesoBancoServices.Find(conciliacionViewModel.BancoCuenta, _beforeYear, _beforeMonth);
                 if (procesoBancoAnterior == null)
                 {
-                    return BadRequest($"No se encontró el proceso en el mes {HelperExtensions.NombreDelMes(_beforeMonth - 1)} para el banco {conciliacionViewModel.BancoCuenta}");
+                    return BadRequest($"No se encontró el proceso en el mes {HelperExtensions.NombreDelMes(_beforeMonth)} para el banco {conciliacionViewModel.BancoCuenta}");
                 }
 
                 var newProcesoBanco = new ProcesoBanco
@@ -315,7 +321,11 @@ namespace mvcIpsa.Controllers
 
                 procesoBanco = procesoBancoServices.Create(newProcesoBanco);
 
-            }           
+            }
+            else
+            {
+                return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(conciliacionViewModel.Month)} para el año {conciliacionViewModel.Year} de la cuenta {conciliacionViewModel.BancoCuenta}");
+            }
 
             var id = procesoBanco.Id;
 
@@ -362,7 +372,7 @@ namespace mvcIpsa.Controllers
 
             oldProcesoBanco.ConciliacionBancaria = ecs;
             oldProcesoBanco.ConciliacionBancariaAux = auxs;
-            oldProcesoBanco.SaldoFinal = ecs.Sum(x => x.Credito) - ecs.Sum(x => x.Debito);
+            oldProcesoBanco.SaldoFinal = oldProcesoBanco.SaldoInicial +  ecs.Sum(x => x.Credito) - ecs.Sum(x => x.Debito);
 
             var ingresosCajaReferencias = db.IngresosEgresosCajaReferencias.Where(f => conciliacionViewModel.conciliacionBancariaAux.Where(x=>x.TableInfo == 1).Select(x=>x.IdOrigen).Contains(f.Id)).ToList();
             if (ingresosCajaReferencias.Count > 0)
@@ -376,6 +386,47 @@ namespace mvcIpsa.Controllers
                 ingresosBanco.ForEach(a => a.Procesado = string.IsNullOrEmpty(conciliacionViewModel.conciliacionBancariaAux.Where(x => x.IdOrigen == a.Id && x.TableInfo == 2).FirstOrDefault().Uuid) ? false : true);
             }
             
+
+            db.SaveChanges();
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Guarda un proceso de conciliacion
+        /// </summary>
+        /// <param name="conciliacionViewModel"></param>
+        /// <returns></returns>
+        [ActionName("delete")]
+        public IActionResult delete(int id)
+        {
+            var usr = this.GetServiceUser();
+
+            var cAuxBanco = db.ConciliacionBancariaAux.Where(x => x.ProcesoBancoId == id && x.TableInfo == 2).ToArray();
+            var cAuxCaja  = db.ConciliacionBancariaAux.Where(x => x.ProcesoBancoId == id && x.TableInfo == 1).ToArray();
+
+            var iecb = db.IngresosEgresosBanco.Where(x => cAuxBanco.Select(p => p.IdOrigen).Contains(x.Id)).ToList();
+            iecb.ForEach(x => x.Procesado = false);
+
+            var iecr = db.IngresosEgresosCajaReferencias.Where(x => cAuxCaja.Select(p => p.IdOrigen).Contains(x.Id)).ToList();
+            iecr.ForEach(x => x.Procesado = false);
+
+            db.ConciliacionBancariaAux.RemoveRange(cAuxBanco);
+            db.ConciliacionBancariaAux.RemoveRange(cAuxCaja);
+
+            var cBanco = db.ConciliacionBancaria.Where(x => x.ProcesoBancoId == id);
+            db.ConciliacionBancaria.RemoveRange(cBanco);
+
+            var procesoBanco = db.ProcesoBanco.Find(id);
+            //si es saldo inicial solo actualizar a 0 el saldo final
+            if (procesoBanco.TipoProcesoId == 1)
+            {
+                procesoBanco.SaldoFinal = 0;
+            }else
+            {
+                //sino, eliminar
+                db.ProcesoBanco.Remove(procesoBanco);
+            }            
 
             db.SaveChanges();
 

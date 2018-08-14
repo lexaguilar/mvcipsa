@@ -268,7 +268,7 @@ namespace mvcIpsa.Controllers
 
             caratula.ReporteFirmas = reporteFirma;
             caratula.MonedaSimbol = bancoCuentaInfo.Moneda.Value==1?"C$":"$";
-            caratula.Titulo = $"Movimientos Bancarios ({bancoCuentaInfo.Banco.Descripcion}) Del Mes De {HelperExtensions.NombreDelMes(mes-1)} De {anio}";
+            caratula.Titulo = $"Movimientos Bancarios ({bancoCuentaInfo.Banco.Descripcion}) Del Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}";
             caratula.Cuenta = $"{bancoCuentaInfo.Descripcion.ToUpper()}";
             caratula.SaldoSegunBanco = infoProcesoBanco.SaldoInicial; // + (conciliacionBancaria.Sum(x=>x.Credito) - conciliacionBancaria.Sum(x => x.Debito));
             caratula.ChequeFlotantes = conciliacionBancariaAux.Where(cba => cba.TipoMovimientoId == (int)TipoMovimientos.Cheques && cba.Conciliado).Sum(x => x.Credito);
@@ -340,7 +340,7 @@ namespace mvcIpsa.Controllers
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel {
-                Titulo = $"Depositos no registradas en nuestro Libros Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Depositos no registradas en nuestro Libros Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = $"{result.CuentaBancaria}",
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -375,7 +375,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas De Debito No Registradas En Libro Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas De Debito No Registradas En Libro Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = $"{result.CuentaBancaria}",
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -410,7 +410,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas de credito no registrada en Libro Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas de credito no registrada en Libro Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = $"{result.CuentaBancaria}",
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -447,7 +447,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Depositos no registrados en el Banco Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Depositos no registrados en el Banco Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = result.CuentaBancaria,
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -483,7 +483,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas de debito no registrada en Banco Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas de debito no registrada en Banco Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = result.CuentaBancaria,
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -520,7 +520,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = result.CuentaBancaria,
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -556,7 +556,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = result.CuentaBancaria,
                 detalle = reporteDetalle,
                 Moneda = result.Moneda
@@ -592,7 +592,7 @@ namespace mvcIpsa.Controllers
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
             {
-                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes - 1)} De {anio}",
+                Titulo = $"Notas De Credito No Registradas En Banco Al Mes De {HelperExtensions.NombreDelMes(mes)} De {anio}",
                 CuentaBancaria = result.CuentaBancaria,
                 detalle = reporteDetalle,
                 Moneda = result.Moneda

@@ -55,5 +55,16 @@ namespace mvcIpsa.Services
         {
             return db.ProcesoBanco.Select(x => x.BancoCuenta).Distinct().ToArray();
         }
+
+        /// <summary>
+        /// returna los bancos que movimienntos
+        /// </summary>
+        /// <returns></returns>
+        public int[] GetLastCuentas()
+        {
+            var t =  db.ProcesoBanco.GroupBy(x => x.BancoCuenta, (key, xs) => xs.OrderByDescending(x => x.Id).First().Id);
+            return t.ToArray();
+            //return db.ProcesoBanco.Select(x => x.BancoCuenta).Distinct().ToArray();
+        }
     }
 }
