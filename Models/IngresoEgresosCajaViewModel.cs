@@ -13,7 +13,7 @@ namespace mvcIpsa.Models
     public class IngresoEgresosCajaDetalleViewModel {
         public string cta_cuenta{ get; set; }
         public decimal precio { get; set; }
-        public short cantidad { get; set; }     
+        public int cantidad { get; set; }     
         public decimal montodolar { get; set; }
     }
 }
