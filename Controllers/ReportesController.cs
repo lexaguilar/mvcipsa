@@ -53,12 +53,12 @@ namespace mvcIpsa.Controllers
                 if (usr.roles.Contains((int)Roles.Administrador))
                     reporte = reporte.Where(iec => iec.CajaId == cajaId);
                 else
-                    reporte = reporte.Where(iec => iec.CajaId > usr.cajaid);
+                    reporte = reporte.Where(iec => iec.CajaId == usr.cajaid);
             }
             else
             {
                 if (!usr.roles.Contains((int)Roles.Administrador))
-                    reporte = reporte.Where(iec => iec.CajaId > usr.cajaid);
+                    reporte = reporte.Where(iec => iec.CajaId == usr.cajaid);
             }
 
             var data = reporte.ToArray();
