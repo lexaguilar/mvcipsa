@@ -437,14 +437,17 @@ namespace mvcIpsa.Controllers
 
             var oldDetalles = db.IngresosEgresosCajaDetalle.Where(d => d.ReciboId == recibos.Id);           
             db.IngresosEgresosCajaDetalle.RemoveRange(oldDetalles);
-
+                   
             foreach (var item in iECajaViewModel.details)
             {
-                if (item.cantidad <= 0)
-                {
-                    return BadRequest(string.Format($"El monto o la cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
-                }
-                var _montoDolar = item.precio * item.cantidad;
+                if (item.cantidad <= 0)                
+                    return BadRequest(string.Format($"El cantidad para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
+
+                if (item.precio == 0)
+                    return BadRequest(string.Format($"El precio para el servicio de la cuenta 1000{item.cta_cuenta}, no puede ser 0"));
+
+                decimal _montoDolar = Convert.ToDecimal(item.precio * item.cantidad);              
+
                 recibos.IngresosEgresosCajaDetalle.Add(new IngresosEgresosCajaDetalle
                 {
                     Cantidad = item.cantidad,
@@ -521,6 +524,10 @@ namespace mvcIpsa.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
             return Json(recibos,
                 new JsonSerializerSettings { MaxDepth = 1, ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore }

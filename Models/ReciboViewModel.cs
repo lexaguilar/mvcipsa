@@ -20,7 +20,7 @@ namespace mvcIpsa.Models
 
     public class ReciboDetalle
     {
-        public int Cantidad { get; set; }
+        public decimal Cantidad { get; set; }
         public string CtaContable { get; set; }
         public decimal Montodolar { get; set; }
         public decimal Precio { get; set; }

@@ -10,7 +10,7 @@ namespace mvcIpsa.DbModel
         public decimal Montodolar { get; set; }
         public string CtaContable { get; set; }
         public decimal Precio { get; set; }
-        public int Cantidad { get; set; }
+        public decimal Cantidad { get; set; }
 
         public IngresosEgresosCaja Recibo { get; set; }
     }

@@ -21,7 +21,7 @@ namespace mvcIpsa.Models
         public string Banco { get; set; }        
         public string ServicioNombre { get; set; }
         public decimal ServicioPrecio { get; set; }
-        public int ServicioCantidad { get; set; }
+        public decimal ServicioCantidad { get; set; }
         public decimal ServicioTotal { get; set; }
     }
 }

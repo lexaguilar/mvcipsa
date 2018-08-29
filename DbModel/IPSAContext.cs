@@ -596,7 +596,7 @@ namespace mvcIpsa.DbModel
                     .HasColumnName("id")
                     .HasDefaultValueSql("nextval('siscb_core.ingresos_egresos_caja_detalle_id_seq'::regclass)");
 
-                entity.Property(e => e.Cantidad).HasColumnName("cantidad");
+                entity.Property(e => e.Cantidad).HasColumnName("cantidad").HasColumnType("numeric(32, 4)");
 
                 entity.Property(e => e.CtaContable)
                     .IsRequired()
