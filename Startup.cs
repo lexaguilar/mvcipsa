@@ -86,8 +86,7 @@ namespace mvcIpsa
                     });
                 });
             });
-
-            string enUSCulture = "en-US";
+           
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(19466);
 
             services.AddMvc().AddJsonOptions(o => o.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
