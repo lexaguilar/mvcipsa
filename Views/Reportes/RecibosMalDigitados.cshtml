@@ -1,0 +1,216 @@
+@model IEnumerable<mvcIpsa.Models.CajaViewModel>
+@using mvcIpsa.Extensions
+@{
+    ViewData["Title"] = "Recibos incorrectos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var usr = this.User.GetServiceUser();
+}
+@section Styles
+{
+    <environment include="Development">             
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">     
+        <link href="~/css/loading.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">     
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+        <link href="~/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet">        
+        <link href="~/css/loading.css" rel="stylesheet" />
+    </environment>
+}
+<style>
+    .inbox-head {
+        padding: 10px;
+        background: #ffffff;
+        color: #fff;
+        border-radius: 0 4px 0 0;
+        -webkit-border-radius: 0 4px 0 0;
+        min-height: 20px;
+    }
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+      
+        padding-right: 3px;
+        padding-left: 3px;
+    }
+</style>
+<div class="wrapper">
+    <div class="panel">
+        <div class="panel-footer">
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridRecibos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+    {
+    <environment include="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+
+        <script src="~/js/aspnet.js"></script>
+        <script src="~/lib/dx/js/date.min.js"></script>    
+        <script src="~/lib/numeral/numeral.js"></script>
+        <script src="~/js/loading.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/dx/js/cldr.min.js"></script>
+        <script src="~/lib/dx/js/event.min.js"></script>
+        <script src="~/lib/dx/js/supplemental.min.js"></script>
+        <script src="~/lib/dx/js/unresolved.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+        <script src="~/lib/dx/js/dx.all.js"></script>
+
+        <script src="~/js/aspnet.js"></script>
+        <script src="~/lib/dx/js/date.min.js"></script>
+        <script src="~/lib/numeral/numeral.js"></script>
+        <script src="~/js/loading.js"></script>
+    </environment>
+     <script>
+        var $grid = '#dxGridRecibos';
+        var procesos = new DevExpress.data.DataSource({
+            store: {
+                type: 'array',
+                data: [],
+                key: 'Id'
+            }
+        });
+
+        $($grid).dxDataGrid({
+            dataSource: procesos,
+            showRowLines: true,
+            columnsAutoWidth: true,     
+            allowColumnResizing: true,
+            rowAlternationEnabled: true,          
+            headerFilter: {
+                visible: true
+            },
+            pager:{
+                showInfo : true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+            "export": {
+                enabled: true,
+                fileName: "recibos ingresados antes del 2017",
+                allowExportSelectedData: true
+            },
+            keyExpr: "Id",
+            editing: {
+                mode: "popup",
+                allowUpdating: true,
+                popup: {
+                    title: "Corregir fecha",
+                    showTitle: true,
+                    width: 700,
+                    height: 345,
+                    position: {
+                        my: "top",
+                        at: "top",
+                        of: window
+                    }
+                }
+            },
+            onRowUpdated: function (e) {
+
+                var p = e.data;
+                p['Id'] = e.key;
+
+                $.post(pathBase + `reportes/corregir-fecha`, p, function () {
+                    loadGrid();
+                });
+            },
+            columns: [{               
+                dataField: "Id",    
+                allowEditing: false     ,
+                visible:false     
+            }, {
+                caption: "Recibo",
+                dataField: "NumRecibo",
+                allowEditing: false,
+                width: 100
+            }, {
+                caption: "Usuario",
+                dataField: "Username",
+                allowEditing: false,
+                width: 80
+            },{
+                caption: "Creado el",
+                dataField: "FechaRegistro",
+                allowEditing: false,
+                dataType: "date",           
+                format: "dd/MM/yyyy",
+                width: 110
+            },{
+                caption: "caja",
+                dataField: "caja",
+                allowEditing: false
+            },{
+                caption: "Beneficiario",
+                dataField: "Beneficiario",
+                allowEditing: false
+            }, {
+                caption: "Moneda",
+                dataField: "moneda",
+                allowEditing: false,
+                width: 85
+            },{
+                caption: "Total",
+                width: 130,
+                dataField: "Total",  
+                alignment: "right",    
+                allowEditing: false,
+                cellTemplate: function (container, options) {
+                $("<div class='text-right'>")
+                    .append(numeral(options.value).format('$0,0.00'))
+                    .appendTo(container);
+                }
+            },{
+                caption: "Fecha",
+                alignment: "right",   
+                width: 90,
+                dataField: "FechaProceso",
+                dataType: "date",           
+                format: "dd/MM/yyyy",
+                validationRules: [{
+                    type: "required",
+                    message: "Este campo es requerido"
+                }]
+            }
+            ],                           
+            showBorders: true,
+        });
+
+        $(document).ready(function () {
+            loadGrid();
+        })
+
+        function loadGrid() {
+            $($grid).parent().loading();
+            $.get(pathBase + `reportes/recibos-mal-digitados-obtener`, null, data => {
+                $($grid).dxDataGrid("instance").option('dataSource', data);
+            }).always(function () {
+                $($grid).parent().loading('stop');
+            });
+        }
+
+    </script>
+}

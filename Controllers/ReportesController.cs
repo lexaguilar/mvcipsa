@@ -11,7 +11,7 @@ using mvcIpsa.DbModelIPSA;
 using mvcIpsa.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using mvcIpsa.Services;
-
+using Microsoft.Extensions.Options;
 namespace mvcIpsa.Controllers
 {   
     [Authorize(Policy = "Admin,Reportes")]
@@ -238,14 +238,14 @@ namespace mvcIpsa.Controllers
             var _bancoCuenta = bancosCuentasOnlyCode.Where(b => HelperExtensions.HashSHA1(b.ToString()) == bancoCuenta).FirstOrDefault();
 
             if (_bancoCuenta == 0)            
-                return View("Error", "No se encontró la cuenta bancaria");            
+                return View("Error", "No se encontrï¿½ la cuenta bancaria");            
 
             if (reporteFirma == null)            
-                return View("Error", $"No se encontró la configuración de las firmas del reporte CaratulaConciliacion");
+                return View("Error", $"No se encontrï¿½ la configuraciï¿½n de las firmas del reporte CaratulaConciliacion");
 
             var infoProcesoBanco = db.ProcesoBanco.Where(b => b.BancoCuenta == _bancoCuenta && b.Fecha.Month == mes && b.Fecha.Year == anio).FirstOrDefault();
             if (infoProcesoBanco == null)
-                return View("Error", "No se encontró la cuenta bancaria con la fecha de proceso indicada");
+                return View("Error", "No se encontrï¿½ la cuenta bancaria con la fecha de proceso indicada");
 
             var bancoCuentaInfo = bancosCuentas.Where(c => c.BancoCuenta == _bancoCuenta).FirstOrDefault();
             if (!bancoCuentaInfo.Moneda.HasValue)
@@ -599,6 +599,58 @@ namespace mvcIpsa.Controllers
             };
 
             return View(conciliacionAnexoViewModel);
+        }
+
+        /// <summary>
+        /// Obtiene los Debitos por correciones internas de menos
+        /// </summary>
+        /// <param name="bancoCuenta"></param>
+        /// <param name="mes"></param>
+        /// <param name="anio"></param>
+        /// <returns></returns>
+        [HttpGet("reportes/recibos-mal-digitados")]
+        public IActionResult RecibosMalDigitados(){            
+            return View();
+        }
+
+        [HttpGet("reportes/recibos-mal-digitados-obtener")]
+        public IActionResult RecibosMalDigitadosObtener()
+        {  
+            var fechaMin = new DateTime(2017,1,1);
+            var result = db.IngresosEgresosCaja
+                        .Include(i => i.TipoMoneda)
+                        .Include(i => i.Caja)
+                        .Where(i => i.FechaProceso < fechaMin).ToArray();
+            
+            return Json(result.Select(x => new {
+                x.Id,
+                NumRecibo = x.NumRecibo.PadLeft(10,'0'),
+                x.FechaProceso,
+                x.Username,
+                x.Beneficiario,
+                x.Total,
+                moneda = x.TipoMoneda.Descripcion,
+                caja = x.Caja.Description,
+                x.FechaRegistro
+            }));
+        }
+
+        [HttpPost("reportes/corregir-fecha")]
+        public IActionResult CorregirFecha(int Id, DateTime FechaProceso)
+        {
+            var user = this.GetServiceUser();
+
+            var oldRecibo = db.IngresosEgresosCaja.Find(Id);
+
+            if(oldRecibo == null)
+                return NotFound("No se encontro el recibo con id: " + Id);
+
+            oldRecibo.FechaProceso = FechaProceso;
+            oldRecibo.UsernameEditado = user.username;
+            oldRecibo.FechaEditado = DateTime.Now;
+
+            db.SaveChanges();
+            return Json(FechaProceso);
         }
     } 
 
