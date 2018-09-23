@@ -1,5 +1,5 @@
-var t = {
-    "es": {
+ {
+    en: {
         "Yes": "Sí",
         "No": "No",
         "Cancel": "Cancelar",

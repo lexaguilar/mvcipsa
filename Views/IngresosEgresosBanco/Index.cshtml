@@ -168,7 +168,7 @@
                     caption: 'Codigo',
                     cellTemplate: function (container, options) {
                         $("<div>")
-                            .append(`<a class="dx-link dx-link-edit dx-icon-edit" title="Edit" href="/IngresosEgresosBanco/edit/${options.value}">${options.text.pad(6)}</a>`)
+                            .append(`<a class="dx-link dx-link-edit dx-icon-edit" title="Edit" href="${pathBase}IngresosEgresosBanco/edit/${options.value}">${options.text.pad(6)}</a>`)
                             .appendTo(container);
                     }
                 },{
