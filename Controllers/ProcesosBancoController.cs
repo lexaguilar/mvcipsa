@@ -26,6 +26,7 @@ namespace mvcIpsa.Controllers
         private readonly IPSAContext db;
         private readonly DBIPSAContext DbIpsa;
         private IHostingEnvironment _hostingEnvironment;
+        private DateTime MinDate = new DateTime(2017,1,1);
         public ProcesosBancoController(IHostingEnvironment hostingEnvironment, IPSAContext _db, DBIPSAContext _DbIpsa)
         {
             _hostingEnvironment = hostingEnvironment;
@@ -220,6 +221,7 @@ namespace mvcIpsa.Controllers
                          && iec.EstadoId == (short)IngresosEgresosCajaEstado.Registrado 
                          && iec.FechaProceso.Year <= Year 
                          && iec.FechaProceso.Month <= Month
+                         && iec.FechaProceso >= MinDate
                          && iecr.Procesado == false
                          && iecr.TipoPagoId > 2 //solo 3 y 4 minuta y transferencia
                          select new Auxiliar
