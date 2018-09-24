@@ -382,7 +382,7 @@ namespace mvcIpsa.Controllers
                 ingresosCajaReferencias.ForEach(a => a.Procesado = string.IsNullOrEmpty(conciliacionViewModel.conciliacionBancariaAux.Where(x => x.IdOrigen == a.Id && x.TableInfo == 1).FirstOrDefault().Uuid) ? false : true);
             }
 
-            var ingresosBanco = db.IngresosEgresosCajaReferencias.Where(f => conciliacionViewModel.conciliacionBancariaAux.Where(x => x.TableInfo == 2).Select(x => x.IdOrigen).Contains(f.Id)).ToList();
+            var ingresosBanco = db.IngresosEgresosBanco.Where(f => conciliacionViewModel.conciliacionBancariaAux.Where(x => x.TableInfo == 2).Select(x => x.IdOrigen).Contains(f.Id)).ToList();
             if (ingresosBanco.Count > 0)
             {
                 ingresosBanco.ForEach(a => a.Procesado = string.IsNullOrEmpty(conciliacionViewModel.conciliacionBancariaAux.Where(x => x.IdOrigen == a.Id && x.TableInfo == 2).FirstOrDefault().Uuid) ? false : true);
