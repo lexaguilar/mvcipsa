@@ -189,6 +189,11 @@ namespace mvcIpsa.Controllers
             ingresosEgresosCaja.NumRecibo = (lote.Actual + 1).ToString().PadLeft(10, '0');
             lote.Actual = lote.Actual + 1;
 
+            var oldRecibo = db.IngresosEgresosCaja.Where(x=>x.NumRecibo == ingresosEgresosCaja.NumRecibo && x.CajaId == user.cajaid).FirstOrDefault();
+            if(ingresosEgresosCaja != null){
+                return BadRequest("Ya existe un recibo con el numero" + ingresosEgresosCaja.NumRecibo + " para la caja " + user.description);
+            }
+
             ingresosEgresosCaja.TipoMovimientoId = 32;
             ingresosEgresosCaja.EstadoId = 1;
             ingresosEgresosCaja.FechaRegistro = DateTime.Now;
