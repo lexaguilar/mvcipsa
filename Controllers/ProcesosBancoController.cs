@@ -208,7 +208,7 @@ namespace mvcIpsa.Controllers
             if (procesoBancoMayor.HasData())
                 return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
 
-            var procesoBancoActual = db.ProcesoBanco.Where(pb => pb.BancoCuenta == BancosCuenta && pb.Fecha.Year == Year && pb.Fecha.Month == Month).ToArray();
+            var procesoBancoActual = db.ProcesoBanco.Where(pb => pb.BancoCuenta == BancosCuenta && pb.Fecha.Year == Year && pb.Fecha.Month == Month && pb.TipoProcesoId != (int)TipoProcesos.SaldoInicial).ToArray();
             if (procesoBancoActual.HasData())
                 return BadRequest($"Ya se concilio el mes de {HelperExtensions.NombreDelMes(Month)} para el año {Year} de la cuenta {_BancosCuentas.Descripcion}");
 

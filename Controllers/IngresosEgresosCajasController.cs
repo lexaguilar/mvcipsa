@@ -191,7 +191,7 @@ namespace mvcIpsa.Controllers
 
             var oldRecibo = db.IngresosEgresosCaja.Where(x=>x.NumRecibo == ingresosEgresosCaja.NumRecibo && x.CajaId == user.cajaid).FirstOrDefault();
             if(ingresosEgresosCaja != null){
-                return BadRequest("Ya existe un recibo con el numero" + ingresosEgresosCaja.NumRecibo + " para la caja " + user.description);
+                return BadRequest("Ya existe un recibo con el numero " + ingresosEgresosCaja.NumRecibo + " para la caja " + user.description);
             }
 
             ingresosEgresosCaja.TipoMovimientoId = 32;
