@@ -145,8 +145,13 @@
             }, {
                 caption: "Recibo",
                 dataField: "NumRecibo",
-                allowEditing: false,
-                width: 100
+                allowEditing: false,                
+                cellTemplate: function (container, options) {
+                    $("<div>")
+                        .append(`<a class="href-button text-custom-16" onclick="printReportById(${options.data.Id},1);"> ${options.data.NumRecibo}</a>`)
+                        .appendTo(container);
+                },
+                width: 100,
             }, {
                 caption: "Usuario",
                 dataField: "Username",
@@ -180,11 +185,11 @@
                 allowEditing: false,
                 cellTemplate: function (container, options) {
                 $("<div class='text-right'>")
-                    .append(numeral(options.value).format('$0,0.00'))
+                    .append(numeral(options.value).format('0,0.00'))
                     .appendTo(container);
                 }
             },{
-                caption: "Fecha",
+                caption: "Fecha Proceso",
                 alignment: "right",   
                 width: 90,
                 dataField: "FechaProceso",

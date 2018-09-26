@@ -23,5 +23,6 @@ namespace mvcIpsa.Models
         public string CentroCosto { get; set; }       
         public string Beneficiario { get; set; }      
         public int CajaId { get; set; }
+        public string Caja { get; set; }
     }
 }

@@ -171,13 +171,15 @@
             currentPage = pag;
             $('#btnSearch').searching();
             var data = findEntity('CajaParameter');
+            
             data['Page'] = pag;
             data['Rows'] = 10;
             data['searchByNum'] = searchByNum;
+            
             var f = function (response) {
                 $('#recibo').datatable({
-                    columnsHead: ['', 'Recibo', 'Movimiento', 'Fecha de Proceso', 'Beneficiario', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario', 'Registrado el', 'Estado'],
-                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular','print'] }, 'NumRecibo', 'TipoMovimiento', 'FechaProceso', 'Beneficiario', 'Total', 'TipoMoneda', 'TipoIngreso', 'Username', 'FechaCreacion', 'Estado'],
+                    columnsHead: ['', 'Recibo', 'Fecha de Proceso', 'Beneficiario', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario','Caja' , 'Creado el', 'Estado'],
+                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular','print'] }, 'NumRecibo', 'FechaProceso', 'Beneficiario', 'Total', 'TipoMoneda', 'TipoIngreso', 'Username','Caja', 'FechaCreacion', 'Estado'],
                     data: response.Result,
                     pag: pag,
                     rows: data.Rows,
@@ -189,6 +191,7 @@
                 });
                 $('#btnSearch').reset();
             }
+
             context.ajax.get('IngresosEgresosCajas/GetList', data, f);
 
         }

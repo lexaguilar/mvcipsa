@@ -617,22 +617,32 @@ namespace mvcIpsa.Controllers
         public IActionResult RecibosMalDigitadosObtener()
         {  
             var fechaMin = new DateTime(2017,1,1);
-            var result = db.IngresosEgresosCaja
-                        .Include(i => i.TipoMoneda)
-                        .Include(i => i.Caja)
-                        .Where(i => i.FechaProceso < fechaMin).ToArray();
+
+             var resultCaja = from iec in db.IngresosEgresosCaja
+                         join c in db.Caja on iec.CajaId equals c.Id
+                         join iecr in db.IngresosEgresosCajaReferencias on iec.Id equals iecr.ReciboId
+                         join m in db.TipoMoneda on iec.TipoMonedaId equals m.Id
+                         where iec.EstadoId == (short)IngresosEgresosCajaEstado.Registrado                          
+                         && (iec.FechaProceso < fechaMin || iecr.Fecha < fechaMin)
+                         select new {
+                                iec.Id,
+                                NumRecibo = iec.NumRecibo.PadLeft(10,'0'),
+                                iec.FechaProceso,
+                                iec.Username,
+                                iec.Beneficiario,
+                                iec.Total,
+                                moneda = iec.TipoMoneda.Descripcion,
+                                caja = iec.Caja.Description,
+                                iec.FechaRegistro
+                         };
+
+
+            // var result = db.IngresosEgresosCaja
+            //             .Include(i => i.TipoMoneda)
+            //             .Include(i => i.Caja)
+            //             .Where(i => i.FechaProceso < fechaMin).ToArray();
             
-            return Json(result.Select(x => new {
-                x.Id,
-                NumRecibo = x.NumRecibo.PadLeft(10,'0'),
-                x.FechaProceso,
-                x.Username,
-                x.Beneficiario,
-                x.Total,
-                moneda = x.TipoMoneda.Descripcion,
-                caja = x.Caja.Description,
-                x.FechaRegistro
-            }));
+            return Json(resultCaja.ToArray());
         }
 
         [HttpPost("reportes/corregir-fecha")]

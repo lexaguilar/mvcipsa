@@ -8,6 +8,29 @@ namespace mvcIpsa.Extensions
 {
     static class IpsaContextExtensions
     {
+        internal static bool Exist (this ProcesoBanco procesoBanco)
+        {
+            return procesoBanco.BancoCuenta > 0;
+        }
+        /// <summary>
+        /// Verifica si es saldo inicial el proceso
+        /// </summary>
+        /// <param name="procesoBanco"></param>
+        /// <returns></returns>
+        internal static bool IsInitialBalance(this ProcesoBanco procesoBanco)
+        {
+            return procesoBanco.TipoProcesoId == 1;
+        }
+
+        /// <summary>
+        /// Verifica si tiene saldo final el proceso
+        /// </summary>
+        /// <param name="procesoBanco"></param>
+        /// <returns></returns>
+        internal static bool IsClosed(this ProcesoBanco procesoBanco)
+        {
+            return procesoBanco.SaldoFinal > 0 ;
+        }
         /// <summary>
         /// Obtiene las notas de debito no registrados en libro
         /// </summary>

@@ -144,13 +144,13 @@ $($gridBanco).dxDataGrid({
         }]
     },
     onCellClick: function (e) {
-        if (e.rowType == 'data' && e.column.dataField == "ck") {
-            if (e.value) {
-                $BancoData.push(e.data);
-            } else {
-                $BancoData = $BancoData.filter(x => x.Referencia != e.data.Referencia && x.Fecha != e.data.Fecha && x.Debito != e.data.Debito && x.Credito != e.data.Credito);
-            }
-        }
+        // if (e.rowType == 'data' && e.column.dataField == "ck") {
+        //     if (e.value) {
+        //         $BancoData.push(e.data);
+        //     } else {
+        //         $BancoData = $BancoData.filter(x => x.Referencia != e.data.Referencia && x.Fecha != e.data.Fecha && x.Debito != e.data.Debito && x.Credito != e.data.Credito);
+        //     }
+        // }
     },
     onRowPrepared: function (info) {
         if (info.rowType != 'header' && info.rowType != 'totalFooter' && info.rowType != 'filter') {
@@ -300,15 +300,15 @@ $($gridIecb).dxDataGrid({
             }
         }]
     },
-    onCellClick: function (e) {
-        if (e.rowType == 'data' && e.column.dataField == "ck") {
-            if (e.value) {
-                $IecbData.push(e.data);
-            } else {
-                $IecbData = $IecbData.filter(x => x.Referencia == e.data.Referencia && x.NumRecibo !== e.data.NumRecibo);
-            }
-        }
-    },
+    // onCellClick: function (e) {
+    //     if (e.rowType == 'data' && e.column.dataField == "ck") {
+    //         if (e.value) {
+    //             $IecbData.push(e.data);
+    //         } else {
+    //             $IecbData = $IecbData.filter(x => x.Referencia == e.data.Referencia && x.NumRecibo !== e.data.NumRecibo);
+    //         }
+    //     }
+    // },
     onRowPrepared: function (info) {
         if (info.rowType != 'header' && info.rowType != 'totalFooter' && info.rowType != 'filter') {
             if (info.data.EstadoId == estados.found)
@@ -355,6 +355,8 @@ var updateEstado = x => {
 }
 
 var isConsiliado = x => !compareOr(x.EstadoId).with(-1, 5, 6)
+
+var isSelected = (x) => x.ck;
 
 var isFirtTime = true;
 
@@ -563,6 +565,13 @@ var _conciliarAutomatico = function () {
 }
 
 var _conciliarManual = function () {
+
+    var dataIecb = allRows($gridIecb);
+    $IecbData = dataIecb.filter(isSelected);
+
+    var dataBanco = allRows($gridBanco);
+    $BancoData = dataBanco.filter(isSelected);
+
     var isValid = true;
     if ($IecbData.some(isConsiliado)) {
         $.notification(`Las referencias del auxiliar ${$IecbData.filter(isConsiliado).map(x => x.Referencia).join(',')} ya tienen estado conciliado`);
@@ -586,7 +595,7 @@ var _conciliarManual = function () {
 
             var uuid = generateUUID();
             dataBanco = dataBanco.map(x => {
-                if (parseFloat(x.Referencia) == parseFloat($BancoData[0].Referencia) && x.Fecha == $BancoData[0].Fecha) {
+                if (parseFloat(x.Referencia) == parseFloat($BancoData[0].Referencia) && x.Fecha == $BancoData[0].Fecha && x.ck) {
                     x.Estado = _estados[estados.manual];
                     x.EstadoId = estados.manual;
                     x.UUID = uuid;
@@ -596,7 +605,7 @@ var _conciliarManual = function () {
 
 
             dataIecb = dataIecb.map(x => {
-                if (parseFloat(x.Referencia) == parseFloat($IecbData[0].Referencia) && x.NumRecibo == $IecbData[0].NumRecibo) {
+                if (parseFloat(x.Referencia) == parseFloat($IecbData[0].Referencia) && x.NumRecibo == $IecbData[0].NumRecibo && x.ck) {
                     x.Estado = _estados[estados.manual];
                     x.EstadoId = estados.manual;
                     x.UUID = uuid;
