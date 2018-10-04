@@ -228,12 +228,12 @@ var  getURL = (a) => a.join('/');
             $('.id_banco').editable({
                 emptytext : 'Seleccione',
                 source: [
-                    { value: 12, text: 'BANPRO' },
+                    //{ value: 12, text: 'BANPRO' },
                     { value: 22, text: 'BANCO DE FINANZAS' },
-                    { value: 1, text: 'B.A.C.' },
+                    //{ value: 1, text: 'B.A.C.' },
                     { value: 4, text: 'BANCENTRO' },
-                    { value: 36, text: 'FICOSA' },
-                    { value: 43, text: 'MINISTERIO DE HACIENDA Y CREDITO PUBLICO' }
+                    //{ value: 36, text: 'FICOSA' },
+                    //{ value: 43, text: 'MINISTERIO DE HACIENDA Y CREDITO PUBLICO' }
                 ],
                 validate: function (value) {
                     if ($.trim(value) == '')
