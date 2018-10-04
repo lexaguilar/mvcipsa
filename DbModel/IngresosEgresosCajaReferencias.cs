@@ -18,6 +18,7 @@ namespace mvcIpsa.DbModel
         public short? IdBanco { get; set; }
         public int TipoPagoId { get; set; }
         public bool Procesado { get; set; }
+        public bool? Excluido { get; set; }
         public IngresosEgresosCaja Recibo { get; set; }
         public TipoPago TipoPago { get; set; }
     }

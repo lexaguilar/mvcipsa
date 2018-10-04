@@ -48,25 +48,26 @@
 </div>
 @section Scripts
     {
-    <environment include="Development">
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/lib/dx/js/cldr.min.js"></script>
-        <script src="~/lib/dx/js/event.min.js"></script>
-        <script src="~/lib/dx/js/supplemental.min.js"></script>
-        <script src="~/lib/dx/js/unresolved.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
-        <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
-        <script src="~/lib/dx/js/dx.all.js"></script>
-
-        <script src="~/js/aspnet.js"></script>
-        <script src="~/lib/dx/js/date.min.js"></script>    
-        <script src="~/lib/numeral/numeral.js"></script>
-        <script src="~/js/loading.js"></script>
-    </environment>
+<environment include="Development">
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js"></script>
+    <script src="~/js/aspnet.js"></script>
+    <script src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/numeral/numeral.js"></script>
+    <script src="~/js/loading.js"></script>
+</environment>
     <environment exclude="Development">
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/lib/dx/js/jszip.min.js"></script>
         <script src="~/lib/dx/js/cldr.min.js"></script>
         <script src="~/lib/dx/js/event.min.js"></script>
         <script src="~/lib/dx/js/supplemental.min.js"></script>
@@ -76,7 +77,6 @@
         <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
         <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
         <script src="~/lib/dx/js/dx.all.js"></script>
-
         <script src="~/js/aspnet.js"></script>
         <script src="~/lib/dx/js/date.min.js"></script>
         <script src="~/lib/numeral/numeral.js"></script>
@@ -113,94 +113,148 @@
                 fileName: "recibos ingresados antes del 2017",
                 allowExportSelectedData: true
             },
-            keyExpr: "Id",
-            editing: {
-                mode: "popup",
-                allowUpdating: true,
-                popup: {
-                    title: "Corregir fecha",
-                    showTitle: true,
-                    width: 700,
-                    height: 345,
-                    position: {
-                        my: "top",
-                        at: "top",
-                        of: window
-                    }
-                }
-            },
-            onRowUpdated: function (e) {
-
-                var p = e.data;
-                p['Id'] = e.key;
-
-                $.post(pathBase + `reportes/corregir-fecha`, p, function () {
-                    loadGrid();
-                });
-            },
-            columns: [{               
-                dataField: "Id",    
-                allowEditing: false     ,
-                visible:false     
-            }, {
-                caption: "Recibo",
-                dataField: "NumRecibo",
-                allowEditing: false,                
-                cellTemplate: function (container, options) {
-                    $("<div>")
-                        .append(`<a class="href-button text-custom-16" onclick="printReportById(${options.data.Id},1);"> ${options.data.NumRecibo}</a>`)
+            keyExpr: "Id",               
+            columns: [
+                {               
+                    dataField: "Id",    
+                    allowEditing: false,
+                    visible:false
+                }, {
+                    caption: "Recibo",
+                    dataField: "NumRecibo",
+                    allowEditing: false,                
+                    cellTemplate: function (container, options) {
+                        $("<div>")
+                            .append(`<a class="href-button text-custom-16" onclick="printReportById(${options.data.Id},1);"> ${options.data.NumRecibo}</a>`)
+                            .appendTo(container);
+                    },
+                    width: 100,
+                }, {
+                    caption: "Usuario",
+                    dataField: "Username",
+                    allowEditing: false,
+                    width: 80
+                },{
+                    caption: "Creado el",
+                    dataField: "FechaRegistro",
+                    allowEditing: false,
+                    dataType: "date",           
+                    format: "dd/MM/yyyy",
+                    width: 110
+                },{
+                    caption: "caja",
+                    dataField: "caja",
+                    allowEditing: false
+                },{
+                    caption: "Beneficiario",
+                    dataField: "Beneficiario",
+                    allowEditing: false
+                },{
+                    caption: "Moneda",
+                    dataField: "moneda",
+                    allowEditing: false,
+                    width: 85
+                },{
+                    caption: "Total",
+                    width: 130,
+                    dataField: "Total",  
+                    alignment: "right",    
+                    allowEditing: false,
+                    cellTemplate: function (container, options) {
+                    $("<div class='text-right'>")
+                        .append(numeral(options.value).format('0,0.00'))
                         .appendTo(container);
-                },
-                width: 100,
-            }, {
-                caption: "Usuario",
-                dataField: "Username",
-                allowEditing: false,
-                width: 80
-            },{
-                caption: "Creado el",
-                dataField: "FechaRegistro",
-                allowEditing: false,
-                dataType: "date",           
-                format: "dd/MM/yyyy",
-                width: 110
-            },{
-                caption: "caja",
-                dataField: "caja",
-                allowEditing: false
-            },{
-                caption: "Beneficiario",
-                dataField: "Beneficiario",
-                allowEditing: false
-            }, {
-                caption: "Moneda",
-                dataField: "moneda",
-                allowEditing: false,
-                width: 85
-            },{
-                caption: "Total",
-                width: 130,
-                dataField: "Total",  
-                alignment: "right",    
-                allowEditing: false,
-                cellTemplate: function (container, options) {
-                $("<div class='text-right'>")
-                    .append(numeral(options.value).format('0,0.00'))
-                    .appendTo(container);
+                    }
+                },{
+                    caption: "Fecha Proceso",
+                    alignment: "right",   
+                    width: 90,
+                    dataField: "FechaProceso",
+                    dataType: "date",           
+                    format: "dd/MM/yyyy",
+                    validationRules: [{
+                        type: "required",
+                        message: "Este campo es requerido"
+                    }]
                 }
-            },{
-                caption: "Fecha Proceso",
-                alignment: "right",   
-                width: 90,
-                dataField: "FechaProceso",
-                dataType: "date",           
-                format: "dd/MM/yyyy",
-                validationRules: [{
-                    type: "required",
-                    message: "Este campo es requerido"
-                }]
-            }
-            ],                           
+            ],       
+            masterDetail: {
+                enabled: true,
+                template: function (container, options) {
+                    var recibos = options.data;
+
+                    $("<div>")
+                        .addClass("master-detail-caption")
+                        .text("Recibo:" + recibos.NumRecibo)
+                        .appendTo(container);
+
+                    $("<div>")
+                        .dxDataGrid({
+                            keyExpr: "Id",
+                            editing: {
+                                mode: "popup",
+                                allowUpdating: true,
+                                popup: {
+                                    title: "Corregir fecha",
+                                    showTitle: true,
+                                    width: 700,
+                                    height: 345,
+                                    position: {
+                                        my: "top",
+                                        at: "top",
+                                        of: window
+                                    }
+                                }
+                            },
+                            onRowUpdated: function (e) {
+
+                                var p = e.data;
+                                p['Id'] = e.key;
+
+                                $.post(pathBase + `reportesDetalle/corregir-o-excluir`, p, function () {
+                                    loadGrid();
+                                });
+                            },
+                            columnAutoWidth: true,
+                            showBorders: true,                           
+                            dataSource: recibos.detalle,
+                            columns: [
+                                {
+                                    dataField: "Id",
+                                    allowEditing: false,
+                                    visible: false
+                                }, {                                    
+                                    dataField: "Referencia",
+                                    allowEditing: false,
+                                }, {
+                                    dataField: "Total",
+                                    width: 130,                                  
+                                    alignment: "right",
+                                    allowEditing: false,
+                                    cellTemplate: function (container, options) {
+                                        $("<div class='text-right'>")
+                                            .append(numeral(options.value).format('0,0.00'))
+                                            .appendTo(container);
+                                    }
+                                }, {                                   
+                                    alignment: "right",
+                                    width: 90,
+                                    dataField: "Fecha",
+                                    dataType: "date",
+                                    format: "dd/MM/yyyy",
+                                    validationRules: [{
+                                        type: "required",
+                                        message: "Este campo es requerido"
+                                    }]
+                                }, {
+                                    dataField: "Excluido",
+                                    dataType: "boolean",
+                                    width: 80
+                                }
+                            ],     
+                        }).appendTo(container);
+                }
+            },
             showBorders: true,
         });
 

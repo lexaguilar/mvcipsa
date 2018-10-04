@@ -1,19 +1,53 @@
 @model IEnumerable<mvcIpsa.Models.ReporteDetalleViewModel>
-<table>
-    <tr>
-        <th>Fecha</th><th>Num Documento</th><th>Monto</th>
-    </tr>
-    @foreach (var item in Model)
-    {
-    <tr>
-        <td>@item.Fecha</td>
-        <td>@item.NumDocumento</td>
-        <td>@item.Monto</td>
-    </tr>
-    }
-    <tr>
-        <td></td>
-        <td>TOTAL:</td>
-        <td>@Model.Sum(m=> m.Monto)</td>
-    </tr>
-</table>
+@if (Model.Any(x => x.TableInfo > 0))
+{
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Num Documento-</th>
+            <th>No Recibo</th>
+            <th>Caja</th>
+            <th>Monto</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Fecha</td>
+                <td>@item.NumDocumento</td>
+                <td>@item.NumRecibo</td>
+                <td class="caja">@item.Caja</td>
+                <td>@item.Monto</td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td>TOTAL:</td>
+            <td>@Model.Sum(m => m.Monto)</td>
+        </tr>
+    </table>
+}
+else
+{
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Num Documento-</th>
+            <th>Monto</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Fecha</td>
+                <td>@item.NumDocumento</td>
+                <td>@item.Monto</td>               
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td>TOTAL:</td>
+            <td>@Model.Sum(m => m.Monto)</td>
+        </tr>
+    </table>
+}

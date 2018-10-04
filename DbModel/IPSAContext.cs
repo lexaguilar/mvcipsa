@@ -551,6 +551,8 @@ namespace mvcIpsa.DbModel
 
                 entity.Property(e => e.UsernameEditado).HasColumnName("username_editado");
 
+                entity.Property(e => e.NoSerie).HasColumnName("no_serie");
+
                 entity.HasOne(d => d.Caja)
                     .WithMany(p => p.IngresosEgresosCaja)
                     .HasForeignKey(d => d.CajaId)
@@ -651,12 +653,10 @@ namespace mvcIpsa.DbModel
                 entity.Property(e => e.MontoMinu)
                     .HasColumnName("monto_minu")
                     .HasColumnType("numeric(10, 4)");
-                    //.HasDefaultValueSql("0::numeric");
 
                 entity.Property(e => e.MontoTrans)
                     .HasColumnName("monto_trans")
                     .HasColumnType("numeric(10, 4)");
-                    //.HasDefaultValueSql("0::numeric");
 
                 entity.Property(e => e.ReciboId).HasColumnName("recibo_id");
 
@@ -671,6 +671,7 @@ namespace mvcIpsa.DbModel
 
                 entity.Property(e => e.TipoPagoId).HasColumnName("tipo_pago_id");
                 entity.Property(e => e.Procesado).HasColumnName("procesado").HasColumnType("bool");
+                entity.Property(e => e.Excluido).HasColumnName("excluido").HasColumnType("bool");
                 entity.Property(e => e.Total)
                     .HasColumnName("total")
                     .HasColumnType("numeric(10, 4)")

@@ -74,7 +74,8 @@ namespace mvcIpsa.Controllers
                     FechaCreacion = c.FechaRegistro,
                     CentroCosto = "IPSA Central",
                     CajaId = c.CajaId,
-                    Caja = c.Caja.Description
+                    Caja = c.Caja.Description,
+                    NoSerie = string.IsNullOrEmpty(c.NoSerie)?"":c.NoSerie
                     
                 });
 
@@ -392,7 +393,6 @@ namespace mvcIpsa.Controllers
         {
             var detalle = "\r\n=======" + action + "=>" + DateTime.Now.ToString();
             string json = JsonConvert.SerializeObject(iECajaViewModel);
-           // System.IO.File.WriteAllText(settings.url + iECajaViewModel.master.NumRecibo + ".txt", detalle + json);
             using (StreamWriter writer = new StreamWriter(settings.url + iECajaViewModel.master.NumRecibo+ ".txt", true)){
                 writer.Write( detalle +"\r\n"+ json);
             }
@@ -419,11 +419,6 @@ namespace mvcIpsa.Controllers
                 return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está anulado");
             }
 
-            // if (recibos.EstadoId == (short)IngresosEgresosCajaEstado.Cerrado)
-            // {
-            //     return BadRequest($"No se puede editar el recibo {recibos.NumRecibo.PadLeft(10, '0')} ya que está cerrado");
-            // }
-
             var ingresosEgresosCaja = iECajaViewModel.master;
             recibos.FechaProceso = ingresosEgresosCaja.FechaProceso;
             recibos.NoOrdenPago = ingresosEgresosCaja.NoOrdenPago;
@@ -436,6 +431,7 @@ namespace mvcIpsa.Controllers
             recibos.Concepto = ingresosEgresosCaja.Concepto;
             recibos.UsernameEditado = user.username;
             recibos.FechaEditado = DateTime.Now;
+            recibos.NoSerie = ingresosEgresosCaja.NoSerie;
 
             var totalServicioDolar = iECajaViewModel.details.Sum(s => s.montodolar);
             var totalPagoDolar = iECajaViewModel.referencias.Sum(p => p.totalD);
@@ -523,7 +519,7 @@ namespace mvcIpsa.Controllers
                 });
             }
 
-            recibos.Referencias = (short)iECajaViewModel.referencias.Count();//  recibos.IngresosEgresosCajaReferencias.Count();
+            recibos.Referencias = (short)iECajaViewModel.referencias.Count();
 
             try
             {
@@ -561,6 +557,37 @@ namespace mvcIpsa.Controllers
                     TipoMoneda = r.TipoMoneda.Descripcion,
                     Id = r.Id,
                     detalles = r.IngresosEgresosCajaDetalle.Select(c => new ReciboDetalle{
+                        Cantidad = c.Cantidad,
+                        CtaContable = c.CtaContable,
+                        Montodolar = c.Montodolar,
+                        Precio = c.Precio,
+                        servicio = servicios.Where(s => s.CtaContable == c.CtaContable).FirstOrDefault().Nombre
+                    })
+                }).FirstOrDefault();
+
+            return View(recibo);
+        }
+        public async Task<IActionResult> Print2(int Id)
+        {
+            var servicios = new MaestroContableServices(DbIpsa).ObtenerServicios();
+
+            var recibo = db.IngresosEgresosCaja
+                .Include(c => c.Estado)
+                .Include(c => c.IngresosEgresosCajaDetalle)
+                .Include(c => c.TipoMoneda)
+                .Where(c => c.Id == Id)
+                .Select(r => new ReciboViewModel
+                {
+                    FechaProceso = r.FechaProceso,
+                    NumRecibo = r.NumRecibo,
+                    Beneficiario = r.Beneficiario,
+                    EstadoId = r.EstadoId,
+                    MotivoAnulado = r.MotivoAnulado,
+                    Total = r.Total,
+                    TipoMoneda = r.TipoMoneda.Descripcion,
+                    Id = r.Id,
+                    detalles = r.IngresosEgresosCajaDetalle.Select(c => new ReciboDetalle
+                    {
                         Cantidad = c.Cantidad,
                         CtaContable = c.CtaContable,
                         Montodolar = c.Montodolar,

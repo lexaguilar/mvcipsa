@@ -1,0 +1,189 @@
+﻿@model mvcIpsa.Models.ReciboViewModel
+
+@{
+    Layout = null;
+    var estado = "";
+    if (Model.EstadoId == 2)
+    {
+        estado = "ANULADO";
+    }
+
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Imprimir @Model.NumRecibo</title>
+</head>
+<body>
+    <style>
+        .rotate {
+            -webkit-transform: rotate(7deg);
+            transform: rotate(-35deg);
+            position: absolute;
+            font-size: 67px;
+            left: 350px;
+            top: 350px;
+            color: #ff00004a;
+            z-index: -1;
+        }
+        .temp {
+            height: 118px;
+        }
+
+        .tablaServicio {
+            min-height: 300px
+        }
+        boby {
+            font-size: 14px;
+            padding-left: 15px;
+        }
+    </style>
+    <style type="text/css" media="print">
+        @@page {
+            size: auto;
+            margin: 0mm;
+        }
+
+        html {
+            background-color: #FFFFFF;
+            margin: 0px;
+        }
+
+        body {
+            font-size: 14px;
+            padding-left: 15px;
+            margin: 10mm 15mm 10mm 15mm;
+        }
+
+        a {
+            display: none
+        }
+
+        .temp {
+            height: 118px;
+        }
+        .tablaServicio {
+            min-height: 300px
+        }
+        .pl-85 {
+            padding-left: 100px;
+        }
+        .tipoMoneda {
+            padding-top: 60px;
+            font-size: 20px
+        }
+        .resp-table {
+            width: 1100px;
+            padding-top: 70px;
+        }
+    </style>
+    <div class="rotate">@estado</div>
+    <div>
+        <div class="temp"></div>
+
+        <style>
+            .resp-table {
+                width: 1100px;
+                padding-top: 70px;
+            }
+
+            .pl-85 {
+                padding-left: 100px;
+            }
+
+            .pl-100 {
+                padding-left: 125px;
+            }
+            .pl-130 {
+                padding-left: 140px;
+            }
+
+            .Fecha {
+                font-size:20px
+            }
+
+            .Beneficiario {
+                padding-top: 20px;
+                font-size: 20px
+            }
+
+            .codigo {
+                width: 12%
+            }
+
+            .servicio {
+                width: 39%
+            }
+
+            .Precio {
+                width: 19%
+            }
+
+            .Cantidad {
+                width: 16%
+            }
+
+            .Montodolar {
+                width: 14%
+            }
+
+            .width-print {
+                width: 1100px;
+            }
+
+            .tipoMoneda {
+                padding-top: 55px;
+                font-size: 20px
+            }
+
+            .total {
+                position: relative;
+                right: -716px;
+                top: 15px;
+                font-size: 20px
+            }
+
+            .referencia {
+                position: relative;
+                float: left;
+                font-size: 20px
+            }
+            .numRecibo {
+                position: relative;
+                float: left;
+                left: 723px;
+                font-size: 20px;
+                top : -25px
+            }
+        </style>
+        <div class="numRecibo">@Model.NumRecibo</div>
+        <div class="pl-85 Fecha">@Model.FechaProceso.ToString("dd-MM-yyyy")</div>
+        <div class="pl-100 Beneficiario">@Model.Beneficiario</div>
+        <div class="tablaServicio">
+            <table class="resp-table">
+                @foreach (var servicio in Model.detalles)
+                {
+                    <tr>
+                        <td class="codigo">@servicio.CtaContable</td>
+                        <td class="servicio">@servicio.servicio</td>
+                        <td class="Precio">@servicio.Precio</td>
+                        <td class="Cantidad">@servicio.Cantidad</td>
+                        <td class="Montodolar">@servicio.Montodolar</td>
+                    </tr>
+                }
+            </table>
+        </div>
+        <div class="width-print pie">
+            <div class="referencia">@Model.MotivoAnulado</div>
+            <div class="total">@Math.Round(Model.Total, 2)</div>
+            <div class="pl-130 tipoMoneda">@Model.TipoMoneda</div>
+
+        </div>
+
+
+    </div>   
+</body>
+</html>

@@ -1,0 +1,245 @@
+﻿
+@{
+    ViewData["Title"] = "Crear";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles
+    {
+    <environment include="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" type="text/css" href="~/lib/dx/css/dx.common.css" />
+        <link rel="dx-theme" data-theme="generic.light" href="~/lib/dx/css/dx.light.css" />
+    </environment>
+}
+<div class="wrapper">
+    <section class="panel animated slideInUp">
+        <header class="panel-heading"></header>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div id="gridBox"></div>
+                </div>
+                <div class="col-md-2">
+                    <div class="dx-field">
+                        <div id="radio-group-with-selection"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="dx-field">
+                        <div class="dx-field-label">Desde</div>
+                        <div class="dx-field-value">
+                            <div id="startDate"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="dx-field">
+                        <div class="dx-field-label">Hasta</div>
+                        <div class="dx-field-value">
+                            <div id="endDate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                 <div class="col-md-4">
+                     <div id="normal"></div>
+                 </div>
+            </div>
+            <div class="dx-viewport">
+                <div class="demo-container">
+                    <div id="dxGridComprobantes"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+@section Scripts
+    {
+<environment include="Development">
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js" asp-append-version="true"></script>
+    <script src="~/lib/dx/js/localization/es.js"></script>
+
+    <script src="~/js/notifIt.js"></script>
+    <script src="~/js/loading.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+
+</environment>
+<environment exclude="Development">
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/cldr.min.js"></script>
+    <script src="~/lib/dx/js/event.min.js"></script>
+    <script src="~/lib/dx/js/supplemental.min.js"></script>
+    <script src="~/lib/dx/js/unresolved.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/globalize.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/message.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/number.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/currency.min.js"></script>
+    <script type="text/javascript" src="~/lib/dx/js/date.min.js"></script>
+    <script src="~/lib/dx/js/jszip.min.js"></script>
+    <script src="~/lib/dx/js/dx.all.js" asp-append-version="true"></script>
+    <script src="~/lib/dx/js/localization/es.js"></script>
+
+    <script src="~/js/notifIt.js"></script>
+    <script src="~/js/loading.js"></script>
+    <script src="~/lib/moment/moment.js"></script>
+</environment>
+    <script>
+        var type = 0; //1 diario, 2 mes 
+        var searching = false;
+        $("#normal").dxButton({
+            text: "Buscar",
+            type: "default",
+            width: 90,
+            onClick: function (e) {
+                DevExpress.ui.notify("Buscando... por favor espere");
+                if (!searching)
+                    CargarDatos();
+            }
+        });
+        var startDate = $("#startDate").dxDateBox({
+            type: "date"
+        });
+
+        var endDate = $("#endDate").dxDateBox({
+            type: "date",
+        });
+
+        var radioGroup = $("#radio-group-with-selection").dxRadioGroup({
+            items: ["Por mes", "Diario"],
+            layout: "horizontal",
+            onValueChanged: function (e) {
+                if (e.value == 'Diario') 
+                    type = 1;
+                else 
+                    type = 2;
+            }
+        }).dxRadioGroup("instance");
+
+
+        var makeAsyncDataSource = function (jsonFile) {
+            return new DevExpress.data.CustomStore({
+                loadMode: "raw",
+                key: "Id",
+                load: function () {
+                    return $.get(pathBase + "cajas/getList", function (data) {
+                        return data;
+                    });
+                }
+            });
+        };
+        $("#gridBox").dxDropDownBox({
+            valueExpr: "Id",
+            placeholder: "Seleccione una caja...",
+            displayExpr: "Description",
+            showClearButton: true,
+            dataSource: makeAsyncDataSource("customers.json"),
+            contentTemplate: function (e) {
+                var value = e.component.option("value"),
+                    $dataGrid = $("<div>").dxDataGrid({
+                        dataSource: e.component.option("dataSource"),
+                        columns: ["Description"],
+                        hoverStateEnabled: true,
+                        paging: { enabled: true, pageSize: 10 },
+                        filterRow: { visible: true },
+                        height: 345,
+                        selection: { mode: "multiple" },
+                        selectedRowKeys: value,
+                        onSelectionChanged: function (selectedItems) {
+                            var keys = selectedItems.selectedRowKeys;
+                            e.component.option("value", keys);
+                        }
+                    });
+
+                dataGrid = $dataGrid.dxDataGrid("instance");
+
+                e.component.on("valueChanged", function (args) {
+                    var value = args.value;
+                    dataGrid.selectRows(value, false);
+                });
+
+                return $dataGrid;
+            }
+        });
+
+        var $gridComprobantes = '#dxGridComprobantes';
+        var cajas = new DevExpress.data.DataSource({
+            store: {
+                type: 'array',
+                data: [],
+                key: 'referencia'
+            }
+        });
+
+
+        $($gridComprobantes).dxDataGrid({
+            dataSource: cajas,
+            showRowLines: true,
+            rowAlternationEnabled: true,
+            columnsAutoWidth: true,
+            allowColumnResizing: true,
+            headerFilter: {
+                visible: true
+            },
+            filterRow: {
+                visible: true,
+                applyFilter: "auto"
+            },
+
+            summary: {
+                totalItems: [{
+                    column: "Id",
+                    summaryType: "count",
+                    customizeText: function (data) {
+                        return data.value + ' cajas';
+                    }
+                }]
+            },
+        }).dxDataGrid("instance");
+
+        var CargarDatos = function () {
+            //$($gridComprobantes).parent().loading();
+            searching = true;
+            var data = {};
+
+            var desdeInstance = $("#startDate").dxDateBox("instance");
+            var desde = desdeInstance.option('value');
+            
+            var hastaInstance = $("#endDate").dxDateBox("instance");
+            var hasta = hastaInstance.option('value');
+
+            var cajasInstance = $("#gridBox").dxDropDownBox("instance");
+            var cajas = cajasInstance.option('value');
+
+            data.desde = moment(desde).utc().format();
+            data.hasta = moment(hasta).utc().format();
+            data.CajaIds = cajas;
+            data.SearchType = type;
+
+            $.post(pathBase + `comprobantes/obtener-previo`, data, result => {
+                $($gridComprobantes).dxDataGrid("instance").option('dataSource', result);
+                
+            }).always(function () {
+                //$($gridComprobantes).parent().loading('stop');
+                searching = false;
+            });
+           
+           
+        }
+
+    </script>
+}

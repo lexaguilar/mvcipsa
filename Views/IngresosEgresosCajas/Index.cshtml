@@ -178,8 +178,8 @@
             
             var f = function (response) {
                 $('#recibo').datatable({
-                    columnsHead: ['', 'Recibo', 'Fecha de Proceso', 'Beneficiario', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario','Caja' , 'Creado el', 'Estado'],
-                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular','print'] }, 'NumRecibo', 'FechaProceso', 'Beneficiario', 'Total', 'TipoMoneda', 'TipoIngreso', 'Username','Caja', 'FechaCreacion', 'Estado'],
+                    columnsHead: ['', 'Recibo','Serie', 'Fecha', 'Beneficiario', 'Monto', 'Tipo Moneda', 'Tipo Ingreso', 'Usuario','Caja' , 'Creado el', 'Estado'],
+                    columnsDisplay: [{ type: 'button', buttons: ['edit', 'anular','print'] }, 'NumRecibo','NoSerie', 'FechaProceso', 'Beneficiario', 'Total', 'TipoMoneda', 'TipoIngreso', 'Username','Caja', 'FechaCreacion', 'Estado'],
                     data: response.Result,
                     pag: pag,
                     rows: data.Rows,

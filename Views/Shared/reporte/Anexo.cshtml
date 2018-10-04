@@ -29,32 +29,72 @@
                 <div class="text-center">@Model.Titulo</div>
                 <div class="text-center">@Model.CuentaBancaria</div>
                 <table>
-                    <tr style="border-bottom: 2px solid #d1d1d1;">
-                        <th class="text-right">Fecha</th>
-                        <th class="text-right">Num Documento</th>
-                        <th class="text-right width-33">Monto</th>
-                    </tr>
-                    @foreach (var item in Model.detalle.Skip(((int)Page-1) * (int)RowsPerPage).Take((int)RowsPerPage))
+
+                    @if (Model.detalle.Any(x => x.TableInfo > 0))
                     {
-                        <tr>
-                            <td class="text-right">@item.Fecha.ToString("dd/MM/yyyy")</td>
-                            <td class="text-right">@item.NumDocumento</td>
-                            <td class="text-right text-bold width-33">@item.Monto.ToString("#,#.00#;(#,#.00#)")</td>
+                        <tr style="border-bottom: 2px solid #d1d1d1;">
+                            <th class="text-right">Fecha</th>
+                            <th class="text-right">Documento</th>
+                            <th>Recibo</th>
+                            <th class="caja">Caja</th>
+                            <th class="text-right width-20">Monto</th>
                         </tr>
-                    }
-                    <tr style="border-top: 2px solid #d1d1d1;">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    @if (Page == Pages)
-                    {
+                        @foreach (var item in Model.detalle.Skip(((int)Page - 1) * (int)RowsPerPage).Take((int)RowsPerPage))
+                            {
+                            <tr>
+                                <td class="text-right">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td class="text-right">@item.NumDocumento</td>
+                                <td>@item.NumRecibo</td>
+                                <td class="caja">@item.Caja</td>
+                                <td class="text-right text-bold width-20">@item.Monto.ToString("#,#.00#;(#,#.00#)")</td>
+                            </tr>
+                         }
+                        <tr style="border-top: 2px solid #d1d1d1;">
+                            <td></td><td></td><td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        @if (Page == Pages)
+                        {
                         <tr>
+                            <td>@Model.detalle.Count() Regsitros</td>
+                            <td></td>
                             <td></td>
                             <td class="text-right text-bold">TOTAL:</td>
                             <td class="text-right text-bold" style="font-size:14px">@Model.Moneda @Total.ToString("#,#.00#;(#,#.00#)")</td>
                         </tr>
+                        }
                     }
+                    else
+                    {
+                        <tr style="border-bottom: 2px solid #d1d1d1;">
+                            <th class="text-right">Fecha</th>
+                            <th class="text-right">Num Documento</th>
+                            <th class="text-right width-33">Monto</th>
+                        </tr>
+                        @foreach (var item in Model.detalle.Skip(((int)Page - 1) * (int)RowsPerPage).Take((int)RowsPerPage))
+                        {
+                            <tr>
+                                <td class="text-right">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                <td class="text-right">@item.NumDocumento</td>
+                                <td class="text-right text-bold width-33">@item.Monto.ToString("#,#.00#;(#,#.00#)")</td>
+                            </tr>
+                        }
+                        <tr style="border-top: 2px solid #d1d1d1;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        @if (Page == Pages)
+                        {
+                            <tr>
+                                <td></td>
+                                <td class="text-right text-bold">TOTAL:</td>
+                                <td class="text-right text-bold" style="font-size:14px">@Model.Moneda @Total.ToString("#,#.00#;(#,#.00#)")</td>
+                            </tr>
+                        }
+                    }
+
                 </table>
                 <br>
                 <div class="text-left">Página @Page de @Pages</div>

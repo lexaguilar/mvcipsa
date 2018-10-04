@@ -32,6 +32,7 @@ namespace mvcIpsa.DbModel
         public short Referencias { get; set; }
         public string UsernameAnulado { get; set; }
         public string UsernameEditado { get; set; }
+        public string NoSerie { get; set; }
         public DateTime? FechaAnulado { get; set; }
         public DateTime? FechaEditado { get; set; }
 

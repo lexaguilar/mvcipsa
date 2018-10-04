@@ -24,5 +24,6 @@ namespace mvcIpsa.Models
         public string Beneficiario { get; set; }      
         public int CajaId { get; set; }
         public string Caja { get; set; }
+        public string NoSerie { get; set; }
     }
 }

@@ -433,16 +433,19 @@ namespace mvcIpsa.Controllers
             var result = reporteServices.conciliacionAnexoViewModel(bancoCuenta, mes, anio, "DPNoRegistradaEnBanco");
 
             if (result.HashError)
-                return View("Error", result.Mensaje);
+                return View("Error", result.Mensaje);           
 
             var reporteDetalle = db.ConciliacionBancariaAux
                 .Include(cb => cb.TipoMovimiento).Where(cb => cb.ProcesoBancoId == result.ProcesoBancoId).ToArray()
                 .ObtenerDPNoRegistradasEnBanco()
                 .Select(x => new ReporteDetalleViewModel
                 {
+                    TableInfo = x.TableInfo,
                     Fecha = x.Fecha,
                     Monto = x.Debito,
-                    NumDocumento = x.Referencia
+                    NumDocumento = x.Referencia,
+                    NumRecibo = x.IdRef.ToString().PadLeft(10, '0'),
+                    Caja = x.TableInfo == 1 ? db.IngresosEgresosCaja.Include(i => i.Caja).Single(i=> i.Id == x.IdRef).Caja.Description : "Movimientos"
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
@@ -476,9 +479,12 @@ namespace mvcIpsa.Controllers
                 .ObtenerNDNoRegistradaEnBanco()
                 .Select(x => new ReporteDetalleViewModel
                 {
+                    TableInfo = x.TableInfo,
                     Fecha = x.Fecha,
                     Monto = x.Debito,
-                    NumDocumento = x.Referencia
+                    NumDocumento = x.Referencia,
+                    NumRecibo = x.IdRef.ToString().PadLeft(10, '0'),
+                    Caja = x.TableInfo == 1 ? db.IngresosEgresosCaja.Include(i => i.Caja).Single(i => i.Id == x.IdRef).Caja.Description : "Movimientos"
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
@@ -513,9 +519,12 @@ namespace mvcIpsa.Controllers
                 .ObtenerNCNoRegistradaEnBanco()
                 .Select(x => new ReporteDetalleViewModel
                 {
+                    TableInfo = x.TableInfo,
                     Fecha = x.Fecha,
                     Monto = x.Credito,
-                    NumDocumento = x.Referencia
+                    NumDocumento = x.Referencia,
+                    NumRecibo = x.IdRef.ToString().PadLeft(10, '0'),
+                    Caja = x.TableInfo == 1 ? db.IngresosEgresosCaja.Include(i => i.Caja).Single(i => i.Id == x.IdRef).Caja.Description : "Movimientos"
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
@@ -549,9 +558,12 @@ namespace mvcIpsa.Controllers
                 .ObtenerCreditosPorCorreccionesIntMas()
                 .Select(x => new ReporteDetalleViewModel
                 {
+                    TableInfo = x.TableInfo,
                     Fecha = x.Fecha,
                     Monto = x.Credito,
-                    NumDocumento = x.Referencia
+                    NumDocumento = x.Referencia,
+                    NumRecibo = x.IdRef.ToString().PadLeft(10, '0'),
+                    Caja = x.TableInfo == 1 ? db.IngresosEgresosCaja.Include(i => i.Caja).Single(i => i.Id == x.IdRef).Caja.Description : "Movimientos"
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
@@ -585,9 +597,12 @@ namespace mvcIpsa.Controllers
                 .ObtenerCreditosPorCorreccionesIntMenos()
                 .Select(x => new ReporteDetalleViewModel
                 {
+                    TableInfo = x.TableInfo,
                     Fecha = x.Fecha,
                     Monto = x.Credito,
-                    NumDocumento = x.Referencia
+                    NumDocumento = x.Referencia,
+                    NumRecibo = x.IdRef.ToString().PadLeft(10, '0'),
+                    Caja = x.TableInfo == 1 ? db.IngresosEgresosCaja.Include(i => i.Caja).Single(i => i.Id == x.IdRef).Caja.Description : "Movimientos"
                 }).ToArray();
 
             var conciliacionAnexoViewModel = new ConciliacionAnexoViewModel
@@ -618,31 +633,39 @@ namespace mvcIpsa.Controllers
         {  
             var fechaMin = new DateTime(2017,1,1);
 
-             var resultCaja = from iec in db.IngresosEgresosCaja
-                         join c in db.Caja on iec.CajaId equals c.Id
-                         join iecr in db.IngresosEgresosCajaReferencias on iec.Id equals iecr.ReciboId
-                         join m in db.TipoMoneda on iec.TipoMonedaId equals m.Id
-                         where iec.EstadoId == (short)IngresosEgresosCajaEstado.Registrado                          
-                         && (iec.FechaProceso < fechaMin || iecr.Fecha < fechaMin)
-                         select new {
-                                iec.Id,
-                                NumRecibo = iec.NumRecibo.PadLeft(10,'0'),
-                                iec.FechaProceso,
-                                iec.Username,
-                                iec.Beneficiario,
-                                iec.Total,
-                                moneda = iec.TipoMoneda.Descripcion,
-                                caja = iec.Caja.Description,
-                                iec.FechaRegistro
-                         };
+            var results = from iec in db.IngresosEgresosCaja                       
+                          join iecr in db.IngresosEgresosCajaReferencias on iec.Id equals iecr.ReciboId                        
+                          where iec.EstadoId == (short)IngresosEgresosCajaEstado.Registrado
+                          //&& (iec.FechaProceso < fechaMin || iecr.Fecha < fechaMin) && (iecr.Excluido ?? false) == false
+                          && (iecr.Fecha < fechaMin && (iecr.Excluido ?? false) == false)
+                          select iec.Id;
 
+            var result = db.IngresosEgresosCaja
+                        .Include(i => i.TipoMoneda)
+                        .Include(i => i.IngresosEgresosCajaReferencias)
+                        .Include(i => i.Caja)
+                        .Where(i => results.Contains(i.Id)).ToArray();
 
-            // var result = db.IngresosEgresosCaja
-            //             .Include(i => i.TipoMoneda)
-            //             .Include(i => i.Caja)
-            //             .Where(i => i.FechaProceso < fechaMin).ToArray();
-            
-            return Json(resultCaja.ToArray());
+            return Json(result.Select(x=> new
+            {
+                x.Id,
+                x.NumRecibo,
+                x.FechaProceso,
+                x.FechaRegistro,
+                x.Beneficiario,
+                caja = x.Caja.Description,
+                moneda = x.TipoMoneda.Descripcion,
+                x.Total,
+                x.Username,
+                detalle = x.IngresosEgresosCajaReferencias.Select(p => new {
+                    p.Id,
+                    p.Total,
+                    p.Referencia,
+                    Excluido = (p.Excluido??false),
+                    p.Fecha,
+                }).Where(i=> i.Excluido == false)                              
+            }));
+               
         }
 
         [HttpPost("reportes/corregir-fecha")]
@@ -662,6 +685,61 @@ namespace mvcIpsa.Controllers
             db.SaveChanges();
             return Json(FechaProceso);
         }
-    } 
+
+        [HttpPost("reportesDetalle/corregir-o-excluir")]
+        public IActionResult CorregirDetalle(int Id, DateTime? Fecha, bool? Excluido)
+        {
+            var user = this.GetServiceUser();
+
+            var oldReferencia = db.IngresosEgresosCajaReferencias.Find(Id);
+
+            if (oldReferencia == null)
+                return NotFound("No se encontro el recibo con id: " + Id);
+
+            if (Excluido.HasValue)
+            {
+                if (Excluido.Value)
+                {
+                    oldReferencia.Excluido = Excluido.Value;
+                }
+            }
+
+            if (Fecha.HasValue)
+            {
+                oldReferencia.Fecha = Fecha.Value;
+            }
+
+            db.SaveChanges();
+            return Json(oldReferencia);
+        }
+
+        [HttpGet("reportesDetalle/recibos-excluidos")]
+        public IActionResult RecibosExcluidos(int Id, DateTime? Fecha, bool? Excluido)
+        {
+            var user = this.GetServiceUser();
+
+            var oldReferencia = db.IngresosEgresosCajaReferencias.Find(Id);
+
+            if (oldReferencia == null)
+                return NotFound("No se encontro el recibo con id: " + Id);
+
+            if (Excluido.HasValue)
+            {
+                if (Excluido.Value)
+                {
+                    oldReferencia.Excluido = Excluido.Value;
+                }
+            }
+
+            if (Fecha.HasValue)
+            {
+                oldReferencia.Fecha = Fecha.Value;
+            }
+
+            db.SaveChanges();
+            return Json(oldReferencia);
+        }
+
+    }
 
 }

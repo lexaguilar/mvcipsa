@@ -71,7 +71,7 @@
                                         <div class="form-group col-lg-3">
                                             <label class="control-label">Identificación</label>
                                             <select class="master" data-error-message="Seleccione un cliente" asp-for="ClienteId">
-                                                <option value="">Seleccione</option>                                                
+                                                <option value="">Seleccione</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-lg-3">
@@ -94,6 +94,11 @@
                                             <label asp-for="Muestra" class="control-label"></label>
                                             <input asp-for="Muestra" class="form-control master" />
                                             <span asp-validation-for="Muestra" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group col-lg-3">
+                                            <label asp-for="NoSerie" class="control-label"></label>
+                                            <input asp-for="NoSerie" class="form-control master" />
+                                            <span asp-validation-for="NoSerie" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
