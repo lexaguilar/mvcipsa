@@ -22,4 +22,17 @@ namespace mvcIpsa.Models
         public IEnumerable<BancosCuentas> Members { get; set; }
         public IEnumerable<BancosCuentas> NonMembers { get; set; }
     }
+
+    public class CuentasBancoByCajaEditModel : CuentasBancoEditModel
+    {
+        public int CajaId { get; set; }
+        public string Description { get; set; }
+      
+    }
+
+    public class CuentasBancoByCajaViewModel : CuentasBancoUsernameViewModel
+    {
+        public int CajaId { get; set; }
+
+    }
 }

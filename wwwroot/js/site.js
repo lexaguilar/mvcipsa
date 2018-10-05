@@ -464,7 +464,7 @@ var  getURL = (a) => a.join('/');
             var $select = $('.data-ajax').selectize({
                 valueField: 'Cuenta',
                 labelField: 'Nombre',
-                searchField: 'Nombre',
+                searchField: ['Nombre', 'Cuenta'],
                 options: servicios,
                 create: false,
                 render: {
